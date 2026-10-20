@@ -15,14 +15,14 @@
 <title>GYM</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
 <style>
-/* Layout: one-column phone app. Sticky header with group tabs, exercise cards below,
-   classic table view as a second mode. Dark gym-at-night palette with a chalk-yellow accent. */
+/* Layout: phone app. Header with group chips, content, fixed bottom tab bar. Dark gym palette, chalk-yellow accent. */
 :root{
   --bg:#F1F3F6; --surface:#FFFFFF; --surface-2:#E9ECF1; --fg:#161A22; --muted:#646C7C;
   --line:#D8DDE6; --accent:#D59A14; --accent-soft:#F7E7B9; --accent-fg:#1A1400;
   --good:#1F9D5A; --bad:#C9414A; --shadow:0 1px 2px rgba(20,24,33,.06),0 6px 20px rgba(20,24,33,.06);
   --display:"Barlow Condensed","Arial Narrow",Impact,sans-serif;
   --body:"Barlow","Helvetica Neue",Arial,sans-serif;
+  --nav-h:58px;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#141821; --surface:#1C212C; --surface-2:#252B38; --fg:#EEF0F4; --muted:#98A0B0;
@@ -34,137 +34,181 @@
   --good:#5BC489; --bad:#E0646A; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark }
 
 *{box-sizing:border-box}
-html,body{min-height:100%} body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.4;margin:0}
-button,input,textarea{font:inherit;color:inherit}
-button{cursor:pointer;border:0;background:none;padding:0}
-button:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+html{-webkit-text-size-adjust:100%}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.4;margin:0}
+button,input,textarea,select{font:inherit;color:inherit}
+input,textarea,select{font-size:16px}
+button{cursor:pointer;border:0;background:none;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .num{font-variant-numeric:tabular-nums}
+.short{display:none}
+.gutter{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
 
-.top{position:sticky;top:0;padding-top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
-.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px 6px}
-.brand{font-family:var(--display);font-weight:700;font-size:30px;letter-spacing:.04em;line-height:1}
-.brand small{display:block;font-family:var(--body);font-weight:500;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:2px}
-.seg{display:flex;background:var(--surface-2);border-radius:999px;padding:3px;gap:2px}
-.seg button{padding:6px 12px;border-radius:999px;font-weight:600;font-size:13px;color:var(--muted)}
-.seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:var(--shadow)}
-.tabs{display:flex;gap:8px;overflow-x:auto;padding:6px 16px 10px;scrollbar-width:none}
+/* header */
+.top{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.bar{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding-block:10px 4px}
+.brand{font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:.04em;line-height:1}
+.brand small{display:block;font-family:var(--body);font-weight:500;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.today{font-size:12px;color:var(--muted);text-align:right;line-height:1.3}
+.today b{display:block;color:var(--fg);font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:.02em}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-block:6px 10px;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex:0 0 auto;padding:7px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);text-align:left;line-height:1.1}
+.tab{flex:0 0 auto;min-height:44px;padding:6px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);text-align:left;line-height:1.1;position:relative}
 .tab b{display:block;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.03em}
 .tab span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .tab[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.tab .dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--good)}
 .tab.add{color:var(--muted);border-style:dashed;display:flex;align-items:center;font-weight:600}
 
-main{padding:14px 16px calc(40px + env(safe-area-inset-bottom,0px));max-width:720px;margin:0 auto}
+main{padding-block:14px calc(var(--nav-h) + 90px + env(safe-area-inset-bottom,0px));max-width:720px;margin:0 auto}
 .notice{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:14px;margin-bottom:12px}
 .notice b{color:var(--fg)}
-.ghead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:2px 0 12px}
+.ghead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:2px 0 12px;flex-wrap:wrap}
 .ghead h2{margin:0;font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:.03em;text-wrap:balance}
 .ghead h2 span{color:var(--muted);font-weight:500;font-size:18px;margin-left:8px}
-.ghead .meta{font-size:12px;color:var(--muted);text-align:right}
+.ghead .meta{font-size:12px;color:var(--muted)}
 
+/* cards */
 .list{display:flex;flex-direction:column;gap:10px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0}
-.card .head{display:flex;width:100%;align-items:flex-start;gap:10px;padding:12px 14px;text-align:left}
+.card.filled{border-color:var(--accent)}
+.card .head{display:flex;width:100%;align-items:flex-start;gap:10px;padding:12px 14px;text-align:left;min-height:52px}
 .card .head .name{flex:1;min-width:0;font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:.02em;line-height:1.15;overflow-wrap:anywhere}
 .card .head .last{font-size:11px;color:var(--muted);white-space:nowrap;padding-top:4px}
+.card .head .last.today{color:var(--good);font-weight:600}
 .sets{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:6px;padding:0 14px 12px}
 .set{background:var(--surface-2);border-radius:10px;padding:8px 8px 7px;min-width:0}
+.set .lbl,.set .cnt{white-space:nowrap}
 .set .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-.set .val{font-family:var(--display);font-weight:700;font-size:22px;line-height:1.1;margin-top:2px;overflow-wrap:anywhere}
+.set .val{font-family:var(--display);font-weight:700;font-size:clamp(17px,5.6vw,24px);line-height:1.1;margin-top:2px;overflow-wrap:anywhere}
 .set .val.empty{color:var(--muted);font-weight:500}
 .set .cnt{font-size:11px;color:var(--muted);margin-top:2px}
-.set .d{display:inline-block;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;margin-right:3px;vertical-align:1px}
-.set .d.up{border-bottom:6px solid var(--good)} .set .d.down{border-top:6px solid var(--bad)}
+.d{display:inline-block;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;margin-right:3px;vertical-align:1px}
+.d.up{border-bottom:6px solid var(--good)} .d.down{border-top:6px solid var(--bad)}
 
 .detail{border-top:1px solid var(--line);padding:12px 14px 14px;display:flex;flex-direction:column;gap:14px}
-.hist h4{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
-.hist h4 button{font-size:11px;color:var(--bad);font-weight:600;letter-spacing:0;text-transform:none}
+.detail h4{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.detail h4 button{font-size:11px;color:var(--bad);font-weight:600;letter-spacing:0;text-transform:none;min-height:32px;padding:0 6px;margin:-6px -6px -6px 0}
 .chips{display:flex;flex-wrap:wrap;gap:4px}
 .chip{background:var(--surface-2);border-radius:6px;padding:2px 7px;font-size:13px;font-weight:500}
 .chip.last{background:var(--accent);color:var(--accent-fg);font-weight:600}
 .spark{display:block;width:100%;height:40px;margin-top:6px}
+.sess{width:100%;border-collapse:collapse;font-size:14px}
+.sess th{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:500;text-align:left;padding:2px 4px}
+.sess td{padding:7px 4px;border-top:1px solid var(--line);vertical-align:middle}
+.sess td.date{color:var(--muted);font-size:13px;white-space:nowrap}
+.sess td.v{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.02em}
+.sess tr:first-child td.v{color:var(--accent)}
+.sess td.x{text-align:right;width:36px}
+.sess td.x button{color:var(--muted);font-size:16px;min-width:36px;min-height:36px;border-radius:8px}
+.sess td.x button:hover{color:var(--bad);background:var(--surface-2)}
+.legacy summary{cursor:pointer;font-size:12px;color:var(--muted);padding:6px 0;list-style:none;display:flex;gap:6px;align-items:center}
+.legacy summary::before{content:"▸";font-size:11px}
+.legacy[open] summary::before{content:"▾"}
+.legacy .hist{margin-top:8px}
+
 .form{background:var(--surface-2);border-radius:12px;padding:12px}
 .form h4{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .inputs{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:6px}
 .inputs label{display:flex;flex-direction:column;gap:3px;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);min-width:0}
-.inputs input{width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 6px;font-size:16px;text-align:center;font-weight:600}
+.inputs input{width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:10px 4px;text-align:center;font-weight:600;min-height:44px}
+.inputs input::placeholder{color:var(--muted);font-weight:500;opacity:.8}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .row.end{justify-content:flex-end}
-.btn{padding:9px 14px;border-radius:10px;font-weight:600;font-size:14px;background:var(--surface-2);color:var(--fg);border:1px solid var(--line)}
+.row.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row.actions .primary{grid-column:1/-1}
+.btn{padding:9px 14px;border-radius:10px;font-weight:600;font-size:14px;background:var(--surface-2);color:var(--fg);border:1px solid var(--line);min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .btn.primary{background:var(--accent);color:var(--accent-fg);border-color:transparent}
 .btn.danger{color:var(--bad)}
 .btn.ghost{background:none;border-color:transparent;color:var(--muted)}
+.btn.sm{min-height:36px;padding:6px 10px;font-size:13px;border-radius:9px}
 .btn:disabled{opacity:.5;cursor:default}
 .rename{display:flex;gap:8px}
-.rename input{flex:1;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 10px;font-size:16px}
+.rename input{flex:1;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 10px}
 .confirm{background:var(--surface);border:1px solid var(--bad);border-radius:10px;padding:10px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}
-.addex{margin-top:4px;width:100%;padding:12px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-weight:600}
+.addex{margin-top:4px;width:100%;padding:12px;min-height:48px;border:1px dashed var(--line);border-radius:14px;color:var(--muted);font-weight:600}
 
+/* workout mode */
+.wdate{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 8px 8px 14px;margin-bottom:12px}
+.wdate label{font-size:13px;color:var(--muted)}
+.wdate input{border:1px solid var(--line);border-radius:8px;background:var(--surface-2);padding:8px 10px;min-height:40px;color:var(--fg)}
+.wcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:12px 14px 12px}
+.wcard.filled{border-color:var(--accent)}
+.wcard .wh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px}
+.wcard .wh .name{font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:.02em;line-height:1.15;overflow-wrap:anywhere;min-width:0}
+.wcard .wh .last{font-size:11px;color:var(--muted);white-space:nowrap}
+.wcard .wh .last.today{color:var(--good);font-weight:600}
+.wtools{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.wtools .btn.sm{flex:1 1 auto}
+.savebar{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));z-index:6;padding:8px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:center;pointer-events:none;transform:translateY(120%);transition:transform .2s}
+.savebar.show{transform:none}
+.savebar .btn{pointer-events:auto;width:100%;max-width:688px;min-height:52px;font-size:16px;box-shadow:var(--shadow)}
+.done{background:var(--surface);border:1px solid var(--good);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:14px}
+.done b{color:var(--good)}
+
+/* table */
 .tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
-table{border-collapse:collapse;font-size:13px;min-width:100%}
-th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:8px 10px;vertical-align:top;text-align:left}
-th{font-family:var(--display);font-size:16px;font-weight:600;letter-spacing:.03em;background:var(--surface-2);position:sticky;top:0}
-td:first-child,th:first-child{position:sticky;left:0;background:var(--surface);font-weight:600;min-width:120px;max-width:170px;overflow-wrap:anywhere;z-index:1}
-th:first-child{background:var(--surface-2);z-index:2}
-td.cell{min-width:220px;max-width:420px;line-height:1.5;color:var(--fg)}
-td.cell .lastv{color:var(--accent);font-weight:700}
-tr:last-child td{border-bottom:0}
+table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
+.grid th,.grid td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:8px 10px;vertical-align:top;text-align:left}
+.grid th{font-family:var(--display);font-size:16px;font-weight:600;letter-spacing:.03em;background:var(--surface-2);position:sticky;top:0}
+.grid td:first-child,.grid th:first-child{position:sticky;left:0;background:var(--surface);font-weight:600;min-width:120px;max-width:170px;overflow-wrap:anywhere;z-index:1}
+.grid th:first-child{background:var(--surface-2);z-index:2}
+.grid td.cell{min-width:220px;max-width:420px;line-height:1.5}
+.grid td.cell .lastv{color:var(--accent);font-weight:700}
+.grid tr:last-child td{border-bottom:0}
 .tablenote{font-size:12px;color:var(--muted);margin:8px 2px 0}
 
-.notes textarea{width:100%;min-height:140px;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:12px;font-size:16px;line-height:1.5;resize:vertical}
+/* journal */
+.jstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.jstat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.jstat b{display:block;font-family:var(--display);font-weight:700;font-size:26px;line-height:1.1}
+.jstat span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.jday{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:12px 14px;margin-bottom:10px}
+.jday h3{margin:0 0 8px;font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:.02em;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.jday h3 span{font-family:var(--body);font-size:12px;color:var(--muted);font-weight:500}
+.jgroup{margin-top:8px}
+.jgroup .gname{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;margin-bottom:4px}
+.jex{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-top:1px solid var(--line);font-size:14px}
+.jex .n{min-width:0;overflow-wrap:anywhere;color:var(--muted)}
+.jex .v{font-family:var(--display);font-weight:600;font-size:16px;letter-spacing:.02em;white-space:nowrap}
+
+/* notes */
+.notes textarea{width:100%;min-height:160px;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:12px;line-height:1.5;resize:vertical}
 .notes .hint{font-size:12px;color:var(--muted);margin:6px 2px}
-
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--fg);color:var(--bg);padding:9px 14px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:9}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-@media (prefers-reduced-motion: reduce){ .toast{transition:none} }
-@media (min-width:560px){ .set .val{font-size:24px} }
-
 .backup{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
 .backup h3{margin:0 0 6px;font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:.03em}
 .backup p{color:var(--muted);font-size:13px;margin:0 0 10px}
 .backup input[type=file]{display:none}
 .backup .status{font-size:12px;color:var(--muted);margin-top:8px}
 
-/* ---- responsive ---- */
-html{-webkit-text-size-adjust:100%}
-button,a,.tab,.card .head{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
-input,textarea{font-size:16px}  /* 16px+ keeps iOS from zooming the page on focus */
-.btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
-.seg button{min-height:36px}
-.tab{min-height:44px}
-.card .head{min-height:52px}
-.bar{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
-.tabs{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
-main{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
-.set .val{font-size:clamp(17px,5.6vw,24px)}
-.row.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.row.actions .primary{grid-column:1/-1}
-.hist h4 button{min-height:32px;padding:0 6px;margin:-6px -6px -6px 0}
+/* bottom nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:7;background:var(--surface);border-top:1px solid var(--line);padding:0 env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);display:flex}
+.nav button{flex:1;min-height:var(--nav-h);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted);font-size:10.5px;font-weight:600;letter-spacing:.02em}
+.nav button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav button[aria-pressed="true"]{color:var(--accent)}
+
+.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--fg);color:var(--bg);padding:9px 14px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:9;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
 @media (max-width:480px){
-  .bar{flex-wrap:wrap;padding-bottom:8px}
-  .seg{flex:1 0 100%;order:3}
-  .seg button{flex:1;padding-inline:4px;min-height:38px}
-  .brand{font-size:26px}
   .ghead{flex-direction:column;align-items:flex-start;gap:2px}
-  .ghead .meta{text-align:left}
   .sets{gap:4px;padding-inline:10px}
   .set{padding:7px 5px 6px}
   .set .lbl{font-size:9px;letter-spacing:.04em}
   .set .cnt{font-size:10px}
   .inputs{gap:4px}
-  .inputs input{padding:10px 2px}
   .card .head{padding:11px 12px}
   .detail{padding-inline:12px}
-  td:first-child,th:first-child{min-width:104px;max-width:130px;font-size:12px}
-  td.cell{min-width:180px;font-size:12px}
+  .grid td:first-child,.grid th:first-child{min-width:104px;max-width:130px;font-size:12px}
+  .grid td.cell{min-width:180px;font-size:12px}
 }
-.short{display:none}
-.set .lbl,.set .cnt{white-space:nowrap}
 @media (max-width:360px){
   .full{display:none} .short{display:inline}
   .set .lbl{font-size:9px}
   .chip{font-size:12px;padding:2px 5px}
+  .nav button{font-size:9.5px}
+  .jstats{grid-template-columns:1fr 1fr}
 }
 @media (min-width:900px){
   main{max-width:960px}
@@ -172,21 +216,27 @@ main{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-ar
   .card.open{grid-column:1/-1}
 }
 @media (hover:hover){ .card .head:hover .name{color:var(--accent)} .tab:hover{border-color:var(--accent)} }
+@media (prefers-reduced-motion: reduce){ .toast,.savebar{transition:none} }
 </style>
+
 </head>
 <body>
-<header class="top">
+<header class="top gutter">
   <div class="bar">
     <div class="brand">GYM<small id="brand-sub">дневник весов</small></div>
-    <div class="seg" role="group" aria-label="Вид">
-      <button id="mode-cards" aria-pressed="true">Карточки</button>
-      <button id="mode-table" aria-pressed="false">Таблица</button>
-      <button id="mode-notes" aria-pressed="false">Заметки</button>
-    </div>
+    <div class="today" id="today-box"></div>
   </div>
   <nav class="tabs" id="tabs" aria-label="Группы мышц"></nav>
 </header>
-<main id="main"></main>
+<main id="main" class="gutter"></main>
+<div class="savebar" id="savebar"><button class="btn primary" id="savebtn">Сохранить тренировку</button></div>
+<nav class="nav" id="nav" aria-label="Разделы">
+  <button data-mode="workout"><svg viewBox="0 0 24 24"><path d="M3 10v4M6 8v8M18 8v8M21 10v4M6 12h12"/></svg>Тренировка</button>
+  <button data-mode="cards"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/></svg>Карточки</button>
+  <button data-mode="table"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16M15 4v16"/></svg>Таблица</button>
+  <button data-mode="journal"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Журнал</button>
+  <button data-mode="notes"><svg viewBox="0 0 24 24"><path d="M5 3h10l4 4v14H5z M15 3v4h4 M8 12h8M8 16h6"/></svg>Заметки</button>
+</nav>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -203,201 +253,305 @@ main{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-ar
     for (const k of kids.flat()) if (k != null && k !== false) n.append(k.nodeType ? k : document.createTextNode(k));
     return n;
   };
-
-  // ---------- state ----------
   const pref = (k, d) => { try { const v = localStorage.getItem('gym:'+k); return v == null ? d : JSON.parse(v); } catch { return d; } };
   const setPref = (k, v) => { try { localStorage.setItem('gym:'+k, JSON.stringify(v)); } catch {} };
 
+  // ---------- state ----------
   const S = {
-    db: null, dbState: 'loading',   // loading | ready | offline
-    groups: pref('cache', []),       // [{id, name, ru, order, nsets, exercises:[{id,name,sets:[[..]]}], lastEntry}]
-    notes: null, notesVersionSeen: false,
-    active: pref('active', null), mode: pref('mode', 'cards'),
-    open: null, form: null, confirm: null, rename: null,
-    addingGroup: false, addingEx: false,
+    dbState: 'loading', groups: pref('cache', []), notes: null, notesLoaded: false,
+    active: pref('active', null), mode: pref('mode', 'workout'),
+    open: null, form: null, confirm: null, rename: null, addingGroup: false, addingEx: false,
+    wdate: null, draft: pref('draft', {}), justSaved: null,
   };
 
-  // ---------- helpers ----------
+  // ---------- entries: string (old, no date) or {v, d} ----------
+  const ev = e => (e && typeof e === 'object') ? String(e.v) : String(e);
+  const ed = e => (e && typeof e === 'object' && e.d) ? e.d : null;
   const num = v => { const m = String(v).replace(',', '.').match(/-?\d+(\.\d+)?/); return m ? parseFloat(m[0]) : null; };
+  const fmtNum = (x, comma) => { let s = (Math.round(x * 100) / 100).toString(); return comma ? s.replace('.', ',') : s; };
   const last = a => a.length ? a[a.length-1] : null;
-  const fmtDate = iso => { if (!iso) return ''; const d = new Date(iso); if (isNaN(d)) return iso;
-    return d.toLocaleDateString('ru-RU', { day:'numeric', month:'short' }); };
-  const today = () => new Date().toISOString().slice(0,10);
+  const today = () => { const d = new Date(); return [d.getFullYear(), String(d.getMonth()+1).padStart(2,'0'), String(d.getDate()).padStart(2,'0')].join('-'); };
+  const MONTHS = ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
+  const DAYS = ['вс','пн','вт','ср','чт','пт','сб'];
+  const parseD = iso => { const [y,m,d] = iso.split('-').map(Number); return new Date(y, m-1, d); };
+  const fmtDate = (iso, withYear) => { if (!iso) return ''; const d = parseD(iso); if (isNaN(d)) return iso;
+    return d.getDate() + ' ' + MONTHS[d.getMonth()] + (withYear || d.getFullYear() !== new Date().getFullYear() ? ' ' + d.getFullYear() : ''); };
+  const fmtLong = iso => { const d = parseD(iso); return DAYS[d.getDay()] + ', ' + fmtDate(iso, true); };
+  const daysAgo = iso => Math.round((parseD(today()) - parseD(iso)) / 86400000);
+  const rel = iso => { if (!iso) return ''; const n = daysAgo(iso); if (n === 0) return 'сегодня'; if (n === 1) return 'вчера'; if (n < 7) return n + ' дн. назад'; return fmtDate(iso); };
   const slug = s => (s.toLowerCase().replace(/[^a-z0-9а-яё]+/gi,'-').replace(/^-|-$/g,'') || 'g') + '-' + Date.now().toString(36);
   const activeGroup = () => S.groups.find(g => g.id === S.active) || S.groups[0] || null;
+  const clone = g => JSON.parse(JSON.stringify(g));
+  const exLast = ex => { let m = ex.last || null; for (const s of ex.sets) for (const e of s) { const d = ed(e); if (d && (!m || d > m)) m = d; } return m; };
 
   let toastT;
-  const toast = msg => { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 1800); };
+  const toast = msg => { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2000); };
 
-  // ---------- storage (this device) ----------
+  // ---------- storage: this device (localStorage) + embedded tables from Notes ----------
   const SEED = [{"id": "dosh", "name": "Dosh", "ru": "Грудь", "order": 0, "nsets": 5, "exercises": [{"id": "dosh-1", "name": "1)shatnga", "sets": [["7,5", "7,5", "10", "10", "15", "15", "15", "17,5", "15", "15", "15", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "20", "20", "20", "20", "20", "20", "20", "20", "20", "20", "22,5", "22,5", "25", "25"], ["10", "10", "12,5", "15", "15", "15", "17,5", "17,5", "17,5", "17,5", "17,5", "20", "20", "20", "20", "17,5", "20", "22,5", "22,5", "25", "25", "22,5", "22,5", "20", "25", "25", "25", "27,5", "27,5", "27,5", "27,5"], ["12,5", "12,5", "15", "15", "15", "17,5", "17,5", "17,5", "20", "20", "20", "22,5", "22,5", "22,5", "22,5", "20", "22,5", "27,5", "25", "25", "25", "25", "22,5", "25", "25", "27,5", "27,5", "30", "27,5", "27,5", "27,5"], ["12,5", "12,5", "22,5", "27,5", "27,5", "27,5", "20", "15", "15", "20"], ["30"]]}, {"id": "dosh-2", "name": "2)shtang teq", "sets": [["5", "7,5", "7,5", "10", "10", "10", "10", "10"], ["7,5", "10", "10", "10", "10", "10", "10", "10"], ["7,5", "10", "10", "10", "12,5", "12,5", "12,5", "12,5"], [], []]}, {"id": "dosh-3", "name": "2)alternativ dosh trenajor)", "sets": [["25"], ["30"], ["35"], [], []]}, {"id": "dosh-4", "name": "3)parkac koxeric gantel", "sets": [["10", "12,5", "12,5", "12,5", "15", "17,5", "17,5", "17,5", "20", "20", "22,5"], ["12,5", "12,5", "15", "15", "17,5", "17,5", "17,5", "20", "20", "20", "25"], ["12,5", "12,5", "15", "1517,5", "17,5", "20", "20", "20", "20", "25"], [], []]}, {"id": "dosh-5", "name": "3)parkac koxeric galntel teq", "sets": [["17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "20", "20", "20", "20", "20", "20", "20", "20", "10"], ["17,5", "17,5", "17,5", "17,5", "20", "20", "20", "20", "17,5", "17,5", "20", "17,5", "20", "20", "20", "20", "20", "20", "22,5", "12"], ["17,5", "20", "20", "20", "20", "20", "20", "20", "17,5", "20", "20", "17,5", "20", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "12"], [], []]}, {"id": "dosh-6", "name": "4)babchka(4)", "sets": [["30", "30", "30", "30", "35", "35", "35", "35", "35", "40", "40", "40", "40", "40", "45", "45", "45", "45", "45", "45", "45"], ["30", "35", "35", "35", "35", "35", "40", "35", "40", "45", "45", "45", "45", "45", "45", "45", "45", "45", "50", "50", "50"], ["30", "35", "40", "35", "40", "40", "40", "40", "45", "50", "50", "45", "45", "45", "45", "45", "45", "50", "50", "50", "50"], [], []]}, {"id": "dosh-7", "name": "Trosov hetevic", "sets": [["9"], ["9"], ["9"], ["4,5"], []]}]}, {"id": "biceps", "name": "Biceps", "ru": "Бицепс", "order": 1, "nsets": 4, "exercises": [{"id": "biceps-1", "name": "1)zigzag shtanga(10kg)", "sets": [["5", "7,5", "10", "10", "10", "11,25", "11,25", "11,25", "12,5", "12,5", "12,5", "12,5", "13,75", "135", "13,75", "13,5", "15", "15", "15", "15", "15", "15", "15", "15", "15", "15", "15", "15", "5"], ["7,5", "10", "10", "10", "11,25", "11,25", "11,25", "11,25", "12,5", "12,5", "13,75", "13,75", "15", "15", "15", "15", "15", "15", "15", "15", "15", "15", "15", "17,5", "15", "15", "15", "15", "15", "7,5"], ["8,75", "10", "10", "10", "11,25", "11,25", "12,5", "12,5", "12,5", "13,75", "15", "15", "16,25", "16,25", "16,25", "17,5", "17,5", "17,5", "17,5", "17,5", "15", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "7,5"], []]}, {"id": "biceps-2", "name": "2)nstac trenajor henac zerqer@", "sets": [["10", "15", "15", "20", "25", "25", "25"], ["15", "15", "20", "20", "25", "25", "25"], ["15", "20", "20", "25", "25", "25", "30", "30"], []]}, {"id": "biceps-3", "name": "3)malatok pahelov", "sets": [["10", "10", "10", "10", "10", "10", "10", "10", "12,5", "12,5", "12,5", "12,5"], ["10", "10", "10", "10", "10", "10", "10", "12,5", "12,5", "12,5", "12,5", "12,5"], ["10", "10", "10", "10", "10", "10", "10", "12,5", "12,5", "12,5", "12,5", "12,5"], []]}, {"id": "biceps-4", "name": "4)sovorakan gantelnerov", "sets": [["10", "10"], ["10", "10"], ["10", "10"], []]}, {"id": "biceps-5", "name": "4)gantel depi dosh", "sets": [["12,5"], ["12,5"], ["12,5"], []]}, {"id": "biceps-6", "name": "5)shtanga hakarak brnac verev", "sets": [["25", "25", "30"], ["25", "25", "30"], ["25", "25", "30", "30"], []]}, {"id": "biceps-7", "name": "Tros nerqevic verev", "sets": [["31,5", "31,5", "36", "36", "36", "40,5", "40,5", "40,5", "45", "45", "45", "45", "45", "45"], ["31,5", "36", "36", "36", "40,5", "40,5", "40,5", "45", "45", "45", "49,5", "49,5", "49,5", "49,5"], ["36", "36", "36", "40,5", "40,5", "40,5", "45", "45", "49,5", "49,5", "49,5", "49,5", "49,5"], []]}, {"id": "biceps-8", "name": "Biceps zigzag@ che myus@)", "sets": [["10", "10", "10", "10", "10", "10", "10", "10", "10", "5"], ["10", "10", "10", "10", "10", "10", "10", "10", "10"], ["10", "10", "10", "10", "12,5", "12,5", "12,5", "12,5", "12,5"], []]}, {"id": "biceps-9", "name": "6)turnik", "sets": [["8", "8"], ["5", "6"], [], []]}]}, {"id": "mechq", "name": "Mechq", "ru": "Спина", "order": 2, "nsets": 4, "exercises": [{"id": "mechq-1", "name": "1)Turnik", "sets": [["10", "9", "9", "10", "11", "11", "11", "11", "8(5kg)", "8(5kg)", "9(5)", "8(5)", "7(7,5)", "8(7,5)", "8", "(7,5)7", "(10)", "8(10)", "9(10)", "9(10)", "9(10)", "8(12,5)", "9(12,5)", "8(15)", "8(15)", "9(15)", "8(15)", "7(15)", "10"], ["6", "5", "6", "6", "7", "7", "7", "8", "6(5kg)", "6(5)", "7(5)", "6(5)", "6(7,5)", "7(7,5)", "7(7,5)", "7(10)", "7(10)", "7(10)", "7(10)", "6(12,5)", "6(12,5)", "6(12,5)", "6(15)", "8(15)", "8(15)", "7(15)", "6(15)", "7"], ["6", "5", "5", "6", "6", "7", "7", "7", "6", "(5kg)", "6(5)", "5(5)", "5(7.5)", "5(7,5)", "6(7,5)", "5(10)", "5(10)", "6", "(10)", "7(10)", "5(11.25)", "5(12,5)", "5(15)", "6(15)", "7(15)", "7(17,5)", "5(17,5)", "6"], ["0", "4", "0", "10", "10", "10"]]}, {"id": "mechq-2", "name": "2)verevic doshin", "sets": [["31,5", "31,5", "36", "40,5", "40,5", "40,5", "40,5", "40,5", "45", "45", "45", "45", "45", "45", "45", "45", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5"], ["36", "36", "40,5", "40,5", "40,5", "45", "45", "45", "45", "45", "45", "45", "45", "45", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "54", "54", "54", "54", "54", "54"], ["40,5", "40,5", "45", "45", "45", "45", "45", "45", "45", "49,5", "45", "49,5", "49,5", "49,5", "49,5", "49,5", "54", "54", "54", "54", "54", "54", "54", "54", "54", "54", "54"], ["49,5"]]}, {"id": "mechq-3", "name": "3)nstac qashel", "sets": [["31,5", "31,5", "36", "40,5", "40,5", "40,5", "40,5", "31,5", "36", "36", "36", "36", "36", "36", "40,5", "40,5", "40,5", "40,5", "40,5", "40,5", "40,5", "40,5", "45", "45", "45", "45", "36"], ["31.5", "36", "40.5", "40,5", "40,5", "40,5", "40,5", "40,5", "36", "36", "36", "36", "36", "40,5", "40,5", "40,5", "40,5", "40,5", "40,5", "40,5", "45", "45", "45", "49,5", "49,5", "49,5", "36"], ["31.5", "36", "40,5", "40,5", "40,5", "45", "31,5", "31,5", "36", "36", "36", "40,5", "40,5", "40,5", "40,5", "45", "45", "45", "45", "45", "45", "49,5", "49,5", "49,5", "49,5", "49,5", "36"], []]}, {"id": "mechq-4", "name": "4)nstac het", "sets": [["20", "20", "25", "25", "25", "25", "25", "25", "30"], ["20", "20", "25", "25", "25", "25", "25", "25", "30"], ["20", "22,5", "25", "25", "25", "25", "25", "25", "30"], []]}]}, {"id": "triceps", "name": "Triceps", "ru": "Трицепс", "order": 3, "nsets": 4, "exercises": [{"id": "triceps-1", "name": "1)kangnac verevic nerqev(2)", "sets": [["27", "27", "31,5", "36", "40,5", "40,5", "22,5", "22,5", "22,5", "22,5"], ["31.5", "31,5", "36", "40,5", "40,5", "45", "22,5", "22,5", "22,5", "22,5"], ["31.5", "36", "40,5", "40,5", "45", "45", "22,5", "22,5", "22,5", "22,5", "22,5"], []]}, {"id": "triceps-2", "name": "1.1)kangnac verevic paranov", "sets": [["18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "22,5", "22,5", "18"], ["18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "22,5", "22,5", "22,5", "22,5", "23,5", "18"], ["18", "18", "18", "18", "18", "18", "18", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "23,5", "18"], []]}, {"id": "triceps-3", "name": "2.1) kangnac tros nerqevic", "sets": [["27", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5"], ["27", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5"], ["22,5", "27", "27", "22,5", "22,5", "22,5", "22,5", "27", "27", "27"], []]}, {"id": "triceps-4", "name": "2.2)kangnac tros kracac", "sets": [["27", "27", "27", "27", "27", "27", "31,5", "31,5", "31,5", "31,5"], ["27", "27", "27", "27", "31,5", "31,5", "31,5", "31,5", "31,5", "31,5"], ["27", "27", "31,5", "31,5", "31,5", "31,5", "31,5", "31,5", "31,5", "31,5"], []]}, {"id": "triceps-5", "name": "2,3)Tros mi dzerov", "sets": [["9", "9", "9", "9", "9", "9", "9", "9", "9", "4,5"], ["9", "9", "9", "9", "9", "9", "9", "9", "9", "4,5"], ["9", "9", "9", "9", "9", "9", "9", "9", "9", "4,5"], []]}, {"id": "triceps-6", "name": "2)kangnac gantel", "sets": [["12,5", "12,5", "15", "15", "17,5", "17,5"], ["12,5", "15", "17,5", "17,5", "17,5", "17,5"], ["12,5", "15", "17,5", "17,5", "17,5", "20"], []]}, {"id": "triceps-7", "name": "3)parkac shtanga", "sets": [["15", "15", "15", "20", "20", "20"], ["15", "15", "20", "20", "20", "20"], ["15", "15", "20", "20", "20", "20"], []]}, {"id": "triceps-8", "name": "4)trenajor nstac", "sets": [["40", "40", "45", "50", "55", "60", "60", "60", "65", "65", "65", "70", "70", "70", "70", "70", "75", "80", "85", "85", "85", "85", "85", "90", "90", "90", "90", "90", "90"], ["45", "45", "50", "55", "60", "60", "65", "65", "65", "65", "70", "75", "75", "75", "75", "75", "75", "85", "85", "90", "90", "90", "90", "90", "90", "90", "90", "90", "90"], ["45", "50", "55", "55", "60", "65", "65", "65", "70", "70", "70", "75", "75", "75", "75", "80", "80", "85", "85", "90", "90", "90", "90", "90", "95", "95", "90", "90"], []]}, {"id": "triceps-9", "name": "5)tros kisaijac", "sets": [["22,5"], ["22,5"], [], []]}, {"id": "triceps-10", "name": "6)tros mi dzerqov", "sets": [["9", "9"], ["9", "9"], ["9", "9"], []]}]}, {"id": "us", "name": "Us", "ru": "Плечи", "order": 4, "nsets": 4, "exercises": [{"id": "us-1", "name": "1)gantel kox", "sets": [["10", "10", "12,5", "5", "5", "7,5", "10"], ["12,5", "12,5", "12,5", "5", "5", "10", "10"], ["12,5", "12,5", "12,5", "5", "7,5", "10", "10"], []]}, {"id": "us-2", "name": "2)trenajor us triceps", "sets": [["15", "15", "15", "20", "25", "25"], ["20", "20", "20", "25", "25", "30"], ["25", "25", "25", "25", "30", "30"], []]}, {"id": "us-3", "name": "3)kangnac depi us kox", "sets": [["10", "10"], ["12,5", "12,5"], ["12,5", "12,5"], []]}, {"id": "us-4", "name": "4)nstac gantel verev", "sets": [["10", "12,5", "12,5", "12,5", "12,5", "12,5", "12,5", "12,5", "15", "15", "15", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5"], ["12,5", "12,5", "12,5", "12,5", "12,5", "12,5", "12,5", "15", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "20", "20", "20"], ["12,5", "12,5", "12,5", "12,5", "12,5", "12,5", "15", "15", "17,5", "17,5", "17,5", "20", "20", "20", "20", "20", "20"], ["15"]]}, {"id": "us-5", "name": "3alt)gantel araj", "sets": [["7,5", "7,5", "7,5"], ["7,5", "7,5", "7,5"], ["7,5", "7,5", "10"], []]}, {"id": "us-6", "name": "4alt)shtanga verev len", "sets": [["15", "20", "25", "25", "25", "25", "25", "25"], ["20", "25", "25", "25", "25", "25", "25", "25"], ["20", "25", "25", "25", "25", "25", "25", "30"], []]}, {"id": "us-7", "name": "4)shtanga verev nex brnac", "sets": [["20", "25", "25", "25", "25"], ["25", "25", "25", "25", "25"], ["25", "25", "25", "30", "30"], []]}, {"id": "us-8", "name": "5)vzi mkan", "sets": [["10"], ["10"], ["10"], []]}, {"id": "us-9", "name": "Hakarak babchka", "sets": [["35", "35", "35", "40", "40", "40", "40", "40", "45", "45", "45"], ["35", "40", "40", "40", "40", "40", "45", "45", "45", "45", "50"], ["35", "40", "40", "40", "45", "45", "45", "45", "50", "50", "50"], []]}, {"id": "us-10", "name": "bacvel kox", "sets": [["4,5"], ["4,5"], ["4,5"], []]}, {"id": "us-11", "name": "bacvel verev", "sets": [["9"], ["9"], ["9"], []]}, {"id": "us-12", "name": "Tros kox hetevic", "sets": [["9"], ["9"], ["9"], []]}, {"id": "us-13", "name": "Tros kox dimacic", "sets": [["9", "9", "9", "9", "9"], ["9", "9", "9", "9", "9"], ["9", "9", "9", "9", "9"], []]}]}, {"id": "vot", "name": "Vot", "ru": "Ноги", "order": 5, "nsets": 4, "exercises": [{"id": "vot-1", "name": "1)shtanga prised-tr", "sets": [["10", "10", "15", "15", "15", "15"], ["15", "15", "20", "15", "20", "20"], ["15", "15", "20", "20", "20", "22,5", "22,5"], []]}, {"id": "vot-2", "name": "1)shtanga prised sovorakan", "sets": [["10", "15", "15", "15", "15", "15", "15", "15", "20", "20", "20", "20", "20", "20"], ["10", "15", "20", "20", "20", "20", "20", "20", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5"], ["10", "20", "22,5", "20", "20", "22,5", "22,5", "22,5", "25", "25", "25", "25", "25", "25"], ["15", "25"]]}, {"id": "vot-3", "name": "2)nstac araj", "sets": [["35", "40", "45", "55", "55", "60", "60", "75", "75", "75", "75", "80", "80", "80", "80", "80", "85", "85", "85", "85", "85", "90", "90", "90"], ["40", "45", "50", "55", "60", "60", "75", "75", "75", "75", "80", "80", "80", "80", "80", "80", "85", "85", "90", "90", "90", "90", "90", "90", "90"], ["45", "50", "55", "55", "60", "75", "80", "80", "80", "80", "80", "80", "80", "85", "85", "85", "85", "90", "90", "90", "90", "95", "95", "95", "95"], []]}, {"id": "vot-4", "name": "3)brtel", "sets": [["85", "100", "100", "95", "100", "120", "125", "125"], ["90", "100", "100", "100", "100", "120", "125", "125"], ["95", "100", "100", "110", "110", "125", "125", "130"], []]}, {"id": "vot-5", "name": "4)parkac hetev", "sets": [["35", "35", "40", "40", "40", "40", "40", "40", "40", "40", "40", "40", "40", "40", "45", "45", "45", "45"], ["35", "40", "40", "40", "40", "40", "40", "40", "40", "40", "40", "40", "45", "45", "45", "45", "45", "45"], ["40", "40", "40", "40", "45", "45", "45", "45", "45", "45", "45", "45", "45", "45", "45", "45", "45", "45"], []]}, {"id": "vot-6", "name": "5)ikra", "sets": [["20", "25"], ["20", "25"], ["20", "25"], []]}]}];
   const SEED_NOTES = {"text": "Biceps aj - 32sm - dzqac 37sm\nBiceps dzax - 33sm\nHunisi 12 pateti verj\nHoktember 17 skizb", "updated": "2026-10-17"};
   const KEY = 'gym:data:v1';
-  function loadAll() {
-    try { const raw = localStorage.getItem(KEY); if (raw) { const d = JSON.parse(raw); if (d && Array.isArray(d.groups)) return d; } } catch {}
-    return { groups: JSON.parse(JSON.stringify(SEED)), notes: SEED_NOTES.text, saved: null };
-  }
-  function persist() {
-    try { localStorage.setItem(KEY, JSON.stringify({ groups: S.groups, notes: S.notes, saved: new Date().toISOString() })); return true; }
-    catch (e) { console.error(e); toast('Не сохранилось: память браузера недоступна'); return false; }
-  }
-  function saveGroup(g) { const i = S.groups.findIndex(x => x.id === g.id); if (i >= 0) S.groups[i] = g; else S.groups.push(g); return Promise.resolve(persist()); }
-  function deleteGroup(id) { S.groups = S.groups.filter(g => g.id !== id); return Promise.resolve(persist()); }
-  function saveNotes(text) { S.notes = text; if (persist()) toast('Заметки сохранены'); }
-  function connect() {
-    const d = loadAll(); S.groups = d.groups.sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); S.notes = d.notes ?? ''; S.notesVersionSeen = true;
-    S.dbState = 'ready'; if (!S.groups.some(g => g.id === S.active)) S.active = S.groups[0] ? S.groups[0].id : null; render();
-  }
-  function exportJSON() {
-    const blob = new Blob([JSON.stringify({ groups: S.groups, notes: S.notes, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'gym-' + today() + '.json'; document.body.append(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000); toast('Файл сохраняется');
-  }
-  function importJSON(file) {
-    const r = new FileReader();
-    r.onload = () => { try { const d = JSON.parse(r.result); if (!d || !Array.isArray(d.groups)) throw 0;
-      S.groups = d.groups; S.notes = typeof d.notes === 'string' ? d.notes : S.notes; persist(); S.active = S.groups[0] ? S.groups[0].id : null; render(); toast('Данные загружены из файла'); }
-      catch { toast('Это не файл резервной копии GYM'); } };
-    r.readAsText(file);
-  }
-  function resetToSeed() { S.groups = JSON.parse(JSON.stringify(SEED)); S.notes = SEED_NOTES.text; S.confirm = null; persist(); S.active = S.groups[0].id; render(); toast('Восстановлены таблицы из Заметок'); }
+  const persist = () => { try { localStorage.setItem(KEY, JSON.stringify({ groups: S.groups, notes: S.notes, saved: new Date().toISOString() })); return true; }
+    catch (e) { console.error(e); toast('Не сохранилось: память браузера недоступна'); return false; } };
+  const store = {
+    init() {
+      let d = null; try { const raw = localStorage.getItem(KEY); if (raw) { const p = JSON.parse(raw); if (p && Array.isArray(p.groups)) d = p; } } catch {}
+      if (!d) d = { groups: clone(SEED), notes: SEED_NOTES.text };
+      S.groups = d.groups.sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); S.notes = d.notes ?? ''; S.notesLoaded = true; S.dbState = 'ready';
+      if (!S.groups.some(g => g.id === S.active)) S.active = S.groups[0] ? S.groups[0].id : null; render();
+    },
+    saveGroup(g) { const i = S.groups.findIndex(x => x.id === g.id); if (i >= 0) S.groups[i] = g; else S.groups.push(g); return Promise.resolve(persist()); },
+    deleteGroup(id) { S.groups = S.groups.filter(g => g.id !== id); return Promise.resolve(persist()); },
+    saveNotes(text) { S.notes = text; if (persist()) toast('Заметки сохранены'); },
+    exportJSON() {
+      const blob = new Blob([JSON.stringify({ groups: S.groups, notes: S.notes, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'gym-' + today() + '.json'; document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000); toast('Файл сохраняется');
+    },
+    importJSON(file) {
+      const r = new FileReader();
+      r.onload = () => { try { const d = JSON.parse(r.result); if (!d || !Array.isArray(d.groups)) throw 0;
+        S.groups = d.groups; S.notes = typeof d.notes === 'string' ? d.notes : S.notes; persist(); S.active = S.groups[0] ? S.groups[0].id : null; render(); toast('Данные загружены из файла'); }
+        catch { toast('Это не файл резервной копии GYM'); } };
+      r.readAsText(file);
+    },
+    resetToSeed() { S.groups = clone(SEED); S.notes = SEED_NOTES.text; S.confirm = null; persist(); S.active = S.groups[0].id; render(); toast('Восстановлены таблицы из Заметок'); },
+    renderBackup(main) {
+      const file = el('input', { id: 'import-file', type: 'file', accept: 'application/json,.json', onchange: e => { if (e.target.files[0]) store.importJSON(e.target.files[0]); e.target.value = ''; } });
+      let saved = null; try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch {}
+      main.append(el('div', { class: 'backup' }, el('h3', {}, 'Резервная копия'),
+        el('p', {}, 'Данные хранятся в памяти этого браузера на этом устройстве. Чтобы не потерять их или перенести на другой телефон, скачивай файл время от времени.'),
+        el('div', { class: 'row' }, el('button', { class: 'btn primary', onclick: store.exportJSON }, 'Скачать файл'),
+          el('button', { class: 'btn', onclick: () => file.click() }, 'Загрузить из файла'), file,
+          el('button', { class: 'btn ghost danger', onclick: () => { S.confirm = { type: 'reset' }; render(); } }, 'Сбросить к исходным')),
+        S.confirm && S.confirm.type === 'reset' ? el('div', { class: 'confirm', style: 'margin-top:10px' }, 'Заменить всё на таблицы из Заметок (17 окт 2026)? Новые записи пропадут.',
+          el('button', { class: 'btn danger', onclick: store.resetToSeed }, 'Сбросить'), el('button', { class: 'btn ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')) : null,
+        el('div', { class: 'status' }, saved && saved.saved ? 'Последнее сохранение: ' + new Date(saved.saved).toLocaleString('ru-RU') : 'Пока показаны исходные таблицы из Заметок.')));
+    },
+  };
+
 
   // ---------- mutations ----------
-  function clone(g) { return JSON.parse(JSON.stringify(g)); }
+  function optimistic(g) { const i = S.groups.findIndex(x => x.id === g.id); if (i >= 0) S.groups[i] = g; else S.groups.push(g); render(); }
 
-  async function addEntry(gid, exid, values) {
+  async function addEntry(gid, exid, values, date) {
     const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
     let changed = false;
-    values.forEach((v, i) => { if (v && v.trim()) { ex.sets[i] = ex.sets[i] || []; ex.sets[i].push(v.trim()); changed = true; } });
+    values.forEach((v, i) => { if (v && v.trim()) { ex.sets[i] = ex.sets[i] || []; ex.sets[i].push({ v: v.trim(), d: date }); changed = true; } });
     if (!changed) { toast('Введи хотя бы один вес'); return; }
-    ex.last = today(); g.lastEntry = today();
+    if (!ex.last || date > ex.last) ex.last = date; if (!g.lastEntry || date > g.lastEntry) g.lastEntry = date;
     S.form = null; optimistic(g);
-    if (await saveGroup(g)) toast('Записано');
+    if (await store.saveGroup(g)) toast('Записано · ' + fmtDate(date));
+  }
+  async function saveWorkout(gid) {
+    const g = clone(S.groups.find(x => x.id === gid)); const date = S.wdate || today();
+    const dr = (S.draft[gid] || {}).values || {}; let n = 0;
+    for (const ex of g.exercises) {
+      const vals = dr[ex.id]; if (!vals) continue; let hit = false;
+      vals.forEach((v, i) => { if (v && v.trim()) { ex.sets[i] = ex.sets[i] || []; ex.sets[i].push({ v: v.trim(), d: date }); hit = true; } });
+      if (hit) { n++; if (!ex.last || date > ex.last) ex.last = date; }
+    }
+    if (!n) { toast('Пока ничего не введено'); return; }
+    if (!g.lastEntry || date > g.lastEntry) g.lastEntry = date;
+    delete S.draft[gid]; setPref('draft', S.draft); S.justSaved = { n, date };
+    optimistic(g);
+    if (await store.saveGroup(g)) toast(`Сохранено: ${n} упр. · ${fmtDate(date)}`);
   }
   async function removeLast(gid, exid, si) {
     const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
     if (!ex.sets[si] || !ex.sets[si].length) return;
     ex.sets[si].pop(); S.confirm = null; optimistic(g);
-    if (await saveGroup(g)) toast('Удалено');
+    if (await store.saveGroup(g)) toast('Удалено');
+  }
+  async function removeSession(gid, exid, date) {
+    const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
+    ex.sets = ex.sets.map(s => s.filter(e => ed(e) !== date));
+    ex.last = exLast({ ...ex, last: null }); S.confirm = null; optimistic(g);
+    if (await store.saveGroup(g)) toast('Запись за ' + fmtDate(date) + ' удалена');
   }
   async function renameEx(gid, exid, name) {
     const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
-    name = name.trim(); if (!name) return; ex.name = name; S.rename = null; optimistic(g); await saveGroup(g);
+    name = name.trim(); if (!name) return; ex.name = name; S.rename = null; optimistic(g); await store.saveGroup(g);
   }
   async function deleteEx(gid, exid) {
     const g = clone(S.groups.find(x => x.id === gid)); g.exercises = g.exercises.filter(e => e.id !== exid);
-    S.confirm = null; S.open = null; optimistic(g); if (await saveGroup(g)) toast('Упражнение удалено');
+    S.confirm = null; S.open = null; optimistic(g); if (await store.saveGroup(g)) toast('Упражнение удалено');
   }
   async function addEx(gid, name) {
     const g = clone(S.groups.find(x => x.id === gid)); name = name.trim(); if (!name) return;
     const id = gid + '-' + Date.now().toString(36);
     g.exercises.push({ id, name, sets: Array.from({ length: g.nsets || 4 }, () => []) });
-    S.addingEx = false; S.open = id; optimistic(g); await saveGroup(g);
+    S.addingEx = false; S.open = id; optimistic(g); await store.saveGroup(g);
   }
   async function addGroup(name, ru) {
     name = name.trim(); if (!name) return;
     const g = { id: slug(name), name, ru: ru.trim(), order: S.groups.length, nsets: 4, exercises: [] };
-    S.addingGroup = false; S.active = g.id; setPref('active', g.id); optimistic(g); await saveGroup(g);
+    S.addingGroup = false; S.active = g.id; setPref('active', g.id); optimistic(g); await store.saveGroup(g);
   }
   async function removeGroup(gid) {
     S.confirm = null; S.groups = S.groups.filter(g => g.id !== gid); S.active = S.groups[0] ? S.groups[0].id : null; render();
-    if (await deleteGroup(gid)) toast('Группа удалена');
+    if (await store.deleteGroup(gid)) toast('Группа удалена');
   }
-  function optimistic(g) { const i = S.groups.findIndex(x => x.id === g.id); if (i >= 0) S.groups[i] = g; else S.groups.push(g); render(); }
+
+  // ---------- draft (workout in progress, survives reload) ----------
+  const draftFor = gid => { const d = S.draft[gid]; if (!d) return null; if (d.date !== (S.wdate || today()) && !S.wdate) { S.wdate = d.date; } return d; };
+  let draftT;
+  function setDraft(gid, exid, i, val) {
+    const d = S.draft[gid] || (S.draft[gid] = { date: S.wdate || today(), values: {} });
+    d.date = S.wdate || today(); const arr = d.values[exid] || (d.values[exid] = []); arr[i] = val;
+    if (!arr.some(v => v && v.trim())) delete d.values[exid];
+    if (!Object.keys(d.values).length) delete S.draft[gid];
+    clearTimeout(draftT); draftT = setTimeout(() => setPref('draft', S.draft), 300);
+    updateSavebar(gid);
+  }
+  const draftCount = gid => Object.keys(((S.draft[gid] || {}).values) || {}).length;
+  function updateSavebar(gid) {
+    const n = S.mode === 'workout' && gid ? draftCount(gid) : 0;
+    $('#savebar').classList.toggle('show', n > 0);
+    $('#savebtn').textContent = n ? `Сохранить тренировку · ${n} упр.` : 'Сохранить тренировку';
+    for (const c of document.querySelectorAll('.wcard')) c.classList.toggle('filled', !!(S.draft[gid] && S.draft[gid].values[c.dataset.ex]));
+  }
 
   // ---------- rendering ----------
   function sparkline(vals) {
-    const ns = vals.map(num).filter(v => v != null);
+    const ns = vals.map(e => num(ev(e))).filter(v => v != null);
     if (ns.length < 2) return null;
     const W = 300, H = 40, p = 4, min = Math.min(...ns), max = Math.max(...ns), span = max - min || 1;
     const pts = ns.map((v, i) => [p + i * (W - 2*p) / (ns.length - 1), H - p - (v - min) / span * (H - 2*p)]);
     const d = pts.map((q, i) => (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1)).join(' ');
     const area = d + ` L${pts[pts.length-1][0].toFixed(1)} ${H} L${pts[0][0].toFixed(1)} ${H} Z`;
     const [lx, ly] = pts[pts.length-1];
-    const svg = el('svg', { class: 'spark', viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: 'none', 'aria-hidden': 'true' });
+    const wrap = document.createElement('div');
+    wrap.innerHTML = `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"></svg>`;
+    const svg = wrap.firstChild;
     svg.innerHTML = `<path d="${area}" fill="var(--accent)" opacity=".15"/><path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2" vector-effect="non-scaling-stroke"/><circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="3" fill="var(--accent)" vector-effect="non-scaling-stroke"/>`;
     return svg;
   }
 
   function renderTabs() {
     const nav = $('#tabs'); nav.replaceChildren();
+    const td = today();
     for (const g of S.groups) nav.append(el('button', { class: 'tab', 'aria-pressed': String(g.id === (activeGroup()||{}).id),
-      onclick: () => { S.active = g.id; setPref('active', g.id); S.open = null; S.form = null; S.confirm = null; if (S.mode === 'notes') setMode('cards'); render(); } },
-      el('b', {}, g.name), g.ru ? el('span', {}, g.ru) : null));
+      onclick: () => { S.active = g.id; setPref('active', g.id); S.open = null; S.form = null; S.confirm = null; S.wdate = null; if (S.mode === 'notes' || S.mode === 'journal') setMode('workout'); render(); } },
+      el('b', {}, g.name), g.ru ? el('span', {}, g.ru) : null, g.lastEntry === td ? el('i', { class: 'dot', title: 'тренировка сегодня' }) : null));
     if (S.dbState === 'ready') nav.append(el('button', { class: 'tab add', onclick: () => { S.addingGroup = true; setMode('cards'); render(); } }, '+ Группа'));
+    const tb = $('#today-box'); tb.replaceChildren();
+    const g = activeGroup();
+    tb.append(el('b', {}, fmtDate(td)), g && g.lastEntry ? 'последняя: ' + rel(g.lastEntry) : DAYS[new Date().getDay()]);
   }
 
-  function setMode(m) { S.mode = m; setPref('mode', m); for (const k of ['cards','table','notes']) $('#mode-'+k).setAttribute('aria-pressed', String(k === m)); }
+  function setMode(m) { S.mode = m; setPref('mode', m); S.confirm = null; for (const b of document.querySelectorAll('#nav button')) b.setAttribute('aria-pressed', String(b.dataset.mode === m)); }
+
+  function setTile(label, i, arr) {
+    const l = last(arr), prev = arr.length > 1 ? arr[arr.length-2] : null;
+    const a = l != null ? num(ev(l)) : null, b = prev != null ? num(ev(prev)) : null; let dir = '';
+    if (a != null && b != null) dir = a > b ? 'up' : a < b ? 'down' : '';
+    return el('div', { class: 'set' },
+      el('div', { class: 'lbl' }, el('span', { class: 'full' }, 'Подход ' + (i+1)), el('span', { class: 'short' }, 'П' + (i+1))),
+      el('div', { class: 'val num' + (l == null ? ' empty' : '') }, l == null ? '—' : ev(l)),
+      el('div', { class: 'cnt num' }, dir ? el('span', { class: 'd ' + dir }) : null,
+        arr.length ? [el('span', { class: 'full' }, arr.length + ' зап.'), el('span', { class: 'short' }, '×' + arr.length)] : el('span', {}, '—')));
+  }
 
   function renderCard(g, ex) {
     const n = g.nsets || ex.sets.length || 4;
     const isOpen = S.open === ex.id;
-    const lastDate = ex.last ? fmtDate(ex.last) : '';
+    const ld = exLast(ex);
     const card = el('div', { class: 'card' + (isOpen ? ' open' : ''), style: `--n:${n}` });
     card.append(el('button', { class: 'head', 'aria-expanded': String(isOpen), onclick: () => { S.open = isOpen ? null : ex.id; S.form = null; S.confirm = null; S.rename = null; render(); } },
-      el('div', { class: 'name' }, ex.name), lastDate ? el('div', { class: 'last' }, lastDate) : null));
+      el('div', { class: 'name' }, ex.name), ld ? el('div', { class: 'last' + (ld === today() ? ' today' : '') }, rel(ld)) : null));
     const sets = el('div', { class: 'sets' });
-    for (let i = 0; i < n; i++) {
-      const arr = ex.sets[i] || []; const l = last(arr), prev = arr.length > 1 ? arr[arr.length-2] : null;
-      const a = num(l), b = num(prev); let dir = '';
-      if (a != null && b != null) dir = a > b ? 'up' : a < b ? 'down' : '';
-      sets.append(el('div', { class: 'set' },
-        el('div', { class: 'lbl' }, el('span', { class: 'full' }, 'Подход ' + (i+1)), el('span', { class: 'short' }, 'П' + (i+1))),
-        el('div', { class: 'val num' + (l == null ? ' empty' : '') }, l == null ? '—' : l),
-        el('div', { class: 'cnt num' }, dir ? el('span', { class: 'd ' + dir }) : null,
-          arr.length ? [el('span', { class: 'full' }, arr.length + ' зап.'), el('span', { class: 'short' }, '×' + arr.length)] : el('span', {}, '—'))));
-    }
+    for (let i = 0; i < n; i++) sets.append(setTile('Подход', i, ex.sets[i] || []));
     card.append(sets);
     if (isOpen) card.append(renderDetail(g, ex, n));
     return card;
   }
 
+  function sessions(ex) {
+    const by = new Map();
+    ex.sets.forEach((s, i) => s.forEach(e => { const d = ed(e); if (!d) return; if (!by.has(d)) by.set(d, []); const r = by.get(d); r[i] = r[i] ? r[i] + '/' + ev(e) : ev(e); }));
+    return [...by.entries()].sort((a, b) => b[0] < a[0] ? -1 : 1);
+  }
+
   function renderDetail(g, ex, n) {
     const d = el('div', { class: 'detail' });
-    // history per set
-    for (let i = 0; i < n; i++) {
-      const arr = ex.sets[i] || [];
+    const canWrite = S.dbState === 'ready';
+    // dated sessions
+    const sess = sessions(ex);
+    if (sess.length) {
+      const t = el('table', { class: 'sess num' });
+      const hr = el('tr', {}, el('th', {}, 'Дата'));
+      for (let i = 0; i < n; i++) hr.append(el('th', {}, 'П' + (i+1)));
+      hr.append(el('th', {})); t.append(el('thead', {}, hr));
+      const tb = el('tbody');
+      for (const [date, vals] of sess) {
+        const tr = el('tr', {}, el('td', { class: 'date' }, fmtDate(date)));
+        for (let i = 0; i < n; i++) tr.append(el('td', { class: 'v' }, vals[i] || '·'));
+        tr.append(el('td', { class: 'x' }, canWrite ? el('button', { 'aria-label': 'Удалить запись за ' + fmtDate(date), onclick: () => { S.confirm = { type: 'sess', date }; render(); } }, '×') : null));
+        tb.append(tr);
+        if (S.confirm && S.confirm.type === 'sess' && S.confirm.date === date)
+          tb.append(el('tr', {}, el('td', { colspan: n + 2, style: 'padding:6px 0' }, el('div', { class: 'confirm' }, `Удалить запись за ${fmtDate(date)}?`,
+            el('button', { class: 'btn sm danger', onclick: () => removeSession(g.id, ex.id, date) }, 'Удалить'),
+            el('button', { class: 'btn sm ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')))));
+      }
+      t.append(tb); d.append(el('div', {}, el('h4', {}, el('span', {}, `Тренировки · ${sess.length}`)), t));
+    }
+    // undated history (from Notes)
+    const legacy = ex.sets.map((s, i) => [i, s.filter(e => !ed(e))]).filter(([, s]) => s.length);
+    const allCount = ex.sets.reduce((a, s) => a + s.length, 0);
+    const renderSetHist = (i, arr, withDelete) => {
       const h = el('div', { class: 'hist' });
-      const title = el('h4', {}, el('span', {}, `Подход ${i+1} · ${arr.length} записей`));
-      if (arr.length) title.append(el('button', { onclick: () => { S.confirm = { type: 'set', si: i }; render(); } }, 'убрать последнее'));
+      const title = el('h4', {}, el('span', {}, `Подход ${i+1} · ${arr.length}`));
+      if (withDelete && canWrite && arr.length && !ed(last(ex.sets[i]))) title.append(el('button', { onclick: () => { S.confirm = { type: 'set', si: i }; render(); } }, 'убрать последнее'));
       h.append(title);
       if (S.confirm && S.confirm.type === 'set' && S.confirm.si === i)
-        h.append(el('div', { class: 'confirm' }, `Удалить «${last(arr)}» из подхода ${i+1}?`,
-          el('button', { class: 'btn danger', onclick: () => removeLast(g.id, ex.id, i) }, 'Удалить'),
-          el('button', { class: 'btn ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')));
+        h.append(el('div', { class: 'confirm' }, `Удалить «${ev(last(arr))}» из подхода ${i+1}?`,
+          el('button', { class: 'btn sm danger', onclick: () => removeLast(g.id, ex.id, i) }, 'Удалить'),
+          el('button', { class: 'btn sm ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')));
       const chips = el('div', { class: 'chips num' });
-      if (!arr.length) chips.append(el('span', { class: 'chip', style: 'color:var(--muted)' }, 'пока нет записей'));
-      arr.forEach((v, j) => chips.append(el('span', { class: 'chip' + (j === arr.length-1 ? ' last' : '') }, v)));
+      arr.forEach((e, j) => chips.append(el('span', { class: 'chip' + (j === arr.length-1 ? ' last' : ''), title: ed(e) ? fmtDate(ed(e), true) : 'без даты' }, ev(e))));
       h.append(chips);
-      const sp = sparkline(arr); if (sp) h.append(sp);
-      d.append(h);
+      return h;
+    };
+    if (legacy.length) {
+      const det = el('details', { class: 'legacy', open: sess.length ? null : '' }, el('summary', {}, `История из Заметок без дат · ${legacy.reduce((a, [, s]) => a + s.length, 0)} записей`));
+      for (const [i, arr] of legacy) det.append(renderSetHist(i, arr, true));
+      d.append(det);
     }
-    // add entry form
+    // trend over everything
+    if (allCount > 1) {
+      const tr = el('div', { class: 'hist' }, el('h4', {}, el('span', {}, 'Динамика · подход 1')));
+      const s1 = sparkline(ex.sets[0] || []); if (s1) tr.append(s1);
+      d.append(tr);
+    }
+    if (!allCount) d.append(el('div', { class: 'notice', style: 'margin:0' }, 'Пока нет записей. Нажми «Записать веса» или веди через вкладку «Тренировка».'));
+
+    // actions / inline forms
     if (S.form === ex.id) {
-      const form = el('form', { class: 'form', style: `--n:${n}`, onsubmit: e => { e.preventDefault(); addEntry(g.id, ex.id, [...form.querySelectorAll('input')].map(i => i.value)); } });
-      form.append(el('h4', {}, 'Новая запись · ' + fmtDate(today())));
+      const form = el('form', { class: 'form', style: `--n:${n}`, onsubmit: e => { e.preventDefault(); addEntry(g.id, ex.id, [...form.querySelectorAll('input[type=text]')].map(i => i.value), dateIn.value || today()); } });
+      const dateIn = el('input', { id: `date-${ex.id}`, type: 'date', value: today(), max: today(), style: 'border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:6px 8px;min-height:40px' });
+      form.append(el('div', { class: 'row', style: 'justify-content:space-between;margin-bottom:8px' }, el('h4', { style: 'margin:0' }, 'Новая запись'), dateIn));
       const inputs = el('div', { class: 'inputs' });
       for (let i = 0; i < n; i++) {
         const l = last(ex.sets[i] || []);
-        inputs.append(el('label', {}, 'П' + (i+1), el('input', { id: `in-${ex.id}-${i}`, type: 'text', inputmode: 'decimal', autocomplete: 'off', value: l == null ? '' : l, placeholder: '—' })));
+        inputs.append(el('label', {}, 'П' + (i+1), el('input', { id: `in-${ex.id}-${i}`, type: 'text', inputmode: 'decimal', autocomplete: 'off', value: l == null ? '' : ev(l), placeholder: '—' })));
       }
       form.append(inputs, el('div', { class: 'row end', style: 'margin-top:10px' },
         el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.form = null; render(); } }, 'Отмена'),
         el('button', { type: 'submit', class: 'btn primary' }, 'Сохранить')));
       d.append(form);
-      setTimeout(() => { form.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const f = form.querySelector('input'); if (f) { f.focus(); f.select(); } }, 0);
+      setTimeout(() => { form.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const f = form.querySelector('input[type=text]'); if (f) { f.focus(); f.select(); } }, 0);
     } else if (S.rename === ex.id) {
       const inp = el('input', { id: 'rename-' + ex.id, type: 'text', value: ex.name });
-      const r = el('form', { class: 'rename', onsubmit: e => { e.preventDefault(); renameEx(g.id, ex.id, inp.value); } }, inp,
+      d.append(el('form', { class: 'rename', onsubmit: e => { e.preventDefault(); renameEx(g.id, ex.id, inp.value); } }, inp,
         el('button', { type: 'submit', class: 'btn primary' }, 'Ок'),
-        el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.rename = null; render(); } }, 'Отмена'));
-      d.append(r); setTimeout(() => inp.focus(), 0);
+        el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.rename = null; render(); } }, 'Отмена')));
+      setTimeout(() => inp.focus(), 0);
     } else if (S.confirm && S.confirm.type === 'ex') {
       d.append(el('div', { class: 'confirm' }, `Удалить упражнение «${ex.name}» со всей историей?`,
         el('button', { class: 'btn danger', onclick: () => deleteEx(g.id, ex.id) }, 'Удалить'),
         el('button', { class: 'btn ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')));
     } else {
-      const canWrite = S.dbState === 'ready';
       d.append(el('div', { class: 'row actions' },
         el('button', { class: 'btn primary', disabled: !canWrite, onclick: () => { S.form = ex.id; S.confirm = null; render(); } }, '+ Записать веса'),
         el('button', { class: 'btn', disabled: !canWrite, onclick: () => { S.rename = ex.id; render(); } }, 'Переименовать'),
@@ -406,10 +560,48 @@ main{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-ar
     return d;
   }
 
+  // ---- workout mode ----
+  function renderWorkout(g, main) {
+    const n = g.nsets || 4; const dr = draftFor(g.id); const date = S.wdate || today();
+    if (S.justSaved) { const js = S.justSaved; main.append(el('div', { class: 'done' }, el('b', {}, '✓ Сохранено. '), `${js.n} упр. за ${fmtDate(js.date)}. `,
+      el('button', { class: 'btn sm', style: 'margin-left:6px', onclick: () => { S.justSaved = null; setMode('cards'); render(); } }, 'Смотреть карточки'))); }
+    const dateIn = el('input', { id: 'wdate', type: 'date', value: date, max: today(), onchange: e => { S.wdate = e.target.value || today(); if (S.draft[g.id]) { S.draft[g.id].date = S.wdate; setPref('draft', S.draft); } renderTabs(); } });
+    main.append(el('div', { class: 'wdate' }, el('label', { for: 'wdate' }, 'Дата тренировки'), dateIn));
+    if (!g.exercises.length) { main.append(el('div', { class: 'notice' }, 'В этой группе пока нет упражнений. Добавь их во вкладке «Карточки».')); return; }
+    const list = el('div', { class: 'list' });
+    for (const ex of g.exercises) {
+      const vals = (dr && dr.values[ex.id]) || [];
+      const ld = exLast(ex);
+      const card = el('div', { class: 'wcard' + (vals.some(v => v && v.trim()) ? ' filled' : ''), 'data-ex': ex.id, style: `--n:${n}` });
+      card.append(el('div', { class: 'wh' }, el('div', { class: 'name' }, ex.name), el('div', { class: 'last' + (ld === today() ? ' today' : '') }, ld ? rel(ld) : (ex.sets.some(s => s.length) ? 'из Заметок, без даты' : 'нет записей'))));
+      const inputs = el('div', { class: 'inputs' }); const ins = [];
+      for (let i = 0; i < n; i++) {
+        const l = last(ex.sets[i] || []);
+        const inp = el('input', { id: `w-${ex.id}-${i}`, type: 'text', inputmode: 'decimal', autocomplete: 'off', enterkeyhint: 'next', value: vals[i] || '', placeholder: l == null ? '—' : ev(l),
+          oninput: e => setDraft(g.id, ex.id, i, e.target.value),
+          onkeydown: e => { if (e.key === 'Enter') { e.preventDefault(); const all = [...main.querySelectorAll('.wcard input[type=text]')]; const k = all.indexOf(e.target); if (all[k+1]) all[k+1].focus(); else e.target.blur(); } } });
+        ins.push(inp);
+        inputs.append(el('label', {}, el('span', { class: 'full' }, 'Подход ' + (i+1)), el('span', { class: 'short' }, 'П' + (i+1)), inp));
+      }
+      card.append(inputs);
+      const lastVals = () => ins.map((inp, i) => { const l = last(ex.sets[i] || []); return l == null ? '' : ev(l); });
+      const fill = arr => { arr.forEach((v, i) => { ins[i].value = v; setDraft(g.id, ex.id, i, v); }); };
+      const bump = delta => { const cur = ins.map((inp, i) => inp.value || inp.placeholder); const comma = cur.some(v => v.includes(','));
+        fill(cur.map((v, i) => { const x = num(v); return x == null || v === '—' ? (ins[i].value || '') : fmtNum(x + delta, comma); })); };
+      card.append(el('div', { class: 'wtools' },
+        el('button', { class: 'btn sm', onclick: () => fill(lastVals()) }, '↺ как в прошлый раз'),
+        el('button', { class: 'btn sm num', onclick: () => bump(-2.5) }, '−2,5'),
+        el('button', { class: 'btn sm num', onclick: () => bump(2.5) }, '+2,5'),
+        vals.some(v => v && v.trim()) ? el('button', { class: 'btn sm ghost', onclick: () => fill(ins.map(() => '')) }, 'очистить') : null));
+      list.append(card);
+    }
+    main.append(list, el('p', { class: 'tablenote' }, 'Заполни только то, что делал сегодня: серым показан прошлый вес. Введённое сохраняется как черновик, пока не нажмёшь «Сохранить тренировку».'));
+  }
+
   function renderTable(g) {
     const n = g.nsets || 4;
     const wrap = el('div', { class: 'tablewrap' });
-    const t = el('table', { class: 'num' });
+    const t = el('table', { class: 'grid num' });
     const thead = el('tr', {}, el('th', {}, g.name));
     for (let i = 1; i <= n; i++) thead.append(el('th', {}, String(i)));
     t.append(el('thead', {}, thead));
@@ -419,13 +611,51 @@ main{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-ar
       for (let i = 0; i < n; i++) {
         const arr = ex.sets[i] || [];
         const td = el('td', { class: 'cell' });
-        arr.forEach((v, j) => { td.append(j < arr.length - 1 ? v + '-' : el('span', { class: 'lastv' }, v)); });
+        arr.forEach((e, j) => { const v = ev(e); td.append(j < arr.length - 1 ? v + '-' : el('span', { class: 'lastv', title: ed(e) ? fmtDate(ed(e), true) : '' }, v)); });
         tr.append(td);
       }
       tb.append(tr);
     }
     t.append(tb); wrap.append(t);
-    return [wrap, el('p', { class: 'tablenote' }, 'Та же таблица, что была в Заметках: столбцы — подходы, в ячейке — вся история весов через дефис. Жёлтым выделен последний вес. Таблицу можно листать вбок.')];
+    return [wrap, el('p', { class: 'tablenote' }, 'Та же таблица, что была в Заметках: столбцы — подходы, в ячейке — вся история весов через дефис. Жёлтым выделен последний вес.')];
+  }
+
+  function renderJournal(main) {
+    const days = new Map(); // date -> Map(gid -> [{ex, vals}])
+    for (const g of S.groups) for (const ex of g.exercises) {
+      const by = new Map();
+      ex.sets.forEach((s, i) => s.forEach(e => { const d = ed(e); if (!d) return; if (!by.has(d)) by.set(d, []); const r = by.get(d); r[i] = r[i] ? r[i] + '/' + ev(e) : ev(e); }));
+      for (const [d, vals] of by) { if (!days.has(d)) days.set(d, new Map()); const gm = days.get(d); if (!gm.has(g.id)) gm.set(g.id, { g, items: [] }); gm.get(g.id).items.push({ ex, vals, n: g.nsets || 4 }); }
+    }
+    const dates = [...days.keys()].sort().reverse();
+    const td = today(); const in30 = dates.filter(d => daysAgo(d) < 30).length; const in7 = dates.filter(d => daysAgo(d) < 7).length;
+    main.append(el('div', { class: 'ghead' }, el('h2', {}, 'Журнал'), el('div', { class: 'meta' }, dates.length ? `${dates.length} тренировок с датой` : '')));
+    main.append(el('div', { class: 'jstats num' },
+      el('div', { class: 'jstat' }, el('b', {}, String(in7)), el('span', {}, 'за 7 дней')),
+      el('div', { class: 'jstat' }, el('b', {}, String(in30)), el('span', {}, 'за 30 дней')),
+      el('div', { class: 'jstat' }, el('b', {}, dates[0] ? rel(dates[0]) : '—'), el('span', {}, 'последняя'))));
+    if (!dates.length) { main.append(el('div', { class: 'notice' }, el('b', {}, 'Пока нет тренировок с датой. '), 'Записи из Заметок перенесены без дат. Всё, что ты сохранишь через «Тренировка» или «Записать веса», появится здесь по дням.')); return; }
+    for (const d of dates) {
+      const box = el('div', { class: 'jday' }, el('h3', {}, fmtLong(d), el('span', {}, d === td ? 'сегодня' : rel(d))));
+      for (const { g, items } of days.get(d).values()) {
+        const grp = el('div', { class: 'jgroup' }, el('div', { class: 'gname' }, g.name + (g.ru ? ' · ' + g.ru : '')));
+        for (const { ex, vals, n } of items) {
+          const parts = []; for (let i = 0; i < n; i++) if (vals[i]) parts.push(vals[i]);
+          grp.append(el('div', { class: 'jex' }, el('div', { class: 'n' }, ex.name), el('div', { class: 'v num' }, parts.join(' · '))));
+        }
+        box.append(grp);
+      }
+      main.append(box);
+    }
+  }
+
+  function renderNotes(main) {
+    const ta = el('textarea', { id: 'notes-ta', placeholder: 'Замеры, даты, план…' });
+    ta.value = S.notes ?? '';
+    main.append(el('div', { class: 'ghead' }, el('h2', {}, 'Заметки')),
+      el('div', { class: 'notes' }, ta, el('p', { class: 'hint' }, S.notesLoaded ? 'Замеры, даты начала и конца циклов, что угодно.' : 'Загружаю…'),
+        el('div', { class: 'row end' }, el('button', { class: 'btn primary', disabled: S.dbState !== 'ready', onclick: () => store.saveNotes(ta.value) }, 'Сохранить'))));
+    if (store.renderBackup) store.renderBackup(main);
   }
 
   function render() {
@@ -433,27 +663,13 @@ main{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-ar
     const main = $('#main'); main.replaceChildren();
     const g = activeGroup();
     $('#brand-sub').textContent = S.dbState === 'offline' ? 'только просмотр' : 'дневник весов';
+    updateSavebar(g && S.mode === 'workout' ? g.id : null);
+    if (S.mode !== 'workout') S.justSaved = null;
 
     if (S.dbState === 'offline') main.append(el('div', { class: 'notice' }, el('b', {}, 'Нет доступа к базе. '), 'Открой ссылку, войдя в свой аккаунт claude.ai, тогда записи можно будет добавлять. Сейчас показана последняя сохранённая копия.'));
 
-    if (S.mode === 'notes') {
-      const ta = el('textarea', { id: 'notes-ta', placeholder: 'Замеры, даты, план…' });
-      ta.value = S.notes ?? '';
-      main.append(el('div', { class: 'ghead' }, el('h2', {}, 'Заметки')),
-        el('div', { class: 'notes' }, ta, el('p', { class: 'hint' }, S.notesVersionSeen ? 'Замеры, даты начала и конца циклов, что угодно.' : 'Загружаю…'),
-          el('div', { class: 'row end' }, el('button', { class: 'btn primary', disabled: S.dbState !== 'ready', onclick: () => saveNotes(ta.value) }, 'Сохранить'))));
-      const file = el('input', { id: 'import-file', type: 'file', accept: 'application/json,.json', onchange: e => { if (e.target.files[0]) importJSON(e.target.files[0]); e.target.value = ''; } });
-      let saved = null; try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch {}
-      main.append(el('div', { class: 'backup' }, el('h3', {}, 'Резервная копия'),
-        el('p', {}, 'Данные хранятся в памяти этого браузера на этом устройстве. Чтобы не потерять их или перенести на другой телефон, скачивай файл время от времени.'),
-        el('div', { class: 'row' }, el('button', { class: 'btn primary', onclick: exportJSON }, 'Скачать файл'),
-          el('button', { class: 'btn', onclick: () => file.click() }, 'Загрузить из файла'), file,
-          el('button', { class: 'btn ghost danger', onclick: () => { S.confirm = { type: 'reset' }; render(); } }, 'Сбросить к исходным')),
-        S.confirm && S.confirm.type === 'reset' ? el('div', { class: 'confirm', style: 'margin-top:10px' }, 'Заменить всё на таблицы из Заметок (17 окт 2026)? Новые записи пропадут.',
-          el('button', { class: 'btn danger', onclick: resetToSeed }, 'Сбросить'), el('button', { class: 'btn ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')) : null,
-        el('div', { class: 'status' }, saved && saved.saved ? 'Последнее сохранение: ' + new Date(saved.saved).toLocaleString('ru-RU') : 'Пока показаны исходные таблицы из Заметок.')));
-      return;
-    }
+    if (S.mode === 'notes') return renderNotes(main);
+    if (S.mode === 'journal') return renderJournal(main);
 
     if (S.addingGroup) {
       const nm = el('input', { id: 'ng-name', type: 'text', placeholder: 'Название (напр. Press)' });
@@ -463,33 +679,29 @@ main{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-ar
         el('div', { class: 'row end', style: 'margin-top:10px' }, el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.addingGroup = false; render(); } }, 'Отмена'), el('button', { type: 'submit', class: 'btn primary' }, 'Создать'))));
       setTimeout(() => nm.focus(), 0);
     }
-
     if (!g) {
       main.append(el('div', { class: 'notice' }, S.dbState === 'loading' ? 'Загружаю твои таблицы…' :
-        [el('b', {}, 'Пока пусто. '), 'Нажми «+ Группа» сверху, чтобы добавить первую группу мышц (например Dosh), потом упражнения и веса.']));
+        [el('b', {}, 'Пока пусто. '), 'Нажми «+ Группа» сверху, чтобы добавить первую группу мышц, потом упражнения и веса.']));
       return;
     }
-
     const total = g.exercises.reduce((a, e) => a + e.sets.reduce((b, s) => b + s.length, 0), 0);
     main.append(el('div', { class: 'ghead' },
       el('h2', {}, g.name, g.ru ? el('span', {}, g.ru) : null),
-      el('div', { class: 'meta num' }, `${g.exercises.length} упр. · ${total} записей`, g.lastEntry ? el('br') : null, g.lastEntry ? 'последняя ' + fmtDate(g.lastEntry) : null)));
+      el('div', { class: 'meta num' }, `${g.exercises.length} упр. · ${total} записей`, g.lastEntry ? ' · последняя ' + rel(g.lastEntry) : '')));
 
+    if (S.mode === 'workout') return renderWorkout(g, main);
     if (S.mode === 'table') { main.append(...renderTable(g)); return; }
 
     const list = el('div', { class: 'list' });
     for (const ex of g.exercises) list.append(renderCard(g, ex));
     main.append(list);
-
     if (S.dbState === 'ready') {
       if (S.addingEx) {
         const inp = el('input', { id: 'newex', type: 'text', placeholder: 'Название упражнения' });
         main.append(el('form', { class: 'form', style: 'margin-top:10px', onsubmit: e => { e.preventDefault(); addEx(g.id, inp.value); } },
           el('h4', {}, 'Новое упражнение'), el('div', { class: 'rename' }, inp, el('button', { type: 'submit', class: 'btn primary' }, 'Добавить'), el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.addingEx = false; render(); } }, 'Отмена'))));
         setTimeout(() => inp.focus(), 0);
-      } else {
-        main.append(el('button', { class: 'addex', onclick: () => { S.addingEx = true; render(); } }, '+ Упражнение'));
-      }
+      } else main.append(el('button', { class: 'addex', onclick: () => { S.addingEx = true; render(); } }, '+ Упражнение'));
       if (S.confirm && S.confirm.type === 'group') {
         main.append(el('div', { class: 'confirm', style: 'margin-top:12px' }, `Удалить группу «${g.name}» со всеми упражнениями?`,
           el('button', { class: 'btn danger', onclick: () => removeGroup(g.id) }, 'Удалить'), el('button', { class: 'btn ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')));
@@ -499,12 +711,11 @@ main{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-ar
     }
   }
 
-  $('#mode-cards').addEventListener('click', () => { setMode('cards'); render(); });
-  $('#mode-table').addEventListener('click', () => { setMode('table'); render(); });
-  $('#mode-notes').addEventListener('click', () => { setMode('notes'); render(); });
+  for (const b of document.querySelectorAll('#nav button')) b.addEventListener('click', () => { setMode(b.dataset.mode); S.open = null; S.form = null; render(); window.scrollTo({ top: 0 }); });
+  $('#savebtn').addEventListener('click', () => { const g = activeGroup(); if (g) saveWorkout(g.id); });
   setMode(S.mode);
   render();
-  connect();
+  store.init();
 })();
 </script>
 </body>
