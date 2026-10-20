@@ -12,6 +12,7 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
+<script src="firebase-config.js"></script>
 <title>GYM</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
 <style>
@@ -34,6 +35,7 @@
   --good:#5BC489; --bad:#E0646A; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark }
 
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 html,body{min-height:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.4;margin:0}
@@ -52,6 +54,26 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .brand small{display:block;font-family:var(--body);font-weight:500;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:3px}
 .today{font-size:12px;color:var(--muted);text-align:right;line-height:1.3}
 .today b{display:block;color:var(--fg);font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:.02em}
+.acct{min-width:40px;height:40px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-weight:600;font-size:13px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;flex:0 0 auto}
+.acct.on{background:var(--accent);color:var(--accent-fg);border-color:transparent;width:40px;padding:0;font-family:var(--display);font-size:18px}
+.acct.warn{border-color:var(--accent);color:var(--accent)}
+.auth{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:16px 14px;display:flex;flex-direction:column;gap:10px}
+.auth h3{margin:0;font-family:var(--display);font-weight:600;font-size:22px;letter-spacing:.02em}
+.auth p{margin:0;color:var(--muted);font-size:14px}
+.auth input{border:1px solid var(--line);border-radius:10px;background:var(--surface-2);padding:10px 12px;min-height:46px;width:100%}
+.auth .err{color:var(--bad);font-size:13px}
+.auth .or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
+.auth .or::before,.auth .or::after{content:"";flex:1;border-top:1px solid var(--line)}
+.choice{display:flex;flex-direction:column;gap:8px}
+.choice button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-height:56px}
+.choice button b{font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.02em}
+.choice button span{font-size:13px;color:var(--muted)}
+.choice button.main{border-color:var(--accent);background:var(--accent-soft)}
+.prof{display:flex;align-items:center;gap:12px}
+.prof .av{width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--accent-fg);font-family:var(--display);font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.prof .who{min-width:0;overflow-wrap:anywhere}
+.prof .who b{display:block}
+.prof .who span{font-size:12px;color:var(--muted)}
 .tabs{display:flex;gap:8px;overflow-x:auto;padding-block:6px 10px;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex:0 0 auto;min-height:44px;padding:6px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);text-align:left;line-height:1.1;position:relative}
@@ -225,6 +247,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   <div class="bar">
     <div class="brand">GYM<small id="brand-sub">дневник весов</small></div>
     <div class="today" id="today-box"></div>
+    <button class="acct" id="acct" hidden aria-label="Аккаунт"></button>
   </div>
   <nav class="tabs" id="tabs" aria-label="Группы мышц"></nav>
 </header>
@@ -287,48 +310,190 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   let toastT;
   const toast = msg => { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2000); };
 
-  // ---------- storage: this device (localStorage) + embedded tables from Notes ----------
+  // ---------- storage: Firebase per-user cloud (users/{uid}/...), local fallback when not signed in ----------
   const SEED = [{"id": "dosh", "name": "Dosh", "ru": "Грудь", "order": 0, "nsets": 5, "exercises": [{"id": "dosh-1", "name": "1)shatnga", "sets": [["7,5", "7,5", "10", "10", "15", "15", "15", "17,5", "15", "15", "15", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "20", "20", "20", "20", "20", "20", "20", "20", "20", "20", "22,5", "22,5", "25", "25"], ["10", "10", "12,5", "15", "15", "15", "17,5", "17,5", "17,5", "17,5", "17,5", "20", "20", "20", "20", "17,5", "20", "22,5", "22,5", "25", "25", "22,5", "22,5", "20", "25", "25", "25", "27,5", "27,5", "27,5", "27,5"], ["12,5", "12,5", "15", "15", "15", "17,5", "17,5", "17,5", "20", "20", "20", "22,5", "22,5", "22,5", "22,5", "20", "22,5", "27,5", "25", "25", "25", "25", "22,5", "25", "25", "27,5", "27,5", "30", "27,5", "27,5", "27,5"], ["12,5", "12,5", "22,5", "27,5", "27,5", "27,5", "20", "15", "15", "20"], ["30"]]}, {"id": "dosh-2", "name": "2)shtang teq", "sets": [["5", "7,5", "7,5", "10", "10", "10", "10", "10"], ["7,5", "10", "10", "10", "10", "10", "10", "10"], ["7,5", "10", "10", "10", "12,5", "12,5", "12,5", "12,5"], [], []]}, {"id": "dosh-3", "name": "2)alternativ dosh trenajor)", "sets": [["25"], ["30"], ["35"], [], []]}, {"id": "dosh-4", "name": "3)parkac koxeric gantel", "sets": [["10", "12,5", "12,5", "12,5", "15", "17,5", "17,5", "17,5", "20", "20", "22,5"], ["12,5", "12,5", "15", "15", "17,5", "17,5", "17,5", "20", "20", "20", "25"], ["12,5", "12,5", "15", "1517,5", "17,5", "20", "20", "20", "20", "25"], [], []]}, {"id": "dosh-5", "name": "3)parkac koxeric galntel teq", "sets": [["17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "20", "20", "20", "20", "20", "20", "20", "20", "10"], ["17,5", "17,5", "17,5", "17,5", "20", "20", "20", "20", "17,5", "17,5", "20", "17,5", "20", "20", "20", "20", "20", "20", "22,5", "12"], ["17,5", "20", "20", "20", "20", "20", "20", "20", "17,5", "20", "20", "17,5", "20", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "12"], [], []]}, {"id": "dosh-6", "name": "4)babchka(4)", "sets": [["30", "30", "30", "30", "35", "35", "35", "35", "35", "40", "40", "40", "40", "40", "45", "45", "45", "45", "45", "45", "45"], ["30", "35", "35", "35", "35", "35", "40", "35", "40", "45", "45", "45", "45", "45", "45", "45", "45", "45", "50", "50", "50"], ["30", "35", "40", "35", "40", "40", "40", "40", "45", "50", "50", "45", "45", "45", "45", "45", "45", "50", "50", "50", "50"], [], []]}, {"id": "dosh-7", "name": "Trosov hetevic", "sets": [["9"], ["9"], ["9"], ["4,5"], []]}]}, {"id": "biceps", "name": "Biceps", "ru": "Бицепс", "order": 1, "nsets": 4, "exercises": [{"id": "biceps-1", "name": "1)zigzag shtanga(10kg)", "sets": [["5", "7,5", "10", "10", "10", "11,25", "11,25", "11,25", "12,5", "12,5", "12,5", "12,5", "13,75", "135", "13,75", "13,5", "15", "15", "15", "15", "15", "15", "15", "15", "15", "15", "15", "15", "5"], ["7,5", "10", "10", "10", "11,25", "11,25", "11,25", "11,25", "12,5", "12,5", "13,75", "13,75", "15", "15", "15", "15", "15", "15", "15", "15", "15", "15", "15", "17,5", "15", "15", "15", "15", "15", "7,5"], ["8,75", "10", "10", "10", "11,25", "11,25", "12,5", "12,5", "12,5", "13,75", "15", "15", "16,25", "16,25", "16,25", "17,5", "17,5", "17,5", "17,5", "17,5", "15", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "7,5"], []]}, {"id": "biceps-2", "name": "2)nstac trenajor henac zerqer@", "sets": [["10", "15", "15", "20", "25", "25", "25"], ["15", "15", "20", "20", "25", "25", "25"], ["15", "20", "20", "25", "25", "25", "30", "30"], []]}, {"id": "biceps-3", "name": "3)malatok pahelov", "sets": [["10", "10", "10", "10", "10", "10", "10", "10", "12,5", "12,5", "12,5", "12,5"], ["10", "10", "10", "10", "10", "10", "10", "12,5", "12,5", "12,5", "12,5", "12,5"], ["10", "10", "10", "10", "10", "10", "10", "12,5", "12,5", "12,5", "12,5", "12,5"], []]}, {"id": "biceps-4", "name": "4)sovorakan gantelnerov", "sets": [["10", "10"], ["10", "10"], ["10", "10"], []]}, {"id": "biceps-5", "name": "4)gantel depi dosh", "sets": [["12,5"], ["12,5"], ["12,5"], []]}, {"id": "biceps-6", "name": "5)shtanga hakarak brnac verev", "sets": [["25", "25", "30"], ["25", "25", "30"], ["25", "25", "30", "30"], []]}, {"id": "biceps-7", "name": "Tros nerqevic verev", "sets": [["31,5", "31,5", "36", "36", "36", "40,5", "40,5", "40,5", "45", "45", "45", "45", "45", "45"], ["31,5", "36", "36", "36", "40,5", "40,5", "40,5", "45", "45", "45", "49,5", "49,5", "49,5", "49,5"], ["36", "36", "36", "40,5", "40,5", "40,5", "45", "45", "49,5", "49,5", "49,5", "49,5", "49,5"], []]}, {"id": "biceps-8", "name": "Biceps zigzag@ che myus@)", "sets": [["10", "10", "10", "10", "10", "10", "10", "10", "10", "5"], ["10", "10", "10", "10", "10", "10", "10", "10", "10"], ["10", "10", "10", "10", "12,5", "12,5", "12,5", "12,5", "12,5"], []]}, {"id": "biceps-9", "name": "6)turnik", "sets": [["8", "8"], ["5", "6"], [], []]}]}, {"id": "mechq", "name": "Mechq", "ru": "Спина", "order": 2, "nsets": 4, "exercises": [{"id": "mechq-1", "name": "1)Turnik", "sets": [["10", "9", "9", "10", "11", "11", "11", "11", "8(5kg)", "8(5kg)", "9(5)", "8(5)", "7(7,5)", "8(7,5)", "8", "(7,5)7", "(10)", "8(10)", "9(10)", "9(10)", "9(10)", "8(12,5)", "9(12,5)", "8(15)", "8(15)", "9(15)", "8(15)", "7(15)", "10"], ["6", "5", "6", "6", "7", "7", "7", "8", "6(5kg)", "6(5)", "7(5)", "6(5)", "6(7,5)", "7(7,5)", "7(7,5)", "7(10)", "7(10)", "7(10)", "7(10)", "6(12,5)", "6(12,5)", "6(12,5)", "6(15)", "8(15)", "8(15)", "7(15)", "6(15)", "7"], ["6", "5", "5", "6", "6", "7", "7", "7", "6", "(5kg)", "6(5)", "5(5)", "5(7.5)", "5(7,5)", "6(7,5)", "5(10)", "5(10)", "6", "(10)", "7(10)", "5(11.25)", "5(12,5)", "5(15)", "6(15)", "7(15)", "7(17,5)", "5(17,5)", "6"], ["0", "4", "0", "10", "10", "10"]]}, {"id": "mechq-2", "name": "2)verevic doshin", "sets": [["31,5", "31,5", "36", "40,5", "40,5", "40,5", "40,5", "40,5", "45", "45", "45", "45", "45", "45", "45", "45", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5"], ["36", "36", "40,5", "40,5", "40,5", "45", "45", "45", "45", "45", "45", "45", "45", "45", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "49,5", "54", "54", "54", "54", "54", "54"], ["40,5", "40,5", "45", "45", "45", "45", "45", "45", "45", "49,5", "45", "49,5", "49,5", "49,5", "49,5", "49,5", "54", "54", "54", "54", "54", "54", "54", "54", "54", "54", "54"], ["49,5"]]}, {"id": "mechq-3", "name": "3)nstac qashel", "sets": [["31,5", "31,5", "36", "40,5", "40,5", "40,5", "40,5", "31,5", "36", "36", "36", "36", "36", "36", "40,5", "40,5", "40,5", "40,5", "40,5", "40,5", "40,5", "40,5", "45", "45", "45", "45", "36"], ["31.5", "36", "40.5", "40,5", "40,5", "40,5", "40,5", "40,5", "36", "36", "36", "36", "36", "40,5", "40,5", "40,5", "40,5", "40,5", "40,5", "40,5", "45", "45", "45", "49,5", "49,5", "49,5", "36"], ["31.5", "36", "40,5", "40,5", "40,5", "45", "31,5", "31,5", "36", "36", "36", "40,5", "40,5", "40,5", "40,5", "45", "45", "45", "45", "45", "45", "49,5", "49,5", "49,5", "49,5", "49,5", "36"], []]}, {"id": "mechq-4", "name": "4)nstac het", "sets": [["20", "20", "25", "25", "25", "25", "25", "25", "30"], ["20", "20", "25", "25", "25", "25", "25", "25", "30"], ["20", "22,5", "25", "25", "25", "25", "25", "25", "30"], []]}]}, {"id": "triceps", "name": "Triceps", "ru": "Трицепс", "order": 3, "nsets": 4, "exercises": [{"id": "triceps-1", "name": "1)kangnac verevic nerqev(2)", "sets": [["27", "27", "31,5", "36", "40,5", "40,5", "22,5", "22,5", "22,5", "22,5"], ["31.5", "31,5", "36", "40,5", "40,5", "45", "22,5", "22,5", "22,5", "22,5"], ["31.5", "36", "40,5", "40,5", "45", "45", "22,5", "22,5", "22,5", "22,5", "22,5"], []]}, {"id": "triceps-2", "name": "1.1)kangnac verevic paranov", "sets": [["18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "22,5", "22,5", "18"], ["18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "18", "22,5", "22,5", "22,5", "22,5", "23,5", "18"], ["18", "18", "18", "18", "18", "18", "18", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "23,5", "18"], []]}, {"id": "triceps-3", "name": "2.1) kangnac tros nerqevic", "sets": [["27", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5"], ["27", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5"], ["22,5", "27", "27", "22,5", "22,5", "22,5", "22,5", "27", "27", "27"], []]}, {"id": "triceps-4", "name": "2.2)kangnac tros kracac", "sets": [["27", "27", "27", "27", "27", "27", "31,5", "31,5", "31,5", "31,5"], ["27", "27", "27", "27", "31,5", "31,5", "31,5", "31,5", "31,5", "31,5"], ["27", "27", "31,5", "31,5", "31,5", "31,5", "31,5", "31,5", "31,5", "31,5"], []]}, {"id": "triceps-5", "name": "2,3)Tros mi dzerov", "sets": [["9", "9", "9", "9", "9", "9", "9", "9", "9", "4,5"], ["9", "9", "9", "9", "9", "9", "9", "9", "9", "4,5"], ["9", "9", "9", "9", "9", "9", "9", "9", "9", "4,5"], []]}, {"id": "triceps-6", "name": "2)kangnac gantel", "sets": [["12,5", "12,5", "15", "15", "17,5", "17,5"], ["12,5", "15", "17,5", "17,5", "17,5", "17,5"], ["12,5", "15", "17,5", "17,5", "17,5", "20"], []]}, {"id": "triceps-7", "name": "3)parkac shtanga", "sets": [["15", "15", "15", "20", "20", "20"], ["15", "15", "20", "20", "20", "20"], ["15", "15", "20", "20", "20", "20"], []]}, {"id": "triceps-8", "name": "4)trenajor nstac", "sets": [["40", "40", "45", "50", "55", "60", "60", "60", "65", "65", "65", "70", "70", "70", "70", "70", "75", "80", "85", "85", "85", "85", "85", "90", "90", "90", "90", "90", "90"], ["45", "45", "50", "55", "60", "60", "65", "65", "65", "65", "70", "75", "75", "75", "75", "75", "75", "85", "85", "90", "90", "90", "90", "90", "90", "90", "90", "90", "90"], ["45", "50", "55", "55", "60", "65", "65", "65", "70", "70", "70", "75", "75", "75", "75", "80", "80", "85", "85", "90", "90", "90", "90", "90", "95", "95", "90", "90"], []]}, {"id": "triceps-9", "name": "5)tros kisaijac", "sets": [["22,5"], ["22,5"], [], []]}, {"id": "triceps-10", "name": "6)tros mi dzerqov", "sets": [["9", "9"], ["9", "9"], ["9", "9"], []]}]}, {"id": "us", "name": "Us", "ru": "Плечи", "order": 4, "nsets": 4, "exercises": [{"id": "us-1", "name": "1)gantel kox", "sets": [["10", "10", "12,5", "5", "5", "7,5", "10"], ["12,5", "12,5", "12,5", "5", "5", "10", "10"], ["12,5", "12,5", "12,5", "5", "7,5", "10", "10"], []]}, {"id": "us-2", "name": "2)trenajor us triceps", "sets": [["15", "15", "15", "20", "25", "25"], ["20", "20", "20", "25", "25", "30"], ["25", "25", "25", "25", "30", "30"], []]}, {"id": "us-3", "name": "3)kangnac depi us kox", "sets": [["10", "10"], ["12,5", "12,5"], ["12,5", "12,5"], []]}, {"id": "us-4", "name": "4)nstac gantel verev", "sets": [["10", "12,5", "12,5", "12,5", "12,5", "12,5", "12,5", "12,5", "15", "15", "15", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5"], ["12,5", "12,5", "12,5", "12,5", "12,5", "12,5", "12,5", "15", "17,5", "17,5", "17,5", "17,5", "17,5", "17,5", "20", "20", "20"], ["12,5", "12,5", "12,5", "12,5", "12,5", "12,5", "15", "15", "17,5", "17,5", "17,5", "20", "20", "20", "20", "20", "20"], ["15"]]}, {"id": "us-5", "name": "3alt)gantel araj", "sets": [["7,5", "7,5", "7,5"], ["7,5", "7,5", "7,5"], ["7,5", "7,5", "10"], []]}, {"id": "us-6", "name": "4alt)shtanga verev len", "sets": [["15", "20", "25", "25", "25", "25", "25", "25"], ["20", "25", "25", "25", "25", "25", "25", "25"], ["20", "25", "25", "25", "25", "25", "25", "30"], []]}, {"id": "us-7", "name": "4)shtanga verev nex brnac", "sets": [["20", "25", "25", "25", "25"], ["25", "25", "25", "25", "25"], ["25", "25", "25", "30", "30"], []]}, {"id": "us-8", "name": "5)vzi mkan", "sets": [["10"], ["10"], ["10"], []]}, {"id": "us-9", "name": "Hakarak babchka", "sets": [["35", "35", "35", "40", "40", "40", "40", "40", "45", "45", "45"], ["35", "40", "40", "40", "40", "40", "45", "45", "45", "45", "50"], ["35", "40", "40", "40", "45", "45", "45", "45", "50", "50", "50"], []]}, {"id": "us-10", "name": "bacvel kox", "sets": [["4,5"], ["4,5"], ["4,5"], []]}, {"id": "us-11", "name": "bacvel verev", "sets": [["9"], ["9"], ["9"], []]}, {"id": "us-12", "name": "Tros kox hetevic", "sets": [["9"], ["9"], ["9"], []]}, {"id": "us-13", "name": "Tros kox dimacic", "sets": [["9", "9", "9", "9", "9"], ["9", "9", "9", "9", "9"], ["9", "9", "9", "9", "9"], []]}]}, {"id": "vot", "name": "Vot", "ru": "Ноги", "order": 5, "nsets": 4, "exercises": [{"id": "vot-1", "name": "1)shtanga prised-tr", "sets": [["10", "10", "15", "15", "15", "15"], ["15", "15", "20", "15", "20", "20"], ["15", "15", "20", "20", "20", "22,5", "22,5"], []]}, {"id": "vot-2", "name": "1)shtanga prised sovorakan", "sets": [["10", "15", "15", "15", "15", "15", "15", "15", "20", "20", "20", "20", "20", "20"], ["10", "15", "20", "20", "20", "20", "20", "20", "22,5", "22,5", "22,5", "22,5", "22,5", "22,5"], ["10", "20", "22,5", "20", "20", "22,5", "22,5", "22,5", "25", "25", "25", "25", "25", "25"], ["15", "25"]]}, {"id": "vot-3", "name": "2)nstac araj", "sets": [["35", "40", "45", "55", "55", "60", "60", "75", "75", "75", "75", "80", "80", "80", "80", "80", "85", "85", "85", "85", "85", "90", "90", "90"], ["40", "45", "50", "55", "60", "60", "75", "75", "75", "75", "80", "80", "80", "80", "80", "80", "85", "85", "90", "90", "90", "90", "90", "90", "90"], ["45", "50", "55", "55", "60", "75", "80", "80", "80", "80", "80", "80", "80", "85", "85", "85", "85", "90", "90", "90", "90", "95", "95", "95", "95"], []]}, {"id": "vot-4", "name": "3)brtel", "sets": [["85", "100", "100", "95", "100", "120", "125", "125"], ["90", "100", "100", "100", "100", "120", "125", "125"], ["95", "100", "100", "110", "110", "125", "125", "130"], []]}, {"id": "vot-5", "name": "4)parkac hetev", "sets": [["35", "35", "40", "40", "40", "40", "40", "40", "40", "40", "40", "40", "40", "40", "45", "45", "45", "45"], ["35", "40", "40", "40", "40", "40", "40", "40", "40", "40", "40", "40", "45", "45", "45", "45", "45", "45"], ["40", "40", "40", "40", "45", "45", "45", "45", "45", "45", "45", "45", "45", "45", "45", "45", "45", "45"], []]}, {"id": "vot-6", "name": "5)ikra", "sets": [["20", "25"], ["20", "25"], ["20", "25"], []]}]}];
   const SEED_NOTES = {"text": "Biceps aj - 32sm - dzqac 37sm\nBiceps dzax - 33sm\nHunisi 12 pateti verj\nHoktember 17 skizb", "updated": "2026-10-17"};
+  const TEMPLATE = [{"id": "chest", "name": "Грудь", "ru": "", "order": 0, "nsets": 4, "exercises": [{"id": "chest-1", "name": "Жим штанги лёжа", "sets": [[], [], [], []]}, {"id": "chest-2", "name": "Жим гантелей на наклонной", "sets": [[], [], [], []]}, {"id": "chest-3", "name": "Разводка гантелей", "sets": [[], [], [], []]}, {"id": "chest-4", "name": "Бабочка", "sets": [[], [], [], []]}, {"id": "chest-5", "name": "Отжимания на брусьях", "sets": [[], [], [], []]}]}, {"id": "back", "name": "Спина", "ru": "", "order": 1, "nsets": 4, "exercises": [{"id": "back-1", "name": "Подтягивания", "sets": [[], [], [], []]}, {"id": "back-2", "name": "Тяга верхнего блока", "sets": [[], [], [], []]}, {"id": "back-3", "name": "Тяга штанги в наклоне", "sets": [[], [], [], []]}, {"id": "back-4", "name": "Тяга горизонтального блока", "sets": [[], [], [], []]}, {"id": "back-5", "name": "Гиперэкстензия", "sets": [[], [], [], []]}]}, {"id": "legs", "name": "Ноги", "ru": "", "order": 2, "nsets": 4, "exercises": [{"id": "legs-1", "name": "Присед со штангой", "sets": [[], [], [], []]}, {"id": "legs-2", "name": "Жим ногами", "sets": [[], [], [], []]}, {"id": "legs-3", "name": "Разгибание ног", "sets": [[], [], [], []]}, {"id": "legs-4", "name": "Сгибание ног", "sets": [[], [], [], []]}, {"id": "legs-5", "name": "Икры стоя", "sets": [[], [], [], []]}]}, {"id": "shoulders", "name": "Плечи", "ru": "", "order": 3, "nsets": 4, "exercises": [{"id": "sh-1", "name": "Жим гантелей сидя", "sets": [[], [], [], []]}, {"id": "sh-2", "name": "Махи гантелей в стороны", "sets": [[], [], [], []]}, {"id": "sh-3", "name": "Тяга к подбородку", "sets": [[], [], [], []]}, {"id": "sh-4", "name": "Обратная бабочка", "sets": [[], [], [], []]}]}, {"id": "biceps", "name": "Бицепс", "ru": "", "order": 4, "nsets": 4, "exercises": [{"id": "bi-1", "name": "Подъём штанги на бицепс", "sets": [[], [], [], []]}, {"id": "bi-2", "name": "Молотки", "sets": [[], [], [], []]}, {"id": "bi-3", "name": "Сгибания на скамье Скотта", "sets": [[], [], [], []]}]}, {"id": "triceps", "name": "Трицепс", "ru": "", "order": 5, "nsets": 4, "exercises": [{"id": "tri-1", "name": "Разгибание на блоке", "sets": [[], [], [], []]}, {"id": "tri-2", "name": "Французский жим", "sets": [[], [], [], []]}, {"id": "tri-3", "name": "Жим узким хватом", "sets": [[], [], [], []]}]}];
+  const OWNER_EMAIL = 'hovo92000@gmail.com';
   const KEY = 'gym:data:v1';
-  const persist = () => { try { localStorage.setItem(KEY, JSON.stringify({ groups: S.groups, notes: S.notes, saved: new Date().toISOString() })); return true; }
+  const FB_VER = '11.10.0';
+  const cfg = (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey) ? window.FIREBASE_CONFIG : null;
+  const store = { mode: 'local', user: null, fb: null, unsub: [], cloudEmpty: null, fromCache: false, err: null, busy: false, hideBanner: false, form: 'login' };
+
+  const sortG = gs => gs.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const localLoad = () => { try { const raw = localStorage.getItem(KEY); if (raw) { const p = JSON.parse(raw); if (p && Array.isArray(p.groups)) return p; } } catch {} return null; };
+  const localPersist = () => { try { localStorage.setItem(KEY, JSON.stringify({ groups: S.groups, notes: S.notes, saved: new Date().toISOString() })); return true; }
     catch (e) { console.error(e); toast('Не сохранилось: память браузера недоступна'); return false; } };
-  const store = {
-    init() {
-      let d = null; try { const raw = localStorage.getItem(KEY); if (raw) { const p = JSON.parse(raw); if (p && Array.isArray(p.groups)) d = p; } } catch {}
-      if (!d) d = { groups: clone(SEED), notes: SEED_NOTES.text };
-      S.groups = d.groups.sort((a,b) => (a.order ?? 0) - (b.order ?? 0)); S.notes = d.notes ?? ''; S.notesLoaded = true; S.dbState = 'ready';
-      if (!S.groups.some(g => g.id === S.active)) S.active = S.groups[0] ? S.groups[0].id : null; render();
-    },
-    saveGroup(g) { const i = S.groups.findIndex(x => x.id === g.id); if (i >= 0) S.groups[i] = g; else S.groups.push(g); return Promise.resolve(persist()); },
-    deleteGroup(id) { S.groups = S.groups.filter(g => g.id !== id); return Promise.resolve(persist()); },
-    saveNotes(text) { S.notes = text; if (persist()) toast('Заметки сохранены'); },
-    exportJSON() {
-      const blob = new Blob([JSON.stringify({ groups: S.groups, notes: S.notes, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'gym-' + today() + '.json'; document.body.append(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(a.href), 1000); toast('Файл сохраняется');
-    },
-    importJSON(file) {
-      const r = new FileReader();
-      r.onload = () => { try { const d = JSON.parse(r.result); if (!d || !Array.isArray(d.groups)) throw 0;
-        S.groups = d.groups; S.notes = typeof d.notes === 'string' ? d.notes : S.notes; persist(); S.active = S.groups[0] ? S.groups[0].id : null; render(); toast('Данные загружены из файла'); }
-        catch { toast('Это не файл резервной копии GYM'); } };
-      r.readAsText(file);
-    },
-    resetToSeed() { S.groups = clone(SEED); S.notes = SEED_NOTES.text; S.confirm = null; persist(); S.active = S.groups[0].id; render(); toast('Восстановлены таблицы из Заметок'); },
-    renderBackup(main) {
-      const file = el('input', { id: 'import-file', type: 'file', accept: 'application/json,.json', onchange: e => { if (e.target.files[0]) store.importJSON(e.target.files[0]); e.target.value = ''; } });
-      let saved = null; try { saved = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch {}
-      main.append(el('div', { class: 'backup' }, el('h3', {}, 'Резервная копия'),
-        el('p', {}, 'Данные хранятся в памяти этого браузера на этом устройстве. Чтобы не потерять их или перенести на другой телефон, скачивай файл время от времени.'),
-        el('div', { class: 'row' }, el('button', { class: 'btn primary', onclick: store.exportJSON }, 'Скачать файл'),
-          el('button', { class: 'btn', onclick: () => file.click() }, 'Загрузить из файла'), file,
-          el('button', { class: 'btn ghost danger', onclick: () => { S.confirm = { type: 'reset' }; render(); } }, 'Сбросить к исходным')),
-        S.confirm && S.confirm.type === 'reset' ? el('div', { class: 'confirm', style: 'margin-top:10px' }, 'Заменить всё на таблицы из Заметок (17 окт 2026)? Новые записи пропадут.',
-          el('button', { class: 'btn danger', onclick: store.resetToSeed }, 'Сбросить'), el('button', { class: 'btn ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')) : null,
-        el('div', { class: 'status' }, saved && saved.saved ? 'Последнее сохранение: ' + new Date(saved.saved).toLocaleString('ru-RU') : 'Пока показаны исходные таблицы из Заметок.')));
-    },
+  const applyData = (groups, notes) => { S.groups = sortG(groups); if (notes != null) S.notes = notes; S.notesLoaded = true; S.dbState = 'ready';
+    if (!S.groups.some(g => g.id === S.active)) S.active = S.groups[0] ? S.groups[0].id : null; render(); };
+  const uid = () => store.user && store.user.uid;
+
+  store.init = () => {
+    const d = localLoad();
+    if (d) applyData(d.groups, d.notes);
+    else if (cfg) applyData(clone(TEMPLATE), '');          // cloud app, nobody signed in yet: generic template
+    else applyData(clone(SEED), SEED_NOTES.text);           // no Firebase configured: single-user page with the Notes tables
+    if (cfg) initFirebase().catch(e => { console.error(e); store.err = 'Firebase не загрузился: ' + (e && e.message || e); render(); });
   };
+
+  async function initFirebase() {
+    const base = `https://www.gstatic.com/firebasejs/${FB_VER}/`;
+    const [app, auth, fs] = await Promise.all([import(base + 'firebase-app.js'), import(base + 'firebase-auth.js'), import(base + 'firebase-firestore.js')]);
+    const a = app.initializeApp(cfg);
+    let db;
+    try { db = fs.initializeFirestore(a, { localCache: fs.persistentLocalCache({ tabManager: fs.persistentMultipleTabManager() }) }); }
+    catch (e) { console.warn('persistent cache unavailable', e); db = fs.getFirestore(a); }
+    const au = auth.getAuth(a); au.languageCode = 'ru';
+    store.fb = { auth, fs, db, au };
+    auth.onAuthStateChanged(au, user => { store.user = user; if (user) attach(); else detach(); render(); });
+  }
+
+  function detach() { for (const u of store.unsub) u(); store.unsub = []; if (store.mode === 'cloud') { store.mode = 'local'; const d = localLoad(); applyData(d ? d.groups : clone(TEMPLATE), d ? d.notes : ''); } }
+  function attach() {
+    for (const u of store.unsub) u(); store.unsub = [];
+    const { fs, db } = store.fb; const u = uid();
+    store.mode = 'cloud'; store.cloudEmpty = null; S.dbState = 'loading'; S.groups = []; S.notes = ''; render();
+    store.unsub.push(fs.onSnapshot(fs.collection(db, 'users', u, 'groups'), { includeMetadataChanges: true }, snap => {
+      store.fromCache = snap.metadata.fromCache;
+      if (!snap.empty) store.cloudEmpty = false; else if (!snap.metadata.fromCache) store.cloudEmpty = true;
+      if (snap.empty && snap.metadata.fromCache) { S.dbState = 'loading'; render(); return; }
+      applyData(snap.docs.map(d => ({ id: d.id, ...d.data() })), null);
+    }, e => { console.error(e); store.err = 'Ошибка чтения: ' + e.code; S.dbState = 'offline'; render(); }));
+    store.unsub.push(fs.onSnapshot(fs.doc(db, 'users', u, 'meta', 'notes'), snap => { S.notes = snap.exists() ? (snap.data().text || '') : ''; S.notesLoaded = true; if (S.mode === 'notes') render(); }, e => console.error(e)));
+  }
+
+  // writes: in cloud mode they are fire-and-forget (Firestore queues them offline and syncs later)
+  const cloudErr = e => { console.error(e); toast(e && e.code === 'permission-denied' ? 'Нет прав: проверь правила Firestore' : 'Не сохранилось в облако'); };
+  store.saveGroup = g => {
+    const i = S.groups.findIndex(x => x.id === g.id); if (i >= 0) S.groups[i] = g; else S.groups.push(g);
+    if (store.mode !== 'cloud') return Promise.resolve(localPersist());
+    const { fs, db } = store.fb; const { id, ...body } = g;
+    fs.setDoc(fs.doc(db, 'users', uid(), 'groups', id), body).catch(cloudErr); return Promise.resolve(true);
+  };
+  store.deleteGroup = id => {
+    S.groups = S.groups.filter(g => g.id !== id);
+    if (store.mode !== 'cloud') return Promise.resolve(localPersist());
+    const { fs, db } = store.fb; fs.deleteDoc(fs.doc(db, 'users', uid(), 'groups', id)).catch(cloudErr); return Promise.resolve(true);
+  };
+  store.saveNotes = text => {
+    S.notes = text;
+    if (store.mode !== 'cloud') { if (localPersist()) toast('Заметки сохранены'); return; }
+    const { fs, db } = store.fb; fs.setDoc(fs.doc(db, 'users', uid(), 'meta', 'notes'), { text, updated: today() }).catch(cloudErr); toast('Заметки сохранены');
+  };
+  async function writeProgram(groups, notes) {
+    const { fs, db } = store.fb; const u = uid(); const b = fs.writeBatch(db);
+    for (const g of S.groups) b.delete(fs.doc(db, 'users', u, 'groups', g.id));
+    for (const g of groups) { const { id, ...body } = g; b.set(fs.doc(db, 'users', u, 'groups', id), body); }
+    b.set(fs.doc(db, 'users', u, 'meta', 'notes'), { text: notes || '', updated: today() });
+    b.set(fs.doc(db, 'users', u, 'meta', 'profile'), { created: today(), email: store.user.email || null, guest: !!store.user.isAnonymous }, { merge: true });
+    store.busy = true; render();
+    try { await Promise.race([b.commit(), new Promise(r => setTimeout(r, 4000))]); store.cloudEmpty = false; S.confirm = null; toast('Программа готова'); }
+    catch (e) { cloudErr(e); } finally { store.busy = false; render(); }
+  }
+
+  // ---- auth ----
+  const AUTH_MSG = { 'auth/invalid-email': 'Неверный email', 'auth/user-not-found': 'Такого пользователя нет', 'auth/wrong-password': 'Неверный пароль', 'auth/invalid-credential': 'Неверный email или пароль',
+    'auth/email-already-in-use': 'Этот email уже зарегистрирован, войди', 'auth/weak-password': 'Пароль минимум 6 символов', 'auth/popup-closed-by-user': 'Окно входа закрыто', 'auth/popup-blocked': 'Браузер заблокировал окно. Войди по email или открой сайт в Safari',
+    'auth/operation-not-allowed': 'Этот способ входа не включён в Firebase Console', 'auth/network-request-failed': 'Нет сети', 'auth/too-many-requests': 'Слишком много попыток, подожди', 'auth/unauthorized-domain': 'Домен не добавлен в Firebase Auth → Authorized domains' };
+  const authErr = e => { console.error(e); store.err = AUTH_MSG[e && e.code] || ('Ошибка: ' + (e && e.code || e)); store.busy = false; render(); };
+  async function doAuth(fn) { store.err = null; store.busy = true; render(); try { await fn(); store.busy = false; store.err = null; } catch (e) { authErr(e); } }
+  const signInEmail = (email, pass) => doAuth(() => store.fb.auth.signInWithEmailAndPassword(store.fb.au, email.trim(), pass));
+  const signUpEmail = (email, pass) => doAuth(() => store.fb.auth.createUserWithEmailAndPassword(store.fb.au, email.trim(), pass));
+  const signInGoogle = () => doAuth(() => store.fb.auth.signInWithPopup(store.fb.au, new store.fb.auth.GoogleAuthProvider()));
+  const signInGuest = () => doAuth(() => store.fb.auth.signInAnonymously(store.fb.au));
+  const resetPass = email => { if (!email.trim()) { store.err = 'Введи email, на него придёт ссылка'; render(); return; } doAuth(async () => { await store.fb.auth.sendPasswordResetEmail(store.fb.au, email.trim()); toast('Письмо для сброса пароля отправлено'); }); };
+  const signOut = () => doAuth(() => store.fb.auth.signOut(store.fb.au));
+
+  // ---- UI pieces ----
+  const initial = () => { const u = store.user; if (!u) return '?'; const s = (u.displayName || u.email || 'Г'); return s[0].toUpperCase(); };
+  store.renderAcct = btn => {
+    if (!cfg) { btn.hidden = true; return; }
+    btn.hidden = false; btn.replaceChildren();
+    if (store.user) { btn.className = 'acct on'; btn.textContent = initial(); btn.title = store.user.email || 'Гость'; }
+    else { btn.className = 'acct warn'; btn.textContent = 'Войти'; }
+  };
+  store.banner = main => {
+    if (!cfg || store.user || store.hideBanner) return;
+    main.append(el('div', { class: 'notice', style: 'display:flex;gap:10px;align-items:center;flex-wrap:wrap' },
+      el('span', { style: 'flex:1;min-width:0' }, el('b', {}, 'Данные только на этом телефоне. '), 'Войди, и они будут в облаке на всех устройствах.'),
+      el('button', { class: 'btn sm primary', onclick: () => { setMode('account'); render(); } }, 'Войти'),
+      el('button', { class: 'btn sm ghost', 'aria-label': 'Скрыть', onclick: () => { store.hideBanner = true; render(); } }, '×')));
+  };
+  // first sign-in with an empty cloud: choose how to start
+  store.gate = main => {
+    if (store.mode !== 'cloud' || store.cloudEmpty !== true) return false;
+    const local = localLoad(); const own = store.user.email === OWNER_EMAIL;
+    main.append(el('div', { class: 'auth' }, el('h3', {}, 'С чего начнём?'), el('p', {}, 'В аккаунте пока пусто. Выбери стартовую программу, потом её можно менять как угодно.'),
+      el('div', { class: 'choice' },
+        el('button', { class: 'main', disabled: store.busy, onclick: () => writeProgram(clone(TEMPLATE), '') }, el('b', {}, 'Стандартная программа'), el('span', {}, '6 групп мышц, 25 базовых упражнений, 4 подхода')),
+        el('button', { disabled: store.busy, onclick: () => writeProgram([], '') }, el('b', {}, 'Пустая'), el('span', {}, 'Сам добавлю группы и упражнения')),
+        local ? el('button', { disabled: store.busy, onclick: () => writeProgram(local.groups, local.notes) }, el('b', {}, 'Перенести с этого устройства'), el('span', {}, `${local.groups.length} групп, сохранено ${local.saved ? new Date(local.saved).toLocaleDateString('ru-RU') : 'ранее'}`)) : null,
+        own ? el('button', { disabled: store.busy, onclick: () => writeProgram(clone(SEED), SEED_NOTES.text) }, el('b', {}, 'Мои таблицы из Notes'), el('span', {}, 'Dosh, Biceps, Mechq, Triceps, Us, Vot со всей историей')) : null),
+      store.busy ? el('p', {}, 'Сохраняю…') : null));
+    return true;
+  };
+  store.renderAccount = main => {
+    main.append(el('div', { class: 'ghead' }, el('h2', {}, 'Аккаунт')));
+    if (!cfg) {
+      main.append(el('div', { class: 'auth' }, el('h3', {}, 'Облако не подключено'), el('p', {}, 'Файл firebase-config.js пуст. Пока данные хранятся только в этом браузере. Инструкция по подключению Firebase лежит в README репозитория.')));
+      return renderBackup(main);
+    }
+    if (!store.fb) { main.append(el('div', { class: 'notice' }, store.err || 'Подключаюсь к Firebase…')); return; }
+    if (store.user) {
+      const u = store.user;
+      main.append(el('div', { class: 'auth' },
+        el('div', { class: 'prof' }, el('div', { class: 'av' }, initial()), el('div', { class: 'who' }, el('b', {}, u.isAnonymous ? 'Гость' : (u.displayName || u.email)), el('span', {}, u.isAnonymous ? 'Данные привязаны к этому устройству, пока не выйдешь' : (u.email || '')))),
+        el('p', {}, store.fromCache ? 'Офлайн: показана локальная копия, изменения отправятся при появлении сети.' : 'Синхронизировано с облаком. Открой этот же сайт на другом устройстве и войди тем же способом.'),
+        el('div', { class: 'row' }, el('button', { class: 'btn', disabled: store.busy, onclick: signOut }, 'Выйти'),
+          el('button', { class: 'btn ghost danger', onclick: () => { S.confirm = { type: 'reprogram' }; render(); } }, 'Заменить программу')),
+        S.confirm && S.confirm.type === 'reprogram' ? el('div', { class: 'confirm' }, 'Удалить все группы и записи в облаке и начать заново?',
+          el('button', { class: 'btn sm danger', disabled: store.busy, onclick: () => writeProgram(clone(TEMPLATE), S.notes) }, 'Стандартная'),
+          el('button', { class: 'btn sm danger', disabled: store.busy, onclick: () => writeProgram([], S.notes) }, 'Пустая'),
+          u.email === OWNER_EMAIL ? el('button', { class: 'btn sm danger', disabled: store.busy, onclick: () => writeProgram(clone(SEED), SEED_NOTES.text) }, 'Из Notes') : null,
+          el('button', { class: 'btn sm ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')) : null,
+        store.err ? el('div', { class: 'err' }, store.err) : null));
+      return renderBackup(main);
+    }
+    const email = el('input', { id: 'auth-email', type: 'email', placeholder: 'Email', autocomplete: 'username', inputmode: 'email' });
+    const pass = el('input', { id: 'auth-pass', type: 'password', placeholder: store.form === 'signup' ? 'Пароль (от 6 символов)' : 'Пароль', autocomplete: store.form === 'signup' ? 'new-password' : 'current-password' });
+    const signup = store.form === 'signup';
+    main.append(el('form', { class: 'auth', onsubmit: e => { e.preventDefault(); (signup ? signUpEmail : signInEmail)(email.value, pass.value); } },
+      el('h3', {}, signup ? 'Создать аккаунт' : 'Войти'),
+      el('p', {}, 'У каждого пользователя своя программа и история. Вход по email работает и в приложении на домашнем экране.'),
+      email, pass,
+      store.err ? el('div', { class: 'err' }, store.err) : null,
+      el('button', { type: 'submit', class: 'btn primary', disabled: store.busy }, store.busy ? 'Секунду…' : (signup ? 'Создать аккаунт' : 'Войти')),
+      el('div', { class: 'row', style: 'justify-content:space-between' },
+        el('button', { type: 'button', class: 'btn ghost sm', onclick: () => { store.form = signup ? 'login' : 'signup'; store.err = null; render(); } }, signup ? 'У меня уже есть аккаунт' : 'Создать аккаунт'),
+        signup ? null : el('button', { type: 'button', class: 'btn ghost sm', onclick: () => resetPass(email.value) }, 'Забыл пароль')),
+      el('div', { class: 'or' }, 'или'),
+      el('button', { type: 'button', class: 'btn', disabled: store.busy, onclick: signInGoogle }, 'Войти через Google'),
+      el('button', { type: 'button', class: 'btn ghost', disabled: store.busy, onclick: signInGuest }, 'Продолжить как гость'),
+      el('p', { style: 'font-size:12px' }, 'Google-вход открывает окно: если ты добавил сайт на экран «Домой» и окно не возвращается, войди по email. Гость хранит данные в облаке без пароля, но вернуть их после выхода нельзя.')));
+    renderBackup(main);
+  };
+
+  // ---- backup (export/import works in both modes) ----
+  function renderBackup(main) {
+    const file = el('input', { id: 'import-file', type: 'file', accept: 'application/json,.json', onchange: e => { if (e.target.files[0]) importJSON(e.target.files[0]); e.target.value = ''; } });
+    main.append(el('div', { class: 'backup' }, el('h3', {}, 'Резервная копия'),
+      el('p', {}, store.mode === 'cloud' ? 'Скачать всё в файл или восстановить из файла (заменит программу в облаке).' : 'Данные хранятся в памяти этого браузера. Скачивай файл время от времени или войди в аккаунт.'),
+      el('div', { class: 'row' }, el('button', { class: 'btn', onclick: exportJSON }, 'Скачать файл'), el('button', { class: 'btn', onclick: () => file.click() }, 'Загрузить из файла'), file)));
+  }
+  function exportJSON() {
+    const blob = new Blob([JSON.stringify({ groups: S.groups, notes: S.notes, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'gym-' + today() + '.json'; document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000); toast('Файл сохраняется');
+  }
+  function importJSON(file) {
+    const r = new FileReader();
+    r.onload = () => { try { const d = JSON.parse(r.result); if (!d || !Array.isArray(d.groups)) throw 0;
+      if (store.mode === 'cloud') { writeProgram(d.groups, typeof d.notes === 'string' ? d.notes : S.notes); return; }
+      S.groups = sortG(d.groups); S.notes = typeof d.notes === 'string' ? d.notes : S.notes; localPersist(); S.active = S.groups[0] ? S.groups[0].id : null; render(); toast('Данные загружены из файла'); }
+      catch { toast('Это не файл резервной копии GYM'); } };
+    r.readAsText(file);
+  }
+  store.renderBackup = renderBackup;   // also shown under Notes
 
 
   // ---------- mutations ----------
@@ -435,10 +600,18 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       onclick: () => { S.active = g.id; setPref('active', g.id); S.open = null; S.form = null; S.confirm = null; S.wdate = null; if (S.mode === 'notes' || S.mode === 'journal') setMode('workout'); render(); } },
       el('b', {}, g.name), g.ru ? el('span', {}, g.ru) : null, g.lastEntry === td ? el('i', { class: 'dot', title: 'тренировка сегодня' }) : null));
     if (S.dbState === 'ready') nav.append(el('button', { class: 'tab add', onclick: () => { S.addingGroup = true; setMode('cards'); render(); } }, '+ Группа'));
+    if (store.renderAcct) store.renderAcct($('#acct'));
     const tb = $('#today-box'); tb.replaceChildren();
     const g = activeGroup();
     tb.append(el('b', {}, fmtDate(td)), g && g.lastEntry ? 'последняя: ' + rel(g.lastEntry) : DAYS[new Date().getDay()]);
   }
+
+  let wake = null;
+  async function wakeLock(on) { try {
+    if (on && !wake && navigator.wakeLock && document.visibilityState === 'visible') { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); }
+    else if (!on && wake) { const w = wake; wake = null; await w.release(); }
+  } catch {} }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && S.mode === 'workout') wakeLock(true); });
 
   function setMode(m) { S.mode = m; setPref('mode', m); S.confirm = null; for (const b of document.querySelectorAll('#nav button')) b.setAttribute('aria-pressed', String(b.dataset.mode === m)); }
 
@@ -665,6 +838,10 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     $('#brand-sub').textContent = S.dbState === 'offline' ? 'только просмотр' : 'дневник весов';
     updateSavebar(g && S.mode === 'workout' ? g.id : null);
     if (S.mode !== 'workout') S.justSaved = null;
+    wakeLock(S.mode === 'workout');
+    if (S.mode === 'account' && store.renderAccount) return store.renderAccount(main);
+    if (store.gate && store.gate(main)) return;
+    if (store.banner) store.banner(main);
 
     if (S.dbState === 'offline') main.append(el('div', { class: 'notice' }, el('b', {}, 'Нет доступа к базе. '), 'Открой ссылку, войдя в свой аккаунт claude.ai, тогда записи можно будет добавлять. Сейчас показана последняя сохранённая копия.'));
 
@@ -712,11 +889,14 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   }
 
   for (const b of document.querySelectorAll('#nav button')) b.addEventListener('click', () => { setMode(b.dataset.mode); S.open = null; S.form = null; render(); window.scrollTo({ top: 0 }); });
+  $('#acct').addEventListener('click', () => { setMode('account'); S.open = null; render(); window.scrollTo({ top: 0 }); });
   $('#savebtn').addEventListener('click', () => { const g = activeGroup(); if (g) saveWorkout(g.id); });
+  if (S.mode === 'account' && !store.renderAccount) S.mode = 'workout';
   setMode(S.mode);
   render();
   store.init();
 })();
 </script>
+<script>if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
 </body>
 </html>
