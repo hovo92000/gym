@@ -357,18 +357,23 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       store.fromCache = snap.metadata.fromCache;
       if (!snap.empty) store.cloudEmpty = false; else if (!snap.metadata.fromCache) store.cloudEmpty = true;
       if (snap.empty && snap.metadata.fromCache) { S.dbState = 'loading'; render(); return; }
-      applyData(snap.docs.map(d => ({ id: d.id, ...d.data() })), null);
+      applyData(snap.docs.map(d => decG(d.id, d.data())), null);
     }, e => { console.error(e); store.err = 'Ошибка чтения: ' + e.code; S.dbState = 'offline'; render(); }));
     store.unsub.push(fs.onSnapshot(fs.doc(db, 'users', u, 'meta', 'notes'), snap => { S.notes = snap.exists() ? (snap.data().text || '') : ''; S.notesLoaded = true; if (S.mode === 'notes') render(); }, e => console.error(e)));
   }
+
+  // Firestore forbids arrays inside arrays: sets [[...],[...]] travel as [{e:[...]},{e:[...]}]
+  const encG = g => { const { id, ...body } = g; return { ...body, exercises: (body.exercises || []).map(ex => ({ ...ex, sets: (ex.sets || []).map(st => ({ e: st })) })) }; };
+  const decG = (id, data) => ({ id, ...data, exercises: (data.exercises || []).map(ex => ({ ...ex, sets: (ex.sets || []).map(st => Array.isArray(st) ? st : (st && st.e) || []) })) });
 
   // writes: in cloud mode they are fire-and-forget (Firestore queues them offline and syncs later)
   const cloudErr = e => { console.error(e); toast(e && e.code === 'permission-denied' ? 'Нет прав: проверь правила Firestore' : 'Не сохранилось в облако'); };
   store.saveGroup = g => {
     const i = S.groups.findIndex(x => x.id === g.id); if (i >= 0) S.groups[i] = g; else S.groups.push(g);
     if (store.mode !== 'cloud') return Promise.resolve(localPersist());
-    const { fs, db } = store.fb; const { id, ...body } = g;
-    fs.setDoc(fs.doc(db, 'users', uid(), 'groups', id), body).catch(cloudErr); return Promise.resolve(true);
+    const { fs, db } = store.fb;
+    try { fs.setDoc(fs.doc(db, 'users', uid(), 'groups', g.id), encG(g)).catch(cloudErr); } catch (e) { cloudErr(e); return Promise.resolve(false); }
+    return Promise.resolve(true);
   };
   store.deleteGroup = id => {
     S.groups = S.groups.filter(g => g.id !== id);
@@ -381,14 +386,17 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const { fs, db } = store.fb; fs.setDoc(fs.doc(db, 'users', uid(), 'meta', 'notes'), { text, updated: today() }).catch(cloudErr); toast('Заметки сохранены');
   };
   async function writeProgram(groups, notes) {
-    const { fs, db } = store.fb; const u = uid(); const b = fs.writeBatch(db);
-    for (const g of S.groups) b.delete(fs.doc(db, 'users', u, 'groups', g.id));
-    for (const g of groups) { const { id, ...body } = g; b.set(fs.doc(db, 'users', u, 'groups', id), body); }
-    b.set(fs.doc(db, 'users', u, 'meta', 'notes'), { text: notes || '', updated: today() });
-    b.set(fs.doc(db, 'users', u, 'meta', 'profile'), { created: today(), email: store.user.email || null, guest: !!store.user.isAnonymous }, { merge: true });
-    store.busy = true; render();
-    try { await Promise.race([b.commit(), new Promise(r => setTimeout(r, 4000))]); store.cloudEmpty = false; S.confirm = null; toast('Программа готова'); }
-    catch (e) { cloudErr(e); } finally { store.busy = false; render(); }
+    store.busy = true; store.err = null; render();
+    try {
+      const { fs, db } = store.fb; const u = uid(); const b = fs.writeBatch(db);
+      for (const g of S.groups) b.delete(fs.doc(db, 'users', u, 'groups', g.id));
+      for (const g of groups) b.set(fs.doc(db, 'users', u, 'groups', g.id), encG(g));
+      b.set(fs.doc(db, 'users', u, 'meta', 'notes'), { text: notes || '', updated: today() });
+      b.set(fs.doc(db, 'users', u, 'meta', 'profile'), { created: today(), email: store.user.email || null, guest: !!store.user.isAnonymous }, { merge: true });
+      await Promise.race([b.commit(), new Promise(r => setTimeout(r, 4000))]);
+      store.cloudEmpty = false; S.confirm = null; toast('Программа готова');
+    } catch (e) { console.error(e); store.err = 'Не сохранилось: ' + (e && (e.code || e.message) || e); toast('Не сохранилось в облако'); }
+    finally { store.busy = false; render(); }
   }
 
   // ---- auth ----
@@ -429,7 +437,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
         el('button', { disabled: store.busy, onclick: () => writeProgram([], '') }, el('b', {}, 'Пустая'), el('span', {}, 'Сам добавлю группы и упражнения')),
         local ? el('button', { disabled: store.busy, onclick: () => writeProgram(local.groups, local.notes) }, el('b', {}, 'Перенести с этого устройства'), el('span', {}, `${local.groups.length} групп, сохранено ${local.saved ? new Date(local.saved).toLocaleDateString('ru-RU') : 'ранее'}`)) : null,
         own ? el('button', { disabled: store.busy, onclick: () => writeProgram(clone(SEED), SEED_NOTES.text) }, el('b', {}, 'Мои таблицы из Notes'), el('span', {}, 'Dosh, Biceps, Mechq, Triceps, Us, Vot со всей историей')) : null),
-      store.busy ? el('p', {}, 'Сохраняю…') : null));
+      store.busy ? el('p', {}, 'Сохраняю…') : null, store.err ? el('div', { class: 'err' }, store.err) : null));
     return true;
   };
   store.renderAccount = main => {
