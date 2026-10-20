@@ -112,7 +112,7 @@ td.cell .lastv{color:var(--accent);font-weight:700}
 tr:last-child td{border-bottom:0}
 .tablenote{font-size:12px;color:var(--muted);margin:8px 2px 0}
 
-.notes textarea{width:100%;min-height:140px;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:12px;font-size:15px;line-height:1.5;resize:vertical}
+.notes textarea{width:100%;min-height:140px;border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:12px;font-size:16px;line-height:1.5;resize:vertical}
 .notes .hint{font-size:12px;color:var(--muted);margin:6px 2px}
 
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--fg);color:var(--bg);padding:9px 14px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:9}
@@ -125,6 +125,53 @@ tr:last-child td{border-bottom:0}
 .backup p{color:var(--muted);font-size:13px;margin:0 0 10px}
 .backup input[type=file]{display:none}
 .backup .status{font-size:12px;color:var(--muted);margin-top:8px}
+
+/* ---- responsive ---- */
+html{-webkit-text-size-adjust:100%}
+button,a,.tab,.card .head{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+input,textarea{font-size:16px}  /* 16px+ keeps iOS from zooming the page on focus */
+.btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.seg button{min-height:36px}
+.tab{min-height:44px}
+.card .head{min-height:52px}
+.bar{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+.tabs{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+main{padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
+.set .val{font-size:clamp(17px,5.6vw,24px)}
+.row.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row.actions .primary{grid-column:1/-1}
+.hist h4 button{min-height:32px;padding:0 6px;margin:-6px -6px -6px 0}
+@media (max-width:480px){
+  .bar{flex-wrap:wrap;padding-bottom:8px}
+  .seg{flex:1 0 100%;order:3}
+  .seg button{flex:1;padding-inline:4px;min-height:38px}
+  .brand{font-size:26px}
+  .ghead{flex-direction:column;align-items:flex-start;gap:2px}
+  .ghead .meta{text-align:left}
+  .sets{gap:4px;padding-inline:10px}
+  .set{padding:7px 5px 6px}
+  .set .lbl{font-size:9px;letter-spacing:.04em}
+  .set .cnt{font-size:10px}
+  .inputs{gap:4px}
+  .inputs input{padding:10px 2px}
+  .card .head{padding:11px 12px}
+  .detail{padding-inline:12px}
+  td:first-child,th:first-child{min-width:104px;max-width:130px;font-size:12px}
+  td.cell{min-width:180px;font-size:12px}
+}
+.short{display:none}
+.set .lbl,.set .cnt{white-space:nowrap}
+@media (max-width:360px){
+  .full{display:none} .short{display:inline}
+  .set .lbl{font-size:9px}
+  .chip{font-size:12px;padding:2px 5px}
+}
+@media (min-width:900px){
+  main{max-width:960px}
+  .list{display:grid;grid-template-columns:1fr 1fr;align-items:start}
+  .card.open{grid-column:1/-1}
+}
+@media (hover:hover){ .card .head:hover .name{color:var(--accent)} .tab:hover{border-color:var(--accent)} }
 </style>
 </head>
 <body>
@@ -286,7 +333,7 @@ tr:last-child td{border-bottom:0}
     const n = g.nsets || ex.sets.length || 4;
     const isOpen = S.open === ex.id;
     const lastDate = ex.last ? fmtDate(ex.last) : '';
-    const card = el('div', { class: 'card', style: `--n:${n}` });
+    const card = el('div', { class: 'card' + (isOpen ? ' open' : ''), style: `--n:${n}` });
     card.append(el('button', { class: 'head', 'aria-expanded': String(isOpen), onclick: () => { S.open = isOpen ? null : ex.id; S.form = null; S.confirm = null; S.rename = null; render(); } },
       el('div', { class: 'name' }, ex.name), lastDate ? el('div', { class: 'last' }, lastDate) : null));
     const sets = el('div', { class: 'sets' });
@@ -294,9 +341,11 @@ tr:last-child td{border-bottom:0}
       const arr = ex.sets[i] || []; const l = last(arr), prev = arr.length > 1 ? arr[arr.length-2] : null;
       const a = num(l), b = num(prev); let dir = '';
       if (a != null && b != null) dir = a > b ? 'up' : a < b ? 'down' : '';
-      sets.append(el('div', { class: 'set' }, el('div', { class: 'lbl' }, 'Подход ' + (i+1)),
+      sets.append(el('div', { class: 'set' },
+        el('div', { class: 'lbl' }, el('span', { class: 'full' }, 'Подход ' + (i+1)), el('span', { class: 'short' }, 'П' + (i+1))),
         el('div', { class: 'val num' + (l == null ? ' empty' : '') }, l == null ? '—' : l),
-        el('div', { class: 'cnt num' }, dir ? el('span', { class: 'd ' + dir }) : null, arr.length ? arr.length + ' зап.' : 'пусто')));
+        el('div', { class: 'cnt num' }, dir ? el('span', { class: 'd ' + dir }) : null,
+          arr.length ? [el('span', { class: 'full' }, arr.length + ' зап.'), el('span', { class: 'short' }, '×' + arr.length)] : el('span', {}, '—'))));
     }
     card.append(sets);
     if (isOpen) card.append(renderDetail(g, ex, n));
@@ -336,7 +385,7 @@ tr:last-child td{border-bottom:0}
         el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.form = null; render(); } }, 'Отмена'),
         el('button', { type: 'submit', class: 'btn primary' }, 'Сохранить')));
       d.append(form);
-      setTimeout(() => { const f = form.querySelector('input'); if (f) { f.focus(); f.select(); } }, 0);
+      setTimeout(() => { form.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); const f = form.querySelector('input'); if (f) { f.focus(); f.select(); } }, 0);
     } else if (S.rename === ex.id) {
       const inp = el('input', { id: 'rename-' + ex.id, type: 'text', value: ex.name });
       const r = el('form', { class: 'rename', onsubmit: e => { e.preventDefault(); renameEx(g.id, ex.id, inp.value); } }, inp,
@@ -349,7 +398,7 @@ tr:last-child td{border-bottom:0}
         el('button', { class: 'btn ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')));
     } else {
       const canWrite = S.dbState === 'ready';
-      d.append(el('div', { class: 'row' },
+      d.append(el('div', { class: 'row actions' },
         el('button', { class: 'btn primary', disabled: !canWrite, onclick: () => { S.form = ex.id; S.confirm = null; render(); } }, '+ Записать веса'),
         el('button', { class: 'btn', disabled: !canWrite, onclick: () => { S.rename = ex.id; render(); } }, 'Переименовать'),
         el('button', { class: 'btn ghost danger', disabled: !canWrite, onclick: () => { S.confirm = { type: 'ex' }; render(); } }, 'Удалить')));
