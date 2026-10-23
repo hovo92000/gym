@@ -117,6 +117,25 @@ section + section{border-top:1px dashed var(--line)}
 .letter .sig{display:block;text-align:right;margin-top:18px;color:var(--rose)}
 .caret{display:inline-block;width:2px;height:1em;background:var(--rose);vertical-align:-.15em;animation:tw .8s steps(2) infinite}
 
+/* mood & answer */
+.mood{display:flex;flex-direction:column;gap:12px}
+.msky{position:relative;height:150px;border-radius:16px;overflow:hidden;background:linear-gradient(180deg,#5b6480,#9aa3b8);transition:background 1s}
+.msun{position:absolute;left:50%;bottom:-70px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle at 45% 40%,#fff3b0,var(--sun) 60%,#ffb347);box-shadow:0 0 40px 10px rgba(255,209,102,.5);transform:translate(-50%,100px);transition:transform .8s cubic-bezier(.3,.7,.3,1)}
+.mface{position:absolute;left:14px;top:12px;font-size:40px;line-height:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.2));transition:transform .3s}
+.mq{font-weight:700;margin-top:4px}
+input[type=range]{width:100%;accent-color:var(--rose);height:44px;margin:0}
+.mlbl{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.mlbl #mval{font-weight:700;color:var(--fg)}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opts button{min-height:44px;padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-weight:700;font-size:15px;text-align:left}
+.opts button[aria-pressed="true"]{background:var(--rose);color:#fff;border-color:var(--rose)}
+textarea#ps{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:16px;resize:vertical;background:#fff;color:var(--fg)}
+.send{display:flex;flex-direction:column;gap:8px}
+.send .btn{text-decoration:none}
+.send .btn[aria-disabled="true"]{opacity:.5;pointer-events:none}
+#sent{font-family:var(--hand);font-size:24px;color:var(--rose);text-align:center;min-height:30px}
+.small{font-size:14px;color:var(--muted)}
+
 /* hug */
 .hugbar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;justify-content:center;padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none}
 .hugbar{justify-content:flex-end}
@@ -198,6 +217,31 @@ footer{padding:30px 0 110px;text-align:center;color:var(--muted);font-size:13px}
     <div class="letter" id="ltext"></div>
   </section>
 
+  <section id="answer">
+    <p class="eyebrow">А теперь ты</p>
+    <h2>Как ты сейчас?</h2>
+    <p class="sub">Честно. Мне правда важно знать. Ответ улетит мне одним нажатием.</p>
+    <div class="card mood">
+      <div class="msky" id="msky"><div class="msun" id="msun"></div><div class="mface" id="mface">😐</div></div>
+      <label for="mood" class="mq">Настроение сейчас</label>
+      <input type="range" id="mood" min="0" max="10" value="5" aria-label="Настроение от 0 до 10">
+      <div class="mlbl"><span>совсем грустно</span><span id="mval">5 / 10</span><span>солнечно</span></div>
+      <p class="mq">Простила?</p>
+      <div class="opts" id="opts">
+        <button type="button" data-v="Да 💛">Да 💛</button>
+        <button type="button" data-v="Почти">Почти</button>
+        <button type="button" data-v="Ещё чуть-чуть побуду обиженной">Ещё чуть-чуть побуду обиженной</button>
+      </div>
+      <textarea id="ps" rows="2" placeholder="Хочешь что-то добавить? Необязательно."></textarea>
+      <div class="send">
+        <a class="btn" id="tg" href="#" target="_blank" rel="noopener">Отправить в Telegram</a>
+        <a class="btn soft" id="wa" href="#" target="_blank" rel="noopener">В WhatsApp</a>
+        <button type="button" class="btn soft" id="copy">Скопировать</button>
+      </div>
+      <p class="small" id="sent"></p>
+    </div>
+  </section>
+
   <footer>Эту страницу видишь только ты. Сделано с любовью на расстоянии.</footer>
 </main>
 
@@ -214,6 +258,9 @@ footer{padding:30px 0 110px;text-align:center;color:var(--muted);font-size:13px}
 const CONFIG = {
   name: 'Солнышко',
   signature: 'Твой, на любом расстоянии',
+  // Куда прилетит её ответ. telegram: твой username без @ (пусто = Telegram сам спросит, кому отправить);
+  // whatsapp: твой номер цифрами с кодом страны, например '37477123456' (пусто = WhatsApp спросит, кому).
+  contact: { telegram: '', whatsapp: '' },
   notes: [
     'Между нами километры. А между нами, по сути, ничего. Проверено.',
     'Я только что улыбнулся просто потому, что подумал о тебе. Твоя очередь.',
@@ -365,6 +412,27 @@ const CONFIG = {
   const type = () => { if (typed) return; typed = true; if (reduced) return showAll(); let i = 0; const caret = document.createElement('span'); caret.className = 'caret'; lt.append(caret);
     const tick = () => { if (i <= full.length) { lt.textContent = full.slice(0, i); lt.append(caret); i++; setTimeout(tick, full[i-1] === '\n' ? 350 : 28); } else { caret.remove(); showAll(); } }; tick(); };
   if ('IntersectionObserver' in window) new IntersectionObserver(es => es.forEach(e => e.isIntersecting && type()), { threshold: .25 }).observe(lt); else showAll();
+
+  // mood & answer
+  const mood = $('#mood'), msky = $('#msky'), msun = $('#msun'), mface = $('#mface'), mval = $('#mval'), opts = $('#opts'), ps = $('#ps'), sent = $('#sent');
+  const FACES = ['😭','😢','😔','🙁','😕','😐','🙂','😊','😄','🥰','🌞'];
+  let choice = ''; try { const saved = JSON.parse(localStorage.getItem('solnce:answer') || 'null'); if (saved) { mood.value = saved.mood; choice = saved.choice || ''; ps.value = saved.ps || ''; } } catch {}
+  const skyFor = v => { const t = v / 10; const mix = (a, b) => Math.round(a + (b - a) * t); return `linear-gradient(180deg, rgb(${mix(91,120)},${mix(100,190)},${mix(128,255)}), rgb(${mix(154,255)},${mix(163,236)},${mix(184,200)}))`; };
+  const updMood = () => { const v = +mood.value; mval.textContent = v + ' / 10'; mface.textContent = FACES[v]; mface.style.transform = `scale(${1 + v/25})`; msky.style.background = skyFor(v); msun.style.transform = `translate(-50%, ${100 - v*12}px)`; };
+  const text = () => { const v = +mood.value; return `Настроение: ${v}/10 ${FACES[v]}\nПростила: ${choice || 'пока думаю'}` + (ps.value.trim() ? `\n${ps.value.trim()}` : '') + '\n— отправлено со страницы «Солнышко»'; };
+  const updLinks = () => { const t = encodeURIComponent(text()); const c = CONFIG.contact || {};
+    $('#tg').href = c.telegram ? `https://t.me/${c.telegram}?text=${t}` : `https://t.me/share/url?url=${encodeURIComponent(' ')}&text=${t}`;
+    $('#wa').href = c.whatsapp ? `https://wa.me/${c.whatsapp}?text=${t}` : `https://wa.me/?text=${t}`;
+    try { localStorage.setItem('solnce:answer', JSON.stringify({ mood: mood.value, choice, ps: ps.value })); } catch {} };
+  mood.addEventListener('input', () => { updMood(); updLinks(); });
+  opts.querySelectorAll('button').forEach(b => { if (b.dataset.v === choice) b.setAttribute('aria-pressed', 'true');
+    b.addEventListener('click', () => { choice = b.dataset.v; opts.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); if (choice.startsWith('Да')) fly(8); updLinks(); }); });
+  ps.addEventListener('input', updLinks);
+  const afterSend = () => { sent.textContent = 'Улетело. Он уже улыбается ♥'; fly(10); };
+  $('#tg').addEventListener('click', afterSend); $('#wa').addEventListener('click', afterSend);
+  $('#copy').addEventListener('click', () => { const t = text(); const done = () => { sent.textContent = 'Скопировано. Вставь в любой чат ♥'; };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done).catch(() => { ps.value = t; ps.select(); done(); }); else { ps.value = t; ps.select(); done(); } });
+  updMood(); updLinks();
 
   // hug
   $('#hug').addEventListener('click', () => { $('#ov').classList.add('on'); fly(12); });
