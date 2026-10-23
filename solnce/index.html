@@ -80,28 +80,18 @@ section + section{border-top:1px dashed var(--line)}
 .reasons li::before{counter-increment:r;content:counter(r);font-family:var(--hand);font-size:24px;color:var(--rose);min-width:22px}
 .reasons li[hidden]{display:none}
 
-/* lanterns */
-.night{position:relative;height:380px;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#141a46 0%,#2a2b6b 60%,#5b3d7a 100%);border:1px solid var(--line)}
-.nstars{position:absolute;inset:0}
-.nstars i{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;animation:tw 2.4s ease-in-out infinite alternate}
-.lrow{position:absolute;left:0;right:0;bottom:14px;display:flex;justify-content:space-evenly;align-items:flex-end;padding:0 6px}
-.lan{position:relative;width:44px;height:62px;border-radius:12px 12px 16px 16px;background:linear-gradient(180deg,#ffe3a6,#f6a35a 70%,#d8653f);opacity:.55;transition:opacity .4s,transform .4s;cursor:pointer;display:flex;align-items:flex-end;justify-content:center;flex:0 0 auto}
-.lan::before{content:"";position:absolute;top:-8px;left:12px;right:12px;height:8px;border-radius:4px 4px 0 0;background:#f6a35a}
-.lan::after{content:"";position:absolute;bottom:-6px;left:16px;right:16px;height:6px;border-radius:0 0 3px 3px;background:#8a3f2b}
-.lan b{display:block;width:10px;height:14px;margin-bottom:10px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#fff6c7;opacity:0;transition:opacity .3s}
-.lan.lit{opacity:1;box-shadow:0 0 24px 8px rgba(255,190,110,.55),0 0 60px 20px rgba(255,160,80,.25)}
-.lan.lit b{opacity:1;animation:flick .5s ease-in-out infinite alternate}
-@keyframes flick{to{transform:scaleY(1.2) translateY(-1px)}}
-.lan.fly{animation:float 7s ease-in forwards;pointer-events:none}
-@keyframes float{0%{transform:translateY(0) rotate(0)}30%{transform:translateY(-120px) rotate(-3deg)}60%{transform:translateY(-240px) rotate(3deg)}100%{transform:translateY(-440px) rotate(-2deg);opacity:0}}
-.vow{position:absolute;left:0;right:0;top:0;padding:18px 20px;text-align:center;color:#fff;font-family:var(--hand);font-size:27px;line-height:1.2;text-shadow:0 2px 16px rgba(0,0,0,.4);opacity:0;transition:opacity .6s;pointer-events:none}
-.vow.show{opacity:1}
-.vow.final{font-size:34px;color:#ffe9a6}
-.plist{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
-.plist li{display:flex;gap:10px;align-items:baseline;padding:8px 12px;background:var(--card);border:1px solid var(--line);border-radius:12px;font-size:15px;animation:up .5s ease-out both}
-.plist li::before{content:"🏮";font-size:14px}
-.plist li.final{font-family:var(--hand);font-size:24px;border-color:#f0b7c4;background:#fff}
-.plist li.final::before{content:"♥";color:var(--rose)}
+/* scratch cards */
+.cards{display:flex;flex-direction:column;gap:14px}
+.sc{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);box-shadow:0 10px 30px rgba(94,67,120,.1);background:#fff}
+.sc .under{min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:22px 18px;gap:4px}
+.sc .under .k{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.sc .under .big{font-family:var(--hand);font-size:44px;line-height:1;color:var(--rose)}
+.sc .under .msg{font-family:var(--hand);font-size:30px;line-height:1.15;color:var(--fg)}
+.sc .under .small{font-size:14px;color:var(--muted)}
+.sc canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;transition:opacity .6s}
+.sc.done canvas{opacity:0;pointer-events:none}
+.sc .lbl{position:absolute;left:0;right:0;top:12px;text-align:center;font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#6b6480;pointer-events:none;transition:opacity .3s}
+.sc.touched .lbl{opacity:0}
 
 /* letter */
 .letter{font-family:var(--hand);font-size:27px;line-height:1.3;white-space:pre-line;background:var(--paper);border-radius:22px;padding:26px 22px;border:1px solid var(--line);box-shadow:0 10px 30px rgba(94,67,120,.08);min-height:200px}
@@ -121,7 +111,7 @@ section + section{border-top:1px dashed var(--line)}
 @keyframes fly{to{transform:translateY(-90vh) rotate(20deg);opacity:0}}
 footer{padding:30px 0 110px;text-align:center;color:var(--muted);font-size:13px}
 
-@media (max-width:360px){ h2{font-size:36px} .note{font-size:26px} .lan{width:36px;height:54px} }
+@media (max-width:360px){ h2{font-size:36px} .note{font-size:26px} .sc .under .msg{font-size:26px} }
 @media (prefers-reduced-motion:reduce){ *{animation-duration:.01s!important;animation-delay:0s!important;transition:none!important} .hero .lead,.hero .hint,.hero h1 span{opacity:1} }
 </style>
 </head>
@@ -167,16 +157,11 @@ footer{padding:30px 0 110px;text-align:center;color:var(--muted);font-size:13px}
     <div style="display:flex;justify-content:center;margin-top:14px"><button class="btn soft" id="more">Ещё</button></div>
   </section>
 
-  <section id="promises">
-    <p class="eyebrow">Фонарики</p>
-    <h2>Мои обещания</h2>
-    <p class="sub">Нажми на фонарик, чтобы зажечь и отпустить его. В каждом слово, которое я держу.</p>
-    <div class="night" id="night" aria-label="Фонарики с обещаниями">
-      <div class="nstars" id="nstars"></div>
-      <div class="lrow" id="lrow"></div>
-      <div class="vow" id="vow"></div>
-    </div>
-    <ul class="plist" id="plist"></ul>
+  <section id="scratch">
+    <p class="eyebrow">Лотерея, в которой всегда выигрыш</p>
+    <h2>Сотри и узнай</h2>
+    <p class="sub">Потри пальцем серебро, как на лотерейном билете. Три билета, три выигрыша.</p>
+    <div class="cards" id="cards"></div>
   </section>
 
   <section id="letter">
@@ -240,15 +225,11 @@ const CONFIG = {
     'То, как ты меня терпишь, даже на расстоянии.',
     'Что ты это ты. Другой такой нет.',
   ],
-  promises: [
-    'Слушать тебя до конца, прежде чем отвечать.',
-    'Не ложиться спать в ссоре. Даже по видеосвязи.',
-    'Говорить «люблю» чаще, чем «потом».',
-    'Беречь то, что дорого тебе, как своё.',
-    'Быть рядом, даже когда я далеко.',
-    'Помнить, что ты важнее любой правоты.',
+  scratch: [
+    { k: 'Расстояние между нами', big: '0 км', small: 'если мерить сердцем, а не картой' },
+    { k: 'Самое главное', msg: 'Я никогда не хочу тебя обидеть. Никогда.' },
+    { k: 'Что будет, когда приеду', msg: 'Сначала обниму. Потом не отпущу.', small: 'билет без срока действия' },
   ],
-  finalPromise: 'Я никогда не хочу тебя обидеть. Никогда. Это главное.',
   letter: `Солнышко,
 я далеко, и это самое глупое, что есть в расстоянии: нельзя обнять прямо сейчас.
 Зато можно сказать. Ты моё солнце. С тобой светло даже в самый серый день, и даже отсюда это видно.
@@ -287,22 +268,32 @@ const CONFIG = {
   const rl = $('#rlist'); CONFIG.reasons.forEach((r, i) => { const li = document.createElement('li'); li.textContent = r; if (i >= 3) li.hidden = true; rl.append(li); });
   $('#more').addEventListener('click', () => { const next = [...rl.querySelectorAll('li[hidden]')].slice(0, 3); next.forEach((li, i) => { li.hidden = false; li.style.animationDelay = (i*.1)+'s'; }); if (!rl.querySelector('li[hidden]')) { $('#more').textContent = 'И это не всё ♥'; $('#more').disabled = true; } });
 
-  // lanterns
-  const ns = $('#nstars'); for (let i = 0; i < 40; i++) { const d = document.createElement('i'); d.style.left = Math.random()*100+'%'; d.style.top = Math.random()*80+'%'; d.style.animationDelay = (Math.random()*2)+'s'; ns.append(d); }
-  const row = $('#lrow'), vow = $('#vow'), pl = $('#plist'); let released = 0, vowT;
-  CONFIG.promises.forEach((text, i) => {
-    const l = document.createElement('button'); l.type = 'button'; l.className = 'lan'; l.setAttribute('aria-label', 'Фонарик ' + (i+1)); l.innerHTML = '<b></b>';
-    l.addEventListener('click', () => {
-      if (l.classList.contains('lit')) return;
-      l.classList.add('lit'); setTimeout(() => l.classList.add('fly'), 500);
-      vow.textContent = text; vow.classList.remove('final'); vow.classList.add('show'); clearTimeout(vowT);
-      const li = document.createElement('li'); li.textContent = text; pl.append(li);
-      released++;
-      if (released === CONFIG.promises.length) {
-        vowT = setTimeout(() => { vow.textContent = CONFIG.finalPromise; vow.classList.add('final', 'show'); const f = document.createElement('li'); f.className = 'final'; f.textContent = CONFIG.finalPromise; pl.append(f); fly(10); }, 2600);
-      } else vowT = setTimeout(() => vow.classList.remove('show'), 4000);
-    });
-    row.append(l);
+  // scratch cards
+  const cards = $('#cards');
+  CONFIG.scratch.forEach((c, idx) => {
+    const sc = document.createElement('div'); sc.className = 'sc';
+    const under = document.createElement('div'); under.className = 'under';
+    const k = document.createElement('div'); k.className = 'k'; k.textContent = c.k; under.append(k);
+    if (c.big) { const b = document.createElement('div'); b.className = 'big'; b.textContent = c.big; under.append(b); }
+    if (c.msg) { const m = document.createElement('div'); m.className = 'msg'; m.textContent = c.msg; under.append(m); }
+    if (c.small) { const sm = document.createElement('div'); sm.className = 'small'; sm.textContent = c.small; under.append(sm); }
+    const cv = document.createElement('canvas'); cv.setAttribute('aria-label', 'Потри, чтобы открыть'); const lbl = document.createElement('div'); lbl.className = 'lbl'; lbl.textContent = 'потри здесь ✦';
+    sc.append(under, cv, lbl); cards.append(sc);
+    const ctx = cv.getContext('2d'); let W, H, dpr, drawing = false, cleared = false, touched = false, last = null;
+    const paint = () => { dpr = Math.min(devicePixelRatio || 1, 2); W = sc.clientWidth; H = sc.clientHeight; cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+      const g = ctx.createLinearGradient(0,0,W,H); g.addColorStop(0,'#d9dbe3'); g.addColorStop(.35,'#f4f5f8'); g.addColorStop(.5,'#c3c6d2'); g.addColorStop(.7,'#eef0f4'); g.addColorStop(1,'#cfd2dc');
+      ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+      ctx.fillStyle = 'rgba(255,255,255,.35)'; for (let i = 0; i < 40; i++) { ctx.beginPath(); ctx.arc(Math.random()*W, Math.random()*H, Math.random()*1.5+.3, 0, 7); ctx.fill(); }
+      ctx.font = '700 15px Nunito, sans-serif'; ctx.fillStyle = '#9a95a8'; ctx.textAlign = 'center'; ctx.fillText(['♥','☀','✦'][idx%3].repeat(7), W/2, H/2+6); };
+    paint();
+    const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+    const scratch = (x, y) => { ctx.globalCompositeOperation = 'destination-out'; ctx.lineCap = 'round'; ctx.lineWidth = 44; ctx.beginPath(); if (last) ctx.moveTo(last[0], last[1]); else ctx.moveTo(x, y); ctx.lineTo(x, y); ctx.stroke(); ctx.beginPath(); ctx.arc(x, y, 22, 0, 7); ctx.fill(); last = [x, y]; ctx.globalCompositeOperation = 'source-over'; };
+    const ratio = () => { const d = ctx.getImageData(0,0,cv.width,cv.height).data; let n = 0, t = 0; for (let i = 3; i < d.length; i += 4*16) { t++; if (d[i] < 40) n++; } return n / t; };
+    cv.addEventListener('pointerdown', e => { if (cleared) return; drawing = true; last = null; cv.setPointerCapture(e.pointerId); if (!touched) { touched = true; sc.classList.add('touched'); } const [x, y] = pos(e); scratch(x, y); });
+    cv.addEventListener('pointermove', e => { if (!drawing || cleared) return; const [x, y] = pos(e); scratch(x, y); });
+    const stop = () => { if (!drawing || cleared) return; drawing = false; last = null; if (ratio() > 0.5) { cleared = true; sc.classList.add('done'); fly(6); } };
+    cv.addEventListener('pointerup', stop); cv.addEventListener('pointercancel', stop); cv.addEventListener('pointerleave', stop);
+    addEventListener('resize', () => { if (!cleared) paint(); });
   });
 
   // letter: typed when it scrolls into view (full text at once if reduced motion)
