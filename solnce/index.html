@@ -62,16 +62,16 @@ section + section{border-top:1px dashed var(--line)}
 .count{font-size:13px;color:var(--muted);text-align:center;margin-top:6px}
 
 /* clouds game */
-.field{position:relative;height:300px;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#b9c6e8,#e9eef9);border:1px solid var(--line)}
+.field{position:relative;height:320px;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#b9c6e8,#e9eef9);border:1px solid var(--line)}
 .field .fsun{position:absolute;left:50%;top:50%;width:150px;height:150px;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle at 45% 40%,#fff3b0,var(--sun) 60%,#ffb347);box-shadow:0 0 40px 10px rgba(255,209,102,.5);transition:box-shadow 1s,transform 1s}
 .field.clear{background:linear-gradient(180deg,#8ec5ff,#e8f4ff)}
 .field.clear .fsun{box-shadow:0 0 80px 30px rgba(255,209,102,.8);transform:translate(-50%,-50%) scale(1.15)}
-.cloud{position:absolute;width:120px;height:62px;background:#fff;border-radius:60px;box-shadow:0 6px 16px rgba(60,70,120,.18);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#6b7394;transition:transform .35s,opacity .35s;cursor:pointer;user-select:none}
+.cloud{position:absolute;width:124px;height:66px;padding:0;background:#fff;border-radius:60px;box-shadow:0 6px 16px rgba(60,70,120,.18);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#6b7394;transition:opacity .35s;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation;z-index:1}
 .cloud::before{content:"";position:absolute;width:56px;height:56px;border-radius:50%;background:#fff;top:-24px;left:18px}
 .cloud::after{content:"";position:absolute;width:40px;height:40px;border-radius:50%;background:#fff;top:-14px;right:20px}
 .cloud span{position:relative}
-.cloud.gone{transform:scale(1.5);opacity:0;pointer-events:none}
-.field .win{position:absolute;inset:auto 0 0 0;padding:14px;text-align:center;font-family:var(--hand);font-size:28px;color:var(--fg);background:linear-gradient(0deg,rgba(255,255,255,.9),transparent);opacity:0;transition:opacity .6s}
+.cloud.gone{opacity:0;pointer-events:none}
+.field .win{position:absolute;z-index:2;inset:auto 0 0 0;pointer-events:none;padding:14px;text-align:center;font-family:var(--hand);font-size:28px;color:var(--fg);background:linear-gradient(0deg,rgba(255,255,255,.9),transparent);opacity:0;transition:opacity .6s}
 .field.clear .win{opacity:1}
 
 /* reasons */
@@ -100,7 +100,8 @@ section + section{border-top:1px dashed var(--line)}
 
 /* hug */
 .hugbar{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;justify-content:center;padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));pointer-events:none}
-.hugbar .btn{pointer-events:auto;width:100%;max-width:520px;min-height:56px}
+.hugbar{justify-content:flex-end}
+.hugbar .btn{pointer-events:auto;min-height:54px;padding-inline:26px}
 .overlay{position:fixed;inset:0;z-index:9;background:radial-gradient(circle at 50% 40%,#ffe0e8,#f9b4c4 70%,#e4506e);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;padding:24px;color:#fff;opacity:0;pointer-events:none;transition:opacity .4s}
 .overlay.on{opacity:1;pointer-events:auto}
 .overlay .heart{font-size:120px;line-height:1;animation:beat 1s ease-in-out infinite;filter:drop-shadow(0 10px 30px rgba(120,20,50,.35))}
@@ -173,7 +174,7 @@ footer{padding:30px 0 110px;text-align:center;color:var(--muted);font-size:13px}
   <footer>Эту страницу видишь только ты. Сделано с любовью на расстоянии.</footer>
 </main>
 
-<div class="hugbar"><button class="btn sun" id="hug">Обнять</button></div>
+<div class="hugbar"><button class="btn sun" id="hug">Обнять ♥</button></div>
 <div class="overlay" id="ov" role="dialog" aria-label="Объятие">
   <div class="heart">♥</div>
   <h2>Обнимаю.</h2>
@@ -258,10 +259,12 @@ const CONFIG = {
   });
 
   // clouds
-  const field = $('#field'); const spots = [[6,8],[52,4],[70,40],[8,52],[40,62],[22,30],[62,70]];
+  const field = $('#field'); const spots = [[4,6],[52,3],[64,30],[6,46],[34,56],[22,26],[58,58]];
   CONFIG.clouds.forEach((w, i) => { const c = document.createElement('button'); c.className = 'cloud'; c.type = 'button'; c.innerHTML = '<span></span>'; c.firstChild.textContent = w; c.setAttribute('aria-label', 'Облако: ' + w);
     const [x, y] = spots[i % spots.length]; c.style.left = `calc(${x}% - ${i%2?20:0}px)`; c.style.top = y + '%'; c.style.animation = reduced ? '' : `bob ${3 + i*.4}s ease-in-out infinite`;
-    c.addEventListener('click', () => { c.classList.add('gone'); if (field.querySelectorAll('.cloud:not(.gone)').length === 0) { field.classList.add('clear'); fly(10); } });
+    const poof = e => { if (e) e.preventDefault(); if (c.classList.contains('gone')) return; c.classList.add('gone'); c.style.animation = 'none'; c.style.transform = 'scale(1.5)'; c.style.transition = 'opacity .35s, transform .35s';
+      if (field.querySelectorAll('.cloud:not(.gone)').length === 0) { field.classList.add('clear'); fly(10); } };
+    c.addEventListener('pointerdown', poof); c.addEventListener('click', poof);
     field.insertBefore(c, $('#win')); });
 
   // reasons
