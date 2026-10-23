@@ -80,6 +80,25 @@ section + section{border-top:1px dashed var(--line)}
 .reasons li::before{counter-increment:r;content:counter(r);font-family:var(--hand);font-size:24px;color:var(--rose);min-width:22px}
 .reasons li[hidden]{display:none}
 
+/* facts */
+.facts{display:flex;flex-direction:column;gap:10px}
+.fact{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.fact .ft{display:flex;gap:12px;align-items:flex-start}
+.fact .ic{font-size:28px;line-height:1;flex:0 0 auto}
+.fact b{display:block;font-size:17px}
+.fact small{color:var(--muted);font-size:14px}
+.fact .ans{display:flex;gap:8px;position:relative;min-height:44px;align-items:flex-start}
+.fact .ans .btn{min-height:44px;padding:8px 18px;font-size:15px}
+.fact .ans .no{position:relative;transition:transform .25s}
+.fact .ans .no.run{position:absolute;z-index:2}
+.fact .verdict{font-family:var(--hand);font-size:24px;color:var(--rose);min-height:30px}
+.fact.ok{border-color:#9bd3a8;background:#f3fbf4}
+.fact.ok .ans{display:none}
+.fact.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.score{margin-top:14px;text-align:center;font-family:var(--hand);font-size:32px;color:var(--fg);min-height:40px;opacity:0;transition:opacity .5s}
+.score.show{opacity:1}
+
 /* scratch cards */
 .cards{display:flex;flex-direction:column;gap:14px}
 .sc{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);box-shadow:0 10px 30px rgba(94,67,120,.1);background:#fff}
@@ -158,6 +177,14 @@ footer{padding:30px 0 110px;text-align:center;color:var(--muted);font-size:13px}
     <div style="display:flex;justify-content:center;margin-top:14px"><button class="btn soft" id="more">Ещё</button></div>
   </section>
 
+  <section id="facts">
+    <p class="eyebrow">Досье на одного человека</p>
+    <h2>Я тебя знаю</h2>
+    <p class="sub">Проверь меня. Отмечай, правда или нет.</p>
+    <div class="facts" id="flist"></div>
+    <div class="score" id="score"></div>
+  </section>
+
   <section id="scratch">
     <p class="eyebrow">Лотерея, в которой всегда выигрыш</p>
     <h2>Сотри и узнай</h2>
@@ -226,6 +253,13 @@ const CONFIG = {
     'То, как ты меня терпишь, даже на расстоянии.',
     'Что ты это ты. Другой такой нет.',
   ],
+  facts: [
+    { ic: '💙', t: 'Любимый цвет: синий.', s: 'Как море. Как твоё платье. Как мои глаза, когда смотрю на тебя… нет, но звучит красиво.' },
+    { ic: '🍫', t: 'Сладкое: сникерс.', s: 'Один это не порция. Один это разминка.' },
+    { ic: '🍝', t: 'Вкусно поесть.', s: 'Это не хобби, это талант. Я видел, как ты выбираешь ресторан.' },
+    { ic: '❤️', t: 'Любишь… меня.', s: 'Кнопка «нет» тут чисто для вида.', last: true },
+  ],
+  factsDone: 'Я тебя знаю. А теперь иди за сникерсом.',
   scratch: [
     { k: 'Расстояние между нами', big: '0 км', small: 'если мерить сердцем, а не картой' },
     { k: 'Самое главное', msg: 'Я никогда не хочу тебя обидеть. Никогда.' },
@@ -270,6 +304,32 @@ const CONFIG = {
   // reasons
   const rl = $('#rlist'); CONFIG.reasons.forEach((r, i) => { const li = document.createElement('li'); li.textContent = r; if (i >= 3) li.hidden = true; rl.append(li); });
   $('#more').addEventListener('click', () => { const next = [...rl.querySelectorAll('li[hidden]')].slice(0, 3); next.forEach((li, i) => { li.hidden = false; li.style.animationDelay = (i*.1)+'s'; }); if (!rl.querySelector('li[hidden]')) { $('#more').textContent = 'И это не всё ♥'; $('#more').disabled = true; } });
+
+  // facts
+  const fl = $('#flist'); let okCount = 0;
+  CONFIG.facts.forEach(f => {
+    const box = document.createElement('div'); box.className = 'fact';
+    const ft = document.createElement('div'); ft.className = 'ft';
+    const ic = document.createElement('div'); ic.className = 'ic'; ic.textContent = f.ic;
+    const tx = document.createElement('div'); const b = document.createElement('b'); b.textContent = f.t; const sm = document.createElement('small'); sm.textContent = f.s; tx.append(b, sm);
+    ft.append(ic, tx);
+    const ans = document.createElement('div'); ans.className = 'ans';
+    const yes = document.createElement('button'); yes.type = 'button'; yes.className = 'btn'; yes.textContent = 'Да, правда';
+    const no = document.createElement('button'); no.type = 'button'; no.className = 'btn soft no'; no.textContent = 'Нет';
+    const verdict = document.createElement('div'); verdict.className = 'verdict';
+    ans.append(yes, no); box.append(ft, ans, verdict); fl.append(box);
+    yes.addEventListener('click', () => { if (box.classList.contains('ok')) return; box.classList.add('ok'); verdict.textContent = ['Знал ♥', 'Я же говорил ♥', 'Конечно ♥', 'И я тебя ♥'][okCount % 4]; okCount++; fly(3);
+      if (okCount === CONFIG.facts.length) { const sc = $('#score'); sc.textContent = `${okCount} из ${CONFIG.facts.length}. ${CONFIG.factsDone}`; sc.classList.add('show'); fly(10); } });
+    if (f.last) {
+      const dodge = e => { if (e) e.preventDefault(); no.classList.add('run'); const r = ans.getBoundingClientRect(); const bw = no.offsetWidth, bh = no.offsetHeight;
+        const x = Math.random() * Math.max(0, r.width - bw), y = Math.random() * Math.max(0, r.height - bh); no.style.left = x + 'px'; no.style.top = y + 'px'; no.style.transform = `scale(${Math.max(.5, (parseFloat(no.dataset.s || 1) - .08))})`; no.dataset.s = Math.max(.5, (parseFloat(no.dataset.s || 1) - .08));
+        verdict.textContent = ['Не-а', 'Мимо', 'Поймай сначала', 'Кнопка против', 'Она тоже за меня'][Math.min(4, (+no.dataset.n || 0))]; no.dataset.n = (+no.dataset.n || 0) + 1; };
+      ans.style.minHeight = '96px';
+      no.addEventListener('pointerenter', dodge); no.addEventListener('pointerdown', dodge); no.addEventListener('touchstart', dodge, { passive: false }); no.addEventListener('click', dodge);
+    } else {
+      no.addEventListener('click', () => { box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake'); verdict.textContent = ['Не верю 😏', 'Ну-ну', 'Попробуй ещё раз'][(+no.dataset.n || 0) % 3]; no.dataset.n = (+no.dataset.n || 0) + 1; });
+    }
+  });
 
   // scratch cards
   const cards = $('#cards');
