@@ -1,5 +1,5 @@
 // GYM service worker: app shell offline, Firebase SDK cached, everything else untouched.
-const CACHE = 'gym-shell-v1';
+const CACHE = 'gym-shell-v2';
 const SHELL = ['./', './index.html', './manifest.json', './icon-180.png', './icon-512.png', './firebase-config.js'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
