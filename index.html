@@ -83,7 +83,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .tab .dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--good)}
 .tab.add{color:var(--muted);border-style:dashed;display:flex;align-items:center;font-weight:600}
 
-main{padding-block:14px calc(var(--nav-h) + 90px + env(safe-area-inset-bottom,0px));max-width:720px;margin:0 auto}
+main{padding-block:14px calc(var(--nav-h) + 28px + env(safe-area-inset-bottom,0px));max-width:720px;margin:0 auto}
 .notice{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:14px;margin-bottom:12px}
 .notice b{color:var(--fg)}
 .ghead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:2px 0 12px;flex-wrap:wrap}
@@ -161,11 +161,24 @@ main{padding-block:14px calc(var(--nav-h) + 90px + env(safe-area-inset-bottom,0p
 .wcard .wh .name{font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:.02em;line-height:1.15;overflow-wrap:anywhere;min-width:0}
 .wcard .wh .last{font-size:11px;color:var(--muted);white-space:nowrap}
 .wcard .wh .last.today{color:var(--good);font-weight:600}
-.wtools{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-.wtools .btn.sm{flex:1 1 auto}
-.savebar{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));z-index:6;padding:8px max(16px,env(safe-area-inset-left,0px));display:flex;justify-content:center;pointer-events:none;transform:translateY(120%);transition:transform .2s}
-.savebar.show{transform:none}
-.savebar .btn{pointer-events:auto;width:100%;max-width:688px;min-height:52px;font-size:16px;box-shadow:var(--shadow)}
+.srows{display:flex;flex-direction:column;gap:6px}
+.srow{display:flex;align-items:center;gap:6px;min-height:46px}
+.srow .sl{width:24px;flex:0 0 auto;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.srow .su{font-size:11px;color:var(--muted);flex:0 0 auto}
+.stp{display:flex;align-items:center;flex:1 1 auto;min-width:0;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.stp button{width:34px;min-height:44px;flex:0 0 auto;font-size:20px;font-weight:600;color:var(--muted)}
+.stp button:active{background:var(--line)}
+.stp input{flex:1 1 auto;min-width:0;width:100%;border:0;background:none;text-align:center;font-family:var(--display);font-weight:700;font-size:20px;min-height:44px;padding:0}
+.stp input::placeholder{font-family:var(--body);font-weight:500;font-size:13px;color:var(--muted)}
+.srow .sok{width:46px;min-height:44px;flex:0 0 auto;border-radius:10px;background:var(--accent);color:var(--accent-fg);font-size:20px;font-weight:700}
+.srow .sok:disabled{opacity:.4}
+.srow .sdel{width:38px;min-height:44px;flex:0 0 auto;border-radius:10px;color:var(--bad);font-size:22px;background:var(--surface-2)}
+.srow.done{background:var(--surface-2);border-radius:10px;padding:0 10px 0 8px;min-height:40px}
+.srow.done .sv{flex:1;font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:.02em}
+.srow.done .sv small{font-family:var(--body);font-weight:600;font-size:14px;color:var(--muted)}
+.srow.done .sedit{font-size:12px;color:var(--muted);font-weight:600;min-height:40px;padding:0 4px}
+.srow.editing{background:var(--accent-soft);border-radius:12px;padding:4px}
+@media (max-width:360px){ .stp button{width:28px} .srow .sok{width:40px} .srow .su{display:none} }
 .done{background:var(--surface);border:1px solid var(--good);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:14px}
 .done b{color:var(--good)}
 
@@ -238,7 +251,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   .card.open{grid-column:1/-1}
 }
 @media (hover:hover){ .card .head:hover .name{color:var(--accent)} .tab:hover{border-color:var(--accent)} }
-@media (prefers-reduced-motion: reduce){ .toast,.savebar{transition:none} }
+@media (prefers-reduced-motion: reduce){ .toast{transition:none} }
 </style>
 
 </head>
@@ -252,7 +265,6 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   <nav class="tabs" id="tabs" aria-label="Группы мышц"></nav>
 </header>
 <main id="main" class="gutter"></main>
-<div class="savebar" id="savebar"><button class="btn primary" id="savebtn">Сохранить тренировку</button></div>
 <nav class="nav" id="nav" aria-label="Разделы">
   <button data-mode="workout"><svg viewBox="0 0 24 24"><path d="M3 10v4M6 8v8M18 8v8M21 10v4M6 12h12"/></svg>Тренировка</button>
   <button data-mode="cards"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/></svg>Карточки</button>
@@ -284,12 +296,14 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     dbState: 'loading', groups: pref('cache', []), notes: null, notesLoaded: false,
     active: pref('active', null), mode: pref('mode', 'workout'),
     open: null, form: null, confirm: null, rename: null, addingGroup: false, addingEx: false,
-    wdate: null, draft: pref('draft', {}), justSaved: null,
+    wdate: null, editing: null,
   };
 
   // ---------- entries: string (old, no date) or {v, d} ----------
   const ev = e => (e && typeof e === 'object') ? String(e.v) : String(e);
   const ed = e => (e && typeof e === 'object' && e.d) ? e.d : null;
+  const er = e => (e && typeof e === 'object' && e.r != null && e.r !== '') ? e.r : null;
+  const evr = e => ev(e) + (er(e) != null ? '×' + er(e) : '');
   const num = v => { const m = String(v).replace(',', '.').match(/-?\d+(\.\d+)?/); return m ? parseFloat(m[0]) : null; };
   const fmtNum = (x, comma) => { let s = (Math.round(x * 100) / 100).toString(); return comma ? s.replace('.', ',') : s; };
   const last = a => a.length ? a[a.length-1] : null;
@@ -516,20 +530,6 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     S.form = null; optimistic(g);
     if (await store.saveGroup(g)) toast('Записано · ' + fmtDate(date));
   }
-  async function saveWorkout(gid) {
-    const g = clone(S.groups.find(x => x.id === gid)); const date = S.wdate || today();
-    const dr = (S.draft[gid] || {}).values || {}; let n = 0;
-    for (const ex of g.exercises) {
-      const vals = dr[ex.id]; if (!vals) continue; let hit = false;
-      vals.forEach((v, i) => { if (v && v.trim()) { ex.sets[i] = ex.sets[i] || []; ex.sets[i].push({ v: v.trim(), d: date }); hit = true; } });
-      if (hit) { n++; if (!ex.last || date > ex.last) ex.last = date; }
-    }
-    if (!n) { toast('Пока ничего не введено'); return; }
-    if (!g.lastEntry || date > g.lastEntry) g.lastEntry = date;
-    delete S.draft[gid]; setPref('draft', S.draft); S.justSaved = { n, date };
-    optimistic(g);
-    if (await store.saveGroup(g)) toast(`Сохранено: ${n} упр. · ${fmtDate(date)}`);
-  }
   async function removeLast(gid, exid, si) {
     const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
     if (!ex.sets[si] || !ex.sets[si].length) return;
@@ -564,25 +564,6 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   async function removeGroup(gid) {
     S.confirm = null; S.groups = S.groups.filter(g => g.id !== gid); S.active = S.groups[0] ? S.groups[0].id : null; render();
     if (await store.deleteGroup(gid)) toast('Группа удалена');
-  }
-
-  // ---------- draft (workout in progress, survives reload) ----------
-  const draftFor = gid => { const d = S.draft[gid]; if (!d) return null; if (d.date !== (S.wdate || today()) && !S.wdate) { S.wdate = d.date; } return d; };
-  let draftT;
-  function setDraft(gid, exid, i, val) {
-    const d = S.draft[gid] || (S.draft[gid] = { date: S.wdate || today(), values: {} });
-    d.date = S.wdate || today(); const arr = d.values[exid] || (d.values[exid] = []); arr[i] = val;
-    if (!arr.some(v => v && v.trim())) delete d.values[exid];
-    if (!Object.keys(d.values).length) delete S.draft[gid];
-    clearTimeout(draftT); draftT = setTimeout(() => setPref('draft', S.draft), 300);
-    updateSavebar(gid);
-  }
-  const draftCount = gid => Object.keys(((S.draft[gid] || {}).values) || {}).length;
-  function updateSavebar(gid) {
-    const n = S.mode === 'workout' && gid ? draftCount(gid) : 0;
-    $('#savebar').classList.toggle('show', n > 0);
-    $('#savebtn').textContent = n ? `Сохранить тренировку · ${n} упр.` : 'Сохранить тренировку';
-    for (const c of document.querySelectorAll('.wcard')) c.classList.toggle('filled', !!(S.draft[gid] && S.draft[gid].values[c.dataset.ex]));
   }
 
   // ---------- rendering ----------
@@ -630,12 +611,12 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     return el('div', { class: 'set' },
       el('div', { class: 'lbl' }, el('span', { class: 'full' }, 'Подход ' + (i+1)), el('span', { class: 'short' }, 'П' + (i+1))),
       el('div', { class: 'val num' + (l == null ? ' empty' : '') }, l == null ? '—' : ev(l)),
-      el('div', { class: 'cnt num' }, dir ? el('span', { class: 'd ' + dir }) : null,
+      el('div', { class: 'cnt num' }, dir ? el('span', { class: 'd ' + dir }) : null, l != null && er(l) != null ? '×' + er(l) + ' · ' : null,
         arr.length ? [el('span', { class: 'full' }, arr.length + ' зап.'), el('span', { class: 'short' }, '×' + arr.length)] : el('span', {}, '—')));
   }
 
   function renderCard(g, ex) {
-    const n = g.nsets || ex.sets.length || 4;
+    const n = Math.max(g.nsets || 4, ex.sets.length);
     const isOpen = S.open === ex.id;
     const ld = exLast(ex);
     const card = el('div', { class: 'card' + (isOpen ? ' open' : ''), style: `--n:${n}` });
@@ -650,7 +631,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
 
   function sessions(ex) {
     const by = new Map();
-    ex.sets.forEach((s, i) => s.forEach(e => { const d = ed(e); if (!d) return; if (!by.has(d)) by.set(d, []); const r = by.get(d); r[i] = r[i] ? r[i] + '/' + ev(e) : ev(e); }));
+    ex.sets.forEach((s, i) => s.forEach(e => { const d = ed(e); if (!d) return; if (!by.has(d)) by.set(d, []); const r = by.get(d); r[i] = r[i] ? r[i] + '/' + evr(e) : evr(e); }));
     return [...by.entries()].sort((a, b) => b[0] < a[0] ? -1 : 1);
   }
 
@@ -690,7 +671,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
           el('button', { class: 'btn sm danger', onclick: () => removeLast(g.id, ex.id, i) }, 'Удалить'),
           el('button', { class: 'btn sm ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')));
       const chips = el('div', { class: 'chips num' });
-      arr.forEach((e, j) => chips.append(el('span', { class: 'chip' + (j === arr.length-1 ? ' last' : ''), title: ed(e) ? fmtDate(ed(e), true) : 'без даты' }, ev(e))));
+      arr.forEach((e, j) => chips.append(el('span', { class: 'chip' + (j === arr.length-1 ? ' last' : ''), title: ed(e) ? fmtDate(ed(e), true) : 'без даты' }, evr(e))));
       h.append(chips);
       return h;
     };
@@ -741,46 +722,72 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     return d;
   }
 
-  // ---- workout mode ----
+  // ---- workout mode: one row per set, each saved on its own ----
+  async function saveSet(gid, exid, si, v, r, date) {
+    const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
+    v = String(v).trim().replace('.', ','); if (!v) { toast('Введи вес'); return false; }
+    while (ex.sets.length <= si) ex.sets.push([]);
+    const entry = { v, d: date }; const reps = parseInt(r, 10); if (!isNaN(reps) && reps > 0) entry.r = reps;
+    const k = ex.sets[si].findIndex(e => ed(e) === date);
+    if (k >= 0) ex.sets[si][k] = entry; else ex.sets[si].push(entry);
+    if (!ex.last || date > ex.last) ex.last = date; if (!g.lastEntry || date > g.lastEntry) g.lastEntry = date;
+    S.editing = null; optimistic(g);
+    const ok = await store.saveGroup(g); if (ok) toast(`Подход ${si+1}: ${v} кг` + (entry.r ? ` × ${entry.r}` : '') + ' ✓'); return ok;
+  }
+  async function deleteSet(gid, exid, si, date) {
+    const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
+    ex.sets[si] = (ex.sets[si] || []).filter(e => ed(e) !== date); ex.last = exLast({ ...ex, last: null });
+    S.editing = null; optimistic(g); if (await store.saveGroup(g)) toast('Подход удалён');
+  }
   function renderWorkout(g, main) {
-    const n = g.nsets || 4; const dr = draftFor(g.id); const date = S.wdate || today();
-    if (S.justSaved) { const js = S.justSaved; main.append(el('div', { class: 'done' }, el('b', {}, '✓ Сохранено. '), `${js.n} упр. за ${fmtDate(js.date)}. `,
-      el('button', { class: 'btn sm', style: 'margin-left:6px', onclick: () => { S.justSaved = null; setMode('cards'); render(); } }, 'Смотреть карточки'))); }
-    const dateIn = el('input', { id: 'wdate', type: 'date', value: date, max: today(), onchange: e => { S.wdate = e.target.value || today(); if (S.draft[g.id]) { S.draft[g.id].date = S.wdate; setPref('draft', S.draft); } renderTabs(); } });
+    const date = S.wdate || today();
+    const dateIn = el('input', { id: 'wdate', type: 'date', value: date, max: today(), onchange: e => { S.wdate = e.target.value || today(); S.editing = null; render(); } });
     main.append(el('div', { class: 'wdate' }, el('label', { for: 'wdate' }, 'Дата тренировки'), dateIn));
     if (!g.exercises.length) { main.append(el('div', { class: 'notice' }, 'В этой группе пока нет упражнений. Добавь их во вкладке «Карточки».')); return; }
+    const canWrite = S.dbState === 'ready';
     const list = el('div', { class: 'list' });
+    let doneTotal = 0;
     for (const ex of g.exercises) {
-      const vals = (dr && dr.values[ex.id]) || [];
+      const n = Math.max(g.nsets || 4, ex.sets.length);
+      const todays = ex.sets.map(st => (st || []).find(e => ed(e) === date) || null);
+      const doneCount = todays.filter(Boolean).length; doneTotal += doneCount;
       const ld = exLast(ex);
-      const card = el('div', { class: 'wcard' + (vals.some(v => v && v.trim()) ? ' filled' : ''), 'data-ex': ex.id, style: `--n:${n}` });
-      card.append(el('div', { class: 'wh' }, el('div', { class: 'name' }, ex.name), el('div', { class: 'last' + (ld === today() ? ' today' : '') }, ld ? rel(ld) : (ex.sets.some(s => s.length) ? 'из Заметок, без даты' : 'нет записей'))));
-      const inputs = el('div', { class: 'inputs' }); const ins = [];
+      const card = el('div', { class: 'wcard' + (doneCount ? ' filled' : '') });
+      card.append(el('div', { class: 'wh' }, el('div', { class: 'name' }, ex.name),
+        el('div', { class: 'last' + (doneCount ? ' today' : '') }, doneCount ? `${doneCount} из ${n} ✓` : ld ? 'прошлый раз: ' + rel(ld) : (ex.sets.some(st => st.length) ? 'из Заметок' : 'нет записей'))));
+      const rows = el('div', { class: 'srows' });
+      let nextOpen = todays.findIndex(t => !t); if (nextOpen < 0) nextOpen = n;
       for (let i = 0; i < n; i++) {
-        const l = last(ex.sets[i] || []);
-        const inp = el('input', { id: `w-${ex.id}-${i}`, type: 'text', inputmode: 'decimal', autocomplete: 'off', enterkeyhint: 'next', value: vals[i] || '', placeholder: l == null ? '—' : ev(l),
-          oninput: e => setDraft(g.id, ex.id, i, e.target.value),
-          onkeydown: e => { if (e.key === 'Enter') { e.preventDefault(); const all = [...main.querySelectorAll('.wcard input[type=text]')]; const k = all.indexOf(e.target); if (all[k+1]) all[k+1].focus(); else e.target.blur(); } } });
-        ins.push(inp);
-        inputs.append(el('label', {}, el('span', { class: 'full' }, 'Подход ' + (i+1)), el('span', { class: 'short' }, 'П' + (i+1)), inp));
+        const done = todays[i]; const editKey = ex.id + ':' + i; const editing = S.editing === editKey;
+        if (done && !editing) {
+          rows.append(el('div', { class: 'srow done' }, el('span', { class: 'sl' }, 'П' + (i+1)), el('span', { class: 'sv num' }, done.v + ' кг', er(done) != null ? el('small', {}, ' × ' + er(done)) : null),
+            canWrite ? el('button', { class: 'sedit', 'aria-label': 'Изменить подход ' + (i+1), onclick: () => { S.editing = editKey; render(); } }, 'изменить') : null));
+          continue;
+        }
+        if (i > nextOpen && !editing) continue;
+        const prevSame = last((ex.sets[i] || []).filter(e => ed(e) !== date));
+        const src = editing ? done : (prevSame || todays[i-1] || last(ex.sets[i-1] || []) || null);
+        const kg = el('input', { id: `kg-${ex.id}-${i}`, type: 'text', inputmode: 'decimal', autocomplete: 'off', value: src ? ev(src) : '', placeholder: 'кг', 'aria-label': 'Вес, кг' });
+        const rp = el('input', { id: `rp-${ex.id}-${i}`, type: 'text', inputmode: 'numeric', autocomplete: 'off', value: src && er(src) != null ? er(src) : '', placeholder: 'раз', 'aria-label': 'Повторения' });
+        const bump = (inp, d, int) => { const x = num(inp.value || inp.placeholder); if (x == null) { inp.value = int ? String(Math.max(1, d)) : fmtNum(Math.max(0, d), true); return; } inp.value = int ? String(Math.max(0, x + d)) : fmtNum(Math.max(0, x + d), true); };
+        const row = el('form', { class: 'srow' + (editing ? ' editing' : ''), onsubmit: e => { e.preventDefault(); saveSet(g.id, ex.id, i, kg.value, rp.value, date); } },
+          el('span', { class: 'sl' }, 'П' + (i+1)),
+          el('div', { class: 'stp' }, el('button', { type: 'button', 'aria-label': 'минус 2,5 кг', onclick: () => bump(kg, -2.5, false) }, '−'), kg, el('button', { type: 'button', 'aria-label': 'плюс 2,5 кг', onclick: () => bump(kg, 2.5, false) }, '+')),
+          el('span', { class: 'su' }, 'кг'),
+          el('div', { class: 'stp' }, el('button', { type: 'button', 'aria-label': 'минус повтор', onclick: () => bump(rp, -1, true) }, '−'), rp, el('button', { type: 'button', 'aria-label': 'плюс повтор', onclick: () => bump(rp, 1, true) }, '+')),
+          el('button', { type: 'submit', class: 'sok', disabled: !canWrite, 'aria-label': 'Сохранить подход ' + (i+1) }, '✓'),
+          editing ? el('button', { type: 'button', class: 'sdel', 'aria-label': 'Удалить подход', onclick: () => deleteSet(g.id, ex.id, i, date) }, '×') : null);
+        rows.append(row);
       }
-      card.append(inputs);
-      const lastVals = () => ins.map((inp, i) => { const l = last(ex.sets[i] || []); return l == null ? '' : ev(l); });
-      const fill = arr => { arr.forEach((v, i) => { ins[i].value = v; setDraft(g.id, ex.id, i, v); }); };
-      const bump = delta => { const cur = ins.map((inp, i) => inp.value || inp.placeholder); const comma = cur.some(v => v.includes(','));
-        fill(cur.map((v, i) => { const x = num(v); return x == null || v === '—' ? (ins[i].value || '') : fmtNum(x + delta, comma); })); };
-      card.append(el('div', { class: 'wtools' },
-        el('button', { class: 'btn sm', onclick: () => fill(lastVals()) }, '↺ как в прошлый раз'),
-        el('button', { class: 'btn sm num', onclick: () => bump(-2.5) }, '−2,5'),
-        el('button', { class: 'btn sm num', onclick: () => bump(2.5) }, '+2,5'),
-        vals.some(v => v && v.trim()) ? el('button', { class: 'btn sm ghost', onclick: () => fill(ins.map(() => '')) }, 'очистить') : null));
+      card.append(rows);
+      if (canWrite && todays.filter(Boolean).length === n) card.append(el('button', { class: 'btn sm ghost', style: 'margin-top:8px', onclick: () => { const gg = clone(g); const e2 = gg.exercises.find(e => e.id === ex.id); e2.sets.push([]); optimistic(gg); store.saveGroup(gg); } }, '+ ещё подход'));
       list.append(card);
     }
-    main.append(list, el('p', { class: 'tablenote' }, 'Заполни только то, что делал сегодня: серым показан прошлый вес. Введённое сохраняется как черновик, пока не нажмёшь «Сохранить тренировку».'));
+    main.append(list, el('p', { class: 'tablenote' }, doneTotal ? `Сегодня записано подходов: ${doneTotal}. Каждый сохраняется сразу, можно закрыть телефон между подходами.` : 'Введи вес и повторения, нажми ✓. Подход сохранится сразу, следующий откроется сам. Цифры подставлены из прошлого раза: меняй и жми.'));
   }
 
   function renderTable(g) {
-    const n = g.nsets || 4;
+    const n = Math.max(g.nsets || 4, ...g.exercises.map(e => e.sets.length));
     const wrap = el('div', { class: 'tablewrap' });
     const t = el('table', { class: 'grid num' });
     const thead = el('tr', {}, el('th', {}, g.name));
@@ -792,7 +799,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       for (let i = 0; i < n; i++) {
         const arr = ex.sets[i] || [];
         const td = el('td', { class: 'cell' });
-        arr.forEach((e, j) => { const v = ev(e); td.append(j < arr.length - 1 ? v + '-' : el('span', { class: 'lastv', title: ed(e) ? fmtDate(ed(e), true) : '' }, v)); });
+        arr.forEach((e, j) => { const v = evr(e); td.append(j < arr.length - 1 ? v + '-' : el('span', { class: 'lastv', title: ed(e) ? fmtDate(ed(e), true) : '' }, v)); });
         tr.append(td);
       }
       tb.append(tr);
@@ -805,7 +812,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const days = new Map(); // date -> Map(gid -> [{ex, vals}])
     for (const g of S.groups) for (const ex of g.exercises) {
       const by = new Map();
-      ex.sets.forEach((s, i) => s.forEach(e => { const d = ed(e); if (!d) return; if (!by.has(d)) by.set(d, []); const r = by.get(d); r[i] = r[i] ? r[i] + '/' + ev(e) : ev(e); }));
+      ex.sets.forEach((s, i) => s.forEach(e => { const d = ed(e); if (!d) return; if (!by.has(d)) by.set(d, []); const r = by.get(d); r[i] = r[i] ? r[i] + '/' + evr(e) : evr(e); }));
       for (const [d, vals] of by) { if (!days.has(d)) days.set(d, new Map()); const gm = days.get(d); if (!gm.has(g.id)) gm.set(g.id, { g, items: [] }); gm.get(g.id).items.push({ ex, vals, n: g.nsets || 4 }); }
     }
     const dates = [...days.keys()].sort().reverse();
@@ -844,8 +851,6 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const main = $('#main'); main.replaceChildren();
     const g = activeGroup();
     $('#brand-sub').textContent = S.dbState === 'offline' ? 'только просмотр' : 'дневник весов';
-    updateSavebar(g && S.mode === 'workout' ? g.id : null);
-    if (S.mode !== 'workout') S.justSaved = null;
     wakeLock(S.mode === 'workout');
     if (S.mode === 'account' && store.renderAccount) return store.renderAccount(main);
     if (store.gate && store.gate(main)) return;
@@ -898,7 +903,6 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
 
   for (const b of document.querySelectorAll('#nav button')) b.addEventListener('click', () => { setMode(b.dataset.mode); S.open = null; S.form = null; render(); window.scrollTo({ top: 0 }); });
   $('#acct').addEventListener('click', () => { setMode('account'); S.open = null; render(); window.scrollTo({ top: 0 }); });
-  $('#savebtn').addEventListener('click', () => { const g = activeGroup(); if (g) saveWorkout(g.id); });
   if (S.mode === 'account' && !store.renderAccount) S.mode = 'workout';
   setMode(S.mode);
   render();
