@@ -112,7 +112,8 @@ main{padding-block:14px calc(var(--nav-h) + 28px + env(safe-area-inset-bottom,0p
 .set .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .set .val{font-family:var(--display);font-weight:700;font-size:clamp(17px,5.6vw,24px);line-height:1.1;margin-top:2px;overflow-wrap:anywhere}
 .set .val.empty{color:var(--muted);font-weight:500}
-.set .cnt{font-size:11px;color:var(--muted);margin-top:2px}
+.set .cnt{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.set .cnt b{color:var(--fg);font-weight:600}
 .d{display:inline-block;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;margin-right:3px;vertical-align:1px}
 .d.up{border-bottom:6px solid var(--good)} .d.down{border-top:6px solid var(--bad)}
 
@@ -953,8 +954,8 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     if (a != null && b != null) dir = a > b ? 'up' : a < b ? 'down' : '';
     return el('div', { class: 'set' },
       el('div', { class: 'lbl' }, el('span', { class: 'full' }, t('Подход ') + (i+1)), el('span', { class: 'short' }, t('П') + (i+1))),
-      el('div', { class: 'val num' + (l == null ? ' empty' : '') }, l == null ? '—' : ev(l), l != null && er(l) != null ? el('small', {}, '×' + er(l)) : null),
-      el('div', { class: 'cnt num' }, dir ? el('span', { class: 'd ' + dir }) : null,
+      el('div', { class: 'val num' + (l == null ? ' empty' : '') }, l == null ? '—' : ev(l)),
+      el('div', { class: 'cnt num' }, dir ? el('span', { class: 'd ' + dir }) : null, l != null && er(l) != null ? el('b', {}, '×' + er(l) + ' · ') : null,
         arr.length ? [el('span', { class: 'full' }, arr.length + t(' зап.')), el('span', { class: 'short' }, '×' + arr.length)] : el('span', {}, '—')));
   }
 
