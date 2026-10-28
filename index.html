@@ -388,6 +388,23 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     wdate: null, editing: null, groupEdit: false, showAll: null,
   };
 
+  // ---------- language ----------
+  const EN = {"сегодня": "today", "вчера": "yesterday", " дн. назад": " days ago", "Первая запись: подбери вес, с которым выходит {0}–{1} раз в подходе.": "First entry: pick a weight you can lift for {0}–{1} reps per set.", "Повторения ещё не записаны. Возьми прошлый вес {0} кг и сделай {1}–{2} раз, дальше подскажу точнее.": "No reps logged yet. Take your last weight, {0} kg, and do {1}–{2} reps; after that the advice gets precise.", "{0} кг в прошлый раз, без повторений. Запиши их, и совет станет точным.": "{0} kg last time, reps not logged. Log them and the advice becomes precise.", "Три тренировки подряд с {0} кг не доходят до {1} раз. Сбрось вес, набери повторения и вернёшься сильнее.": "Three workouts in a row at {0} kg below {1} reps. Drop the weight, build reps back up and you'll come back stronger.", "В прошлый раз все подходы с {0} кг вышли по {1}{2} раз. Пора добавить вес, цель {3} раз.": "Last time every set at {0} kg hit {1}{2} reps. Time to add weight; aim for {3} reps.", "{0} кг × {1}{2} в прошлый раз. Держи вес, цель {3}+ в каждом подходе.": "{0} kg × {1}{2} last time. Keep the weight; aim for {3}+ in every set.", "Прошлый раз {0} кг × {1}{2}. Тот же вес, плюс одно повторение: цель {3}. На {4} добавим вес.": "Last time {0} kg × {1}{2}. Same weight, one more rep: aim for {3}. At {4} we add weight.", "Не сохранилось: память браузера недоступна": "Not saved: browser storage unavailable", "Подключаюсь к облаку…": "Connecting to the cloud…", "Облако не ответило. Показываю данные с этого устройства.": "The cloud didn't answer. Showing data from this device.", "Firebase не загрузился: ": "Firebase failed to load: ", "Загружаю твои тренировки…": "Loading your workouts…", "Жду ответ сервера… если нет сети, подожди, данные придут при подключении": "Waiting for the server… if you're offline, data will arrive once connected", "Ошибка чтения: ": "Read error: ", "Нет прав: проверь правила Firestore": "No permission: check Firestore rules", "Не сохранилось в облако": "Could not save to the cloud", "Заметки сохранены": "Notes saved", "Программа готова": "Program ready", "Не сохранилось: ": "Not saved: ", "Неверный email": "Invalid email", "Такого пользователя нет": "No such user", "Неверный пароль": "Wrong password", "Неверный email или пароль": "Wrong email or password", "Этот email уже зарегистрирован, войди": "This email is already registered, sign in", "Пароль минимум 6 символов": "Password must be at least 6 characters", "Окно входа закрыто": "Sign-in window closed", "Браузер заблокировал окно. Войди по email или открой сайт в Safari": "The browser blocked the popup. Sign in with email or open the site in Safari", "Этот способ входа не включён в Firebase Console": "This sign-in method is not enabled in Firebase Console", "Нет сети": "No network", "Слишком много попыток, подожди": "Too many attempts, wait a bit", "Домен не добавлен в Firebase Auth → Authorized domains": "Domain not added in Firebase Auth → Authorized domains", "Ошибка: ": "Error: ", "Введи email, на него придёт ссылка": "Enter your email, a reset link will be sent", "Письмо для сброса пароля отправлено": "Password reset email sent", "Г": "G", "Гость": "Guest", "Войти": "Sign in", "Данные только на этом телефоне. ": "Data is only on this phone. ", "Войди, и они будут в облаке на всех устройствах.": "Sign in and it will sync to the cloud on all devices.", "Скрыть": "Hide", "С чего начнём?": "How shall we start?", "В аккаунте пока пусто. Выбери стартовую программу, потом её можно менять как угодно.": "Your account is empty. Pick a starting program; you can change everything later.", "Стандартная программа": "Standard program", "6 групп мышц, 25 базовых упражнений, 4 подхода": "6 muscle groups, 25 basic exercises, 4 sets", "Пустая": "Empty", "Сам добавлю группы и упражнения": "I'll add groups and exercises myself", "Перенести с этого устройства": "Move data from this device", "{0} групп, сохранено {1}": "{0} groups, saved {1}", "Мои таблицы из Notes": "My tables from Notes", "Dosh, Biceps, Mechq, Triceps, Us, Vot со всей историей": "Dosh, Biceps, Mechq, Triceps, Us, Vot with full history", "Сохраняю…": "Saving…", "Аккаунт": "Account", "Облако не подключено": "Cloud not connected", "Файл firebase-config.js пуст. Пока данные хранятся только в этом браузере. Инструкция по подключению Firebase лежит в README репозитория.": "firebase-config.js is empty. Data is stored only in this browser for now. Firebase setup steps are in the repository README.", "Подключаюсь к Firebase…": "Connecting to Firebase…", "Данные привязаны к этому устройству, пока не выйдешь": "Data is tied to this device until you sign out", "Офлайн: показана локальная копия, изменения отправятся при появлении сети.": "Offline: showing the local copy, changes will upload when back online.", "Синхронизировано с облаком. Открой этот же сайт на другом устройстве и войди тем же способом.": "Synced with the cloud. Open this site on another device and sign in the same way.", "Выйти": "Sign out", "Заменить программу": "Replace program", "Удалить все группы и записи в облаке и начать заново?": "Delete all groups and records in the cloud and start over?", "Стандартная": "Standard", "Из Notes": "From Notes", "Отмена": "Cancel", "Пароль (от 6 символов)": "Password (6+ characters)", "Пароль": "Password", "Создать аккаунт": "Create account", "У каждого пользователя своя программа и история. Вход по email работает и в приложении на домашнем экране.": "Every user has their own program and history. Email sign-in also works from the home-screen app.", "Секунду…": "One second…", "У меня уже есть аккаунт": "I already have an account", "Забыл пароль": "Forgot password", "или": "or", "Войти через Google": "Sign in with Google", "Продолжить как гость": "Continue as guest", "Google-вход открывает окно: если ты добавил сайт на экран «Домой» и окно не возвращается, войди по email. Гость хранит данные в облаке без пароля, но вернуть их после выхода нельзя.": "Google sign-in opens a popup: if you added the site to your home screen and the popup doesn't come back, sign in with email. Guest data lives in the cloud without a password, but can't be recovered after signing out.", "Резервная копия": "Backup", "Скачать всё в файл или восстановить из файла (заменит программу в облаке).": "Download everything to a file or restore from one (replaces the program in the cloud).", "Данные хранятся в памяти этого браузера. Скачивай файл время от времени или войди в аккаунт.": "Data lives in this browser's storage. Download a file now and then, or sign in.", "Скачать файл": "Download file", "Загрузить из файла": "Restore from file", "Файл сохраняется": "Saving the file", "Данные загружены из файла": "Data loaded from file", "Это не файл резервной копии GYM": "This is not a GYM backup file", "Удалено": "Deleted", "Запись за ": "Entry for ", " удалена": " deleted", "Упражнение удалено": "Exercise deleted", "Группа удалена": "Group deleted", "Загружаю…": "Loading…", "тренировка сегодня": "trained today", "+ Группа": "+ Group", "последняя: ": "last: ", "Подход ": "Set ", "П": "S", " зап.": " logs", "из Заметок": "from Notes", "нет записей": "no entries", "Подход": "Set", " кг": " kg", " рекорд": " record", " трениров": " workout", "ка": "", "ок": "s", " из Заметок": " from Notes", "за 30 дн. ({0} → {1})": "over 30 days ({0} → {1})", "рост за 30 дн.: нужно 2 тренировки": "30-day growth: needs 2 workouts", "расчётный максимум на 1 раз": "estimated one-rep max", "объём последней (вес × повторы)": "last session volume (weight × reps)", "В следующий раз: {0} кг × {1}": "Next time: {0} kg × {1}", "Дата": "Date", "Открыть этот день": "Open this day", "Удалить запись за ": "Delete entry for ", "Удалить запись за {0}?": "Delete the entry for {0}?", "Удалить": "Delete", "Тренировки · нажми на день, чтобы открыть": "Workouts · tap a day to open", "Свернуть": "Collapse", "Показать все {0}": "Show all {0}", "Динамика веса · подход 1": "Weight trend · set 1", "Объём за тренировку · вес × повторы": "Volume per workout · weight × reps", "История из Заметок без дат · {0}": "History from Notes without dates · {0}", "Подход {0} · {1}": "Set {0} · {1}", "убрать последнее": "remove last", "Удалить «{0}» из подхода {1}?": "Delete “{0}” from set {1}?", "Пока нет записей. Нажми «Записать подход», откроется тренировка на сегодня.": "No entries yet. Tap “Log a set” to open today's workout.", "Ок": "OK", "Удалить упражнение «{0}» со всей историей?": "Delete exercise “{0}” with all its history?", "+ Записать подход": "+ Log a set", "Переименовать": "Rename", " техника выполнения": " form", "▶ Техника": "▶ Technique", "Выше": "Move up", "Ниже": "Move down", "Отдых закончен": "Rest over", "Введи вес": "Enter a weight", "Новый рекорд веса: {0} кг": "New weight record: {0} kg", "Раньше максимум был {0} кг": "Previous best was {0} kg", "Новый расчётный максимум: {0} кг": "New estimated max: {0} kg", "{0} кг × {1} сильнее всего, что было": "{0} kg × {1} beats everything before", "Подход {0}: {1} кг": "Set {0}: {1} kg", "Подход удалён": "Set deleted", "по плану": "planned", "сегодня по плану": "today's plan", "+ Дни программы": "+ Program days", "Программа сохранена": "Program saved", "Дни программы": "Program days", "Например «День A: Dosh + Triceps». Приложение подскажет, какой день следующий по кругу.": "For example “Day A: Chest + Triceps”. The app will suggest which day is next in rotation.", "Название дня": "Day name", "Удалить день": "Delete day", "День ": "Day ", "+ День": "+ Day", "Сохранить": "Save", "Дата тренировки": "Workout date", "В этой группе пока нет упражнений. Добавь их во вкладке «Карточки».": "No exercises in this group yet. Add them in the “Cards” tab.", "{0} из {1} ✓": "{0} of {1} ✓", "прошлый раз: ": "last time: ", "Совет: {0} кг × {1}": "Advice: {0} kg × {1}", "Совет: × {0}": "Advice: × {0}", "Изменить подход ": "Edit set ", "изменить": "edit", "кг": "kg", "Вес, кг": "Weight, kg", "раз": "reps", "Повторения": "Reps", "минус 2,5 кг": "minus 2.5 kg", "плюс 2,5 кг": "plus 2.5 kg", "минус повтор": "minus one rep", "плюс повтор": "plus one rep", "Сохранить подход ": "Save set ", "Удалить подход": "Delete set", "+ ещё подход": "+ another set", "Сегодня записано подходов: {0}. Каждый сохраняется сразу, можно закрыть телефон между подходами.": "Sets logged today: {0}. Each one saves instantly; you can lock the phone between sets.", "Введи вес и повторения, нажми ✓. Подход сохранится сразу, следующий откроется сам. Цифры подставлены из прошлого раза: меняй и жми.": "Enter weight and reps, tap ✓. The set saves instantly and the next one opens. Numbers are prefilled from last time: adjust and tap.", "Та же таблица, что была в Заметках: столбцы — подходы, в ячейке — вся история весов через дефис. Жёлтым выделен последний вес.": "The same table as in Notes: columns are sets, each cell holds the whole weight history separated by dashes. The latest weight is highlighted.", "Журнал": "Journal", "{0} тренировок с датой": "{0} dated workouts", "за 7 дней": "last 7 days", "за 30 дней": "last 30 days", "последняя": "latest", "Календарь тренировок за 16 недель": "Workout calendar, last 16 weeks", " · {0} подх.": " · {0} sets", "Календарь": "Calendar", "16 недель": "16 weeks", " неделя": " week", " недели": " weeks", " недель": " weeks", " подряд с тренировками 🔥": " in a row with workouts 🔥", "На этой неделе ещё не было тренировки. Начни серию.": "No workout this week yet. Start a streak.", "Пока нет тренировок с датой. ": "No dated workouts yet. ", "Записи из Заметок перенесены без дат. Всё, что ты сохранишь через «Тренировка», появится здесь по дням, а ниже появится статистика роста.": "Entries imported from Notes have no dates. Everything you save in “Workout” appears here by day, with growth stats below.", "Рост за 30 дней": "30-day growth", "поднято за 7 дней": "lifted in 7 days", "поднято за 30 дней": "lifted in 30 days", "Сравнивать пока не с чем: нужно минимум две тренировки одного упражнения с датой.": "Nothing to compare yet: needs at least two dated workouts of the same exercise.", "Без изменений: ": "Unchanged: ", "Замеры, даты, план…": "Measurements, dates, plans…", "Заметки": "Notes", "Замеры, даты начала и конца циклов, что угодно.": "Measurements, cycle dates, anything.", "Грудь": "Chest", "Талия": "Waist", "Бицепс": "Biceps", "Бедро": "Thigh", "Таз": "Hips", "Введи хотя бы одно значение": "Enter at least one value", "Замеры сохранены": "Measurements saved", "Замеры тела": "Body measurements", "Сохранить замеры": "Save measurements", "Замеры": "Measurements", "{0} записей": "{0} entries", "Вес тела · {0} → {1} кг": "Body weight · {0} → {1} kg", ", кг": ", kg", "Удалить замер": "Delete measurement", "Запиши вес и объёмы раз в неделю-две, здесь появится таблица с изменениями и график веса.": "Log weight and girths every week or two; a table with changes and a weight chart will appear here.", "только просмотр": "view only", "дневник весов": "weight diary", "подключаюсь…": "connecting…", "Нет доступа к базе. ": "No database access. ", "Открой ссылку, войдя в свой аккаунт claude.ai, тогда записи можно будет добавлять. Сейчас показана последняя сохранённая копия.": "Open the link while signed in to claude.ai to add entries. Showing the last saved copy.", "Название (напр. Press)": "Name (e.g. Abs)", "Подпись (напр. Пресс)": "Caption (e.g. Core)", "Новая группа мышц": "New muscle group", "Создать": "Create", "Загружаю твои таблицы…": "Loading your tables…", "Пока пусто. ": "Empty so far. ", "Нажми «+ Группа» сверху, чтобы добавить первую группу мышц, потом упражнения и веса.": "Tap “+ Group” above to add your first muscle group, then exercises and weights.", "тренировка по программе": "program workout", "Настройки группы": "Group settings", "{0} упр. · {1} записей": "{0} exercises · {1} entries", " · последняя ": " · last ", "Название": "Name", "Подпись (напр. Грудь)": "Caption (e.g. Chest)", "Отдых между подходами, секунд": "Rest between sets, seconds", "Минимум повторений": "Minimum reps", "Максимум повторений": "Maximum reps", "Шаг веса, кг": "Weight step, kg", " подход": " set", " подхода": " sets", " подходов": " sets", "Сохранено": "Saved", "Правило прогрессии": "Progression rule", "повторений от": "reps from", "до": "to", "· шаг веса": "· weight step", "Дошёл до верхней границы во всех подходах → совет добавить шаг веса. Ниже нижней → держать вес и добирать повторы.": "Hit the upper bound in every set → advice to add a weight step. Below the lower bound → keep the weight and build reps.", "Таймер отдыха после подхода, сек": "Rest timer after a set, sec", "(0 = выключить)": "(0 = off)", "Удалить группу": "Delete group", "Удалить группу «{0}» со всеми упражнениями и историей?": "Delete group “{0}” with all exercises and history?", "Название или поиск по базе": "Name or search the library", "Новое упражнение": "New exercise", "Добавить": "Add", "Из базы упражнений, сначала для этой группы:": "From the exercise library, this group first:", "+ Упражнение": "+ Exercise", "Тренировка": "Workout", "Карточки": "Cards", "Таблица": "Table", "Отдых": "Rest", "Язык": "Language"};
+  S.lang = pref('lang', null) || (/^(ru|uk|be|kk|hy)/i.test(navigator.language || '') ? 'ru' : 'en');
+  const t = (k, v) => { let x = (S.lang === 'en' && EN[k] != null) ? EN[k] : k; if (v) x = x.replace(/\{(\d+)\}/g, (_, i) => v[+i]); return x; };
+  const MONTHS_EN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], DAYS_EN = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const LOCALE = () => S.lang === 'en' ? 'en-GB' : 'ru-RU';
+  function applyStatic() {
+    document.documentElement.lang = S.lang;
+    for (const b of document.querySelectorAll('#nav button')) { const tn = [...b.childNodes].find(x => x.nodeType === 3); if (tn) { b.dataset.label = b.dataset.label || tn.textContent.trim(); tn.textContent = t(b.dataset.label); } }
+    const tl = document.querySelector('.timer .tl'); if (tl) tl.textContent = t('Отдых');
+  }
+  function setLang(l) { S.lang = l; setPref('lang', l); applyStatic(); render(); }
+  function langRow() { return el('div', { class: 'row', style: 'margin-top:16px;align-items:center;gap:8px' }, el('span', { class: 'small' }, t('Язык') + ':'),
+    el('button', { class: 'btn sm' + (S.lang === 'ru' ? ' primary' : ''), onclick: () => setLang('ru') }, 'Русский'), el('button', { class: 'btn sm' + (S.lang === 'en' ? ' primary' : ''), onclick: () => setLang('en') }, 'English')); }
+  const GROUP_EN = { 'Грудь': 'Chest', 'Спина': 'Back', 'Ноги': 'Legs', 'Плечи': 'Shoulders', 'Бицепс': 'Biceps', 'Трицепс': 'Triceps', 'Пресс': 'Abs' };
+  const localizeTemplate = groups => S.lang !== 'en' ? groups : groups.map(g => ({ ...g, name: GROUP_EN[g.name] || g.name, exercises: g.exercises.map(ex => { const hit = LIB.find(e => e[1] === ex.name); return hit ? { ...ex, name: hit[2] } : ex; }) }));
+
   // ---------- entries: string (old, no date) or {v, d} ----------
   const ev = e => (e && typeof e === 'object') ? String(e.v) : String(e);
   const ed = e => (e && typeof e === 'object' && e.d) ? e.d : null;
@@ -401,10 +418,10 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   const DAYS = ['вс','пн','вт','ср','чт','пт','сб'];
   const parseD = iso => { const [y,m,d] = iso.split('-').map(Number); return new Date(y, m-1, d); };
   const fmtDate = (iso, withYear) => { if (!iso) return ''; const d = parseD(iso); if (isNaN(d)) return iso;
-    return d.getDate() + ' ' + MONTHS[d.getMonth()] + (withYear || d.getFullYear() !== new Date().getFullYear() ? ' ' + d.getFullYear() : ''); };
-  const fmtLong = iso => { const d = parseD(iso); return DAYS[d.getDay()] + ', ' + fmtDate(iso, true); };
+    return d.getDate() + ' ' + (S.lang === 'en' ? MONTHS_EN : MONTHS)[d.getMonth()] + (withYear || d.getFullYear() !== new Date().getFullYear() ? ' ' + d.getFullYear() : ''); };
+  const fmtLong = iso => { const d = parseD(iso); return (S.lang === 'en' ? DAYS_EN : DAYS)[d.getDay()] + ', ' + fmtDate(iso, true); };
   const daysAgo = iso => Math.round((parseD(today()) - parseD(iso)) / 86400000);
-  const rel = iso => { if (!iso) return ''; const n = daysAgo(iso); if (n === 0) return 'сегодня'; if (n === 1) return 'вчера'; if (n < 7) return n + ' дн. назад'; return fmtDate(iso); };
+  const rel = iso => { if (!iso) return ''; const n = daysAgo(iso); if (n === 0) return t('сегодня'); if (n === 1) return t('вчера'); if (n < 7) return n + t(' дн. назад'); return fmtDate(iso); };
   const slug = s => (s.toLowerCase().replace(/[^a-z0-9а-яё]+/gi,'-').replace(/^-|-$/g,'') || 'g') + '-' + Date.now().toString(36);
   const activeGroup = () => S.groups.find(g => g.id === S.active) || S.groups[0] || null;
   const clone = g => JSON.parse(JSON.stringify(g));
@@ -453,18 +470,18 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const lastS = ss[ss.length - 1];
     const topLegacy = (() => { let m = null; for (const st of ex.sets) { const e = last(st.filter(x => !ed(x))); const w = e ? num(ev(e)) : null; if (w != null && (m == null || w > m)) m = w; } return m; })();
     if (!lastS || lastS.top == null) {
-      if (topLegacy == null) return { w: null, r: rmin, why: `Первая запись: подбери вес, с которым выходит ${rmin}–${rmax} раз в подходе.` };
-      return { w: topLegacy, r: rmin, why: `Повторения ещё не записаны. Возьми прошлый вес ${fmtNum(topLegacy, true)} кг и сделай ${rmin}–${rmax} раз, дальше подскажу точнее.` };
+      if (topLegacy == null) return { w: null, r: rmin, why: t('Первая запись: подбери вес, с которым выходит {0}–{1} раз в подходе.', [rmin, rmax]) };
+      return { w: topLegacy, r: rmin, why: t('Повторения ещё не записаны. Возьми прошлый вес {0} кг и сделай {1}–{2} раз, дальше подскажу точнее.', [fmtNum(topLegacy, true), rmin, rmax]) };
     }
     const working = lastS.sets.filter(x => x.w === lastS.top && x.r != null);
-    if (!working.length) return { w: lastS.top, r: rmin, why: `${fmtNum(lastS.top, true)} кг в прошлый раз, без повторений. Запиши их, и совет станет точным.` };
+    if (!working.length) return { w: lastS.top, r: rmin, why: t('{0} кг в прошлый раз, без повторений. Запиши их, и совет станет точным.', [fmtNum(lastS.top, true)]) };
     const minR = Math.min(...working.map(x => x.r)), maxR = Math.max(...working.map(x => x.r));
     // three sessions in a row below the range at the same weight → deload
     const prev = ss.slice(-3).filter(x => x.top === lastS.top && x.sets.some(y => y.w === x.top && y.r != null) && Math.min(...x.sets.filter(y => y.w === x.top && y.r != null).map(y => y.r)) < rmin);
-    if (prev.length >= 3) return { w: Math.max(0, lastS.top - step), r: rmin, why: `Три тренировки подряд с ${fmtNum(lastS.top, true)} кг не доходят до ${rmin} раз. Сбрось вес, набери повторения и вернёшься сильнее.` };
-    if (minR >= rmax) return { w: lastS.top + step, r: rmin, why: `В прошлый раз все подходы с ${fmtNum(lastS.top, true)} кг вышли по ${minR}${maxR > minR ? '–' + maxR : ''} раз. Пора добавить вес, цель ${rmin} раз.` };
-    if (minR < rmin) return { w: lastS.top, r: Math.min(rmin, minR + 1), why: `${fmtNum(lastS.top, true)} кг × ${minR}${maxR > minR ? '–' + maxR : ''} в прошлый раз. Держи вес, цель ${rmin}+ в каждом подходе.` };
-    return { w: lastS.top, r: Math.min(rmax, maxR + 1), why: `Прошлый раз ${fmtNum(lastS.top, true)} кг × ${minR}${maxR > minR ? '–' + maxR : ''}. Тот же вес, плюс одно повторение: цель ${Math.min(rmax, maxR + 1)}. На ${rmax} добавим вес.` };
+    if (prev.length >= 3) return { w: Math.max(0, lastS.top - step), r: rmin, why: t('Три тренировки подряд с {0} кг не доходят до {1} раз. Сбрось вес, набери повторения и вернёшься сильнее.', [fmtNum(lastS.top, true), rmin]) };
+    if (minR >= rmax) return { w: lastS.top + step, r: rmin, why: t('В прошлый раз все подходы с {0} кг вышли по {1}{2} раз. Пора добавить вес, цель {3} раз.', [fmtNum(lastS.top, true), minR, maxR > minR ? '–' + maxR : '', rmin]) };
+    if (minR < rmin) return { w: lastS.top, r: Math.min(rmin, minR + 1), why: t('{0} кг × {1}{2} в прошлый раз. Держи вес, цель {3}+ в каждом подходе.', [fmtNum(lastS.top, true), minR, maxR > minR ? '–' + maxR : '', rmin]) };
+    return { w: lastS.top, r: Math.min(rmax, maxR + 1), why: t('Прошлый раз {0} кг × {1}{2}. Тот же вес, плюс одно повторение: цель {3}. На {4} добавим вес.', [fmtNum(lastS.top, true), minR, maxR > minR ? '–' + maxR : '', Math.min(rmax, maxR + 1), rmax]) };
   }
   const sparkNums = (nums) => sparkline(nums.map(x => String(x)));
 
@@ -484,18 +501,18 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   const sortG = gs => gs.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const localLoad = () => { try { const raw = localStorage.getItem(KEY); if (raw) { const p = JSON.parse(raw); if (p && Array.isArray(p.groups)) return p; } } catch {} return null; };
   const localPersist = () => { try { localStorage.setItem(KEY, JSON.stringify({ groups: S.groups, notes: S.notes, body: S.body, program: S.program, saved: new Date().toISOString() })); return true; }
-    catch (e) { console.error(e); toast('Не сохранилось: память браузера недоступна'); return false; } };
+    catch (e) { console.error(e); toast(t('Не сохранилось: память браузера недоступна')); return false; } };
   const applyData = (groups, notes) => { S.groups = sortG(groups); if (notes != null) S.notes = notes; S.notesLoaded = true; S.dbState = 'ready';
     if (!S.groups.some(g => g.id === S.active)) S.active = S.groups[0] ? S.groups[0].id : null; render(); };
   const uid = () => store.user && store.user.uid;
 
-  const applyLocal = () => { const d = localLoad(); S.body = (d && Array.isArray(d.body)) ? d.body : []; S.program = (d && d.program && Array.isArray(d.program.days)) ? d.program : { days: [] }; if (d) applyData(d.groups, d.notes); else if (cfg) applyData(clone(TEMPLATE), ''); else applyData(clone(SEED), SEED_NOTES.text); };
+  const applyLocal = () => { const d = localLoad(); S.body = (d && Array.isArray(d.body)) ? d.body : []; S.program = (d && d.program && Array.isArray(d.program.days)) ? d.program : { days: [] }; if (d) applyData(d.groups, d.notes); else if (cfg) applyData(localizeTemplate(clone(TEMPLATE)), ''); else applyData(clone(SEED), SEED_NOTES.text); };
   store.init = () => {
     if (!cfg) { applyLocal(); return; }
     // cloud app: keep the loader up until Firebase says who is signed in, so the user's own data appears without a template flash
-    S.dbState = 'loading'; store.loadMsg = 'Подключаюсь к облаку…'; render();
-    store.authTimer = setTimeout(() => { if (!store.authKnown) { store.err = 'Облако не ответило. Показываю данные с этого устройства.'; applyLocal(); } }, 9000);
-    initFirebase().catch(e => { console.error(e); clearTimeout(store.authTimer); store.err = 'Firebase не загрузился: ' + (e && e.message || e); applyLocal(); });
+    S.dbState = 'loading'; store.loadMsg = t('Подключаюсь к облаку…'); render();
+    store.authTimer = setTimeout(() => { if (!store.authKnown) { store.err = t('Облако не ответило. Показываю данные с этого устройства.'); applyLocal(); } }, 9000);
+    initFirebase().catch(e => { console.error(e); clearTimeout(store.authTimer); store.err = t('Firebase не загрузился: ') + (e && e.message || e); applyLocal(); });
   };
 
   async function initFirebase() {
@@ -514,13 +531,13 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   function attach() {
     for (const u of store.unsub) u(); store.unsub = [];
     const { fs, db } = store.fb; const u = uid();
-    store.mode = 'cloud'; store.cloudEmpty = null; S.dbState = 'loading'; store.loadMsg = 'Загружаю твои тренировки…'; S.groups = []; S.notes = ''; render();
+    store.mode = 'cloud'; store.cloudEmpty = null; S.dbState = 'loading'; store.loadMsg = t('Загружаю твои тренировки…'); S.groups = []; S.notes = ''; render();
     store.unsub.push(fs.onSnapshot(fs.collection(db, 'users', u, 'groups'), { includeMetadataChanges: true }, snap => {
       store.fromCache = snap.metadata.fromCache;
       if (!snap.empty) store.cloudEmpty = false; else if (!snap.metadata.fromCache) store.cloudEmpty = true;
-      if (snap.empty && snap.metadata.fromCache) { S.dbState = 'loading'; store.loadMsg = 'Жду ответ сервера… если нет сети, подожди, данные придут при подключении'; render(); return; }
+      if (snap.empty && snap.metadata.fromCache) { S.dbState = 'loading'; store.loadMsg = t('Жду ответ сервера… если нет сети, подожди, данные придут при подключении'); render(); return; }
       applyData(snap.docs.map(d => decG(d.id, d.data())), null);
-    }, e => { console.error(e); store.err = 'Ошибка чтения: ' + e.code; S.dbState = 'offline'; render(); }));
+    }, e => { console.error(e); store.err = t('Ошибка чтения: ') + e.code; S.dbState = 'offline'; render(); }));
     store.unsub.push(fs.onSnapshot(fs.doc(db, 'users', u, 'meta', 'notes'), snap => { S.notes = snap.exists() ? (snap.data().text || '') : ''; S.notesLoaded = true; if (S.mode === 'notes') render(); }, e => console.error(e)));
     store.unsub.push(fs.onSnapshot(fs.doc(db, 'users', u, 'meta', 'program'), snap => { S.program = snap.exists() && Array.isArray(snap.data().days) ? { days: snap.data().days } : { days: [] }; if (S.mode === 'workout') render(); }, e => console.error(e)));
     store.unsub.push(fs.onSnapshot(fs.doc(db, 'users', u, 'meta', 'body'), snap => { S.body = snap.exists() ? (snap.data().rows || []) : []; if (S.mode === 'notes') render(); }, e => console.error(e)));
@@ -531,7 +548,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   const decG = (id, data) => ({ id, ...data, exercises: (data.exercises || []).map(ex => ({ ...ex, sets: (ex.sets || []).map(st => Array.isArray(st) ? st : (st && st.e) || []) })) });
 
   // writes: in cloud mode they are fire-and-forget (Firestore queues them offline and syncs later)
-  const cloudErr = e => { console.error(e); toast(e && e.code === 'permission-denied' ? 'Нет прав: проверь правила Firestore' : 'Не сохранилось в облако'); };
+  const cloudErr = e => { console.error(e); toast(e && e.code === 'permission-denied' ? t('Нет прав: проверь правила Firestore') : t('Не сохранилось в облако')); };
   store.saveGroup = g => {
     const i = S.groups.findIndex(x => x.id === g.id); if (i >= 0) S.groups[i] = g; else S.groups.push(g);
     if (store.mode !== 'cloud') return Promise.resolve(localPersist());
@@ -546,8 +563,8 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   };
   store.saveNotes = text => {
     S.notes = text;
-    if (store.mode !== 'cloud') { if (localPersist()) toast('Заметки сохранены'); return; }
-    const { fs, db } = store.fb; fs.setDoc(fs.doc(db, 'users', uid(), 'meta', 'notes'), { text, updated: today() }).catch(cloudErr); toast('Заметки сохранены');
+    if (store.mode !== 'cloud') { if (localPersist()) toast(t('Заметки сохранены')); return; }
+    const { fs, db } = store.fb; fs.setDoc(fs.doc(db, 'users', uid(), 'meta', 'notes'), { text, updated: today() }).catch(cloudErr); toast(t('Заметки сохранены'));
   };
   store.saveProgram = days => {
     S.program = { days };
@@ -568,104 +585,104 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       b.set(fs.doc(db, 'users', u, 'meta', 'notes'), { text: notes || '', updated: today() });
       b.set(fs.doc(db, 'users', u, 'meta', 'profile'), { created: today(), email: store.user.email || null, guest: !!store.user.isAnonymous }, { merge: true });
       await Promise.race([b.commit(), new Promise(r => setTimeout(r, 4000))]);
-      store.cloudEmpty = false; S.confirm = null; toast('Программа готова');
-    } catch (e) { console.error(e); store.err = 'Не сохранилось: ' + (e && (e.code || e.message) || e); toast('Не сохранилось в облако'); }
+      store.cloudEmpty = false; S.confirm = null; toast(t('Программа готова'));
+    } catch (e) { console.error(e); store.err = t('Не сохранилось: ') + (e && (e.code || e.message) || e); toast(t('Не сохранилось в облако')); }
     finally { store.busy = false; render(); }
   }
 
   // ---- auth ----
-  const AUTH_MSG = { 'auth/invalid-email': 'Неверный email', 'auth/user-not-found': 'Такого пользователя нет', 'auth/wrong-password': 'Неверный пароль', 'auth/invalid-credential': 'Неверный email или пароль',
-    'auth/email-already-in-use': 'Этот email уже зарегистрирован, войди', 'auth/weak-password': 'Пароль минимум 6 символов', 'auth/popup-closed-by-user': 'Окно входа закрыто', 'auth/popup-blocked': 'Браузер заблокировал окно. Войди по email или открой сайт в Safari',
-    'auth/operation-not-allowed': 'Этот способ входа не включён в Firebase Console', 'auth/network-request-failed': 'Нет сети', 'auth/too-many-requests': 'Слишком много попыток, подожди', 'auth/unauthorized-domain': 'Домен не добавлен в Firebase Auth → Authorized domains' };
-  const authErr = e => { console.error(e); store.err = AUTH_MSG[e && e.code] || ('Ошибка: ' + (e && e.code || e)); store.busy = false; render(); };
+  const AUTH_MSG = { 'auth/invalid-email': t('Неверный email'), 'auth/user-not-found': t('Такого пользователя нет'), 'auth/wrong-password': t('Неверный пароль'), 'auth/invalid-credential': t('Неверный email или пароль'),
+    'auth/email-already-in-use': t('Этот email уже зарегистрирован, войди'), 'auth/weak-password': t('Пароль минимум 6 символов'), 'auth/popup-closed-by-user': t('Окно входа закрыто'), 'auth/popup-blocked': t('Браузер заблокировал окно. Войди по email или открой сайт в Safari'),
+    'auth/operation-not-allowed': t('Этот способ входа не включён в Firebase Console'), 'auth/network-request-failed': t('Нет сети'), 'auth/too-many-requests': t('Слишком много попыток, подожди'), 'auth/unauthorized-domain': t('Домен не добавлен в Firebase Auth → Authorized domains') };
+  const authErr = e => { console.error(e); store.err = AUTH_MSG[e && e.code] || (t('Ошибка: ') + (e && e.code || e)); store.busy = false; render(); };
   async function doAuth(fn) { store.err = null; store.busy = true; render(); try { await fn(); store.busy = false; store.err = null; } catch (e) { authErr(e); } }
   const signInEmail = (email, pass) => doAuth(() => store.fb.auth.signInWithEmailAndPassword(store.fb.au, email.trim(), pass));
   const signUpEmail = (email, pass) => doAuth(() => store.fb.auth.createUserWithEmailAndPassword(store.fb.au, email.trim(), pass));
   const signInGoogle = () => doAuth(() => store.fb.auth.signInWithPopup(store.fb.au, new store.fb.auth.GoogleAuthProvider()));
   const signInGuest = () => doAuth(() => store.fb.auth.signInAnonymously(store.fb.au));
-  const resetPass = email => { if (!email.trim()) { store.err = 'Введи email, на него придёт ссылка'; render(); return; } doAuth(async () => { await store.fb.auth.sendPasswordResetEmail(store.fb.au, email.trim()); toast('Письмо для сброса пароля отправлено'); }); };
+  const resetPass = email => { if (!email.trim()) { store.err = t('Введи email, на него придёт ссылка'); render(); return; } doAuth(async () => { await store.fb.auth.sendPasswordResetEmail(store.fb.au, email.trim()); toast(t('Письмо для сброса пароля отправлено')); }); };
   const signOut = () => doAuth(() => store.fb.auth.signOut(store.fb.au));
 
   // ---- UI pieces ----
-  const initial = () => { const u = store.user; if (!u) return '?'; const s = (u.displayName || u.email || 'Г'); return s[0].toUpperCase(); };
+  const initial = () => { const u = store.user; if (!u) return '?'; const s = (u.displayName || u.email || t('Г')); return s[0].toUpperCase(); };
   store.renderAcct = btn => {
     if (!cfg || (!store.authKnown && S.dbState === 'loading')) { btn.hidden = true; return; }
     btn.hidden = false; btn.replaceChildren();
-    if (store.user) { btn.className = 'acct on'; btn.textContent = initial(); btn.title = store.user.email || 'Гость'; }
-    else { btn.className = 'acct warn'; btn.textContent = 'Войти'; }
+    if (store.user) { btn.className = 'acct on'; btn.textContent = initial(); btn.title = store.user.email || t('Гость'); }
+    else { btn.className = 'acct warn'; btn.textContent = t('Войти'); }
   };
   store.banner = main => {
     if (!cfg || store.user || store.hideBanner) return;
     main.append(el('div', { class: 'notice', style: 'display:flex;gap:10px;align-items:center;flex-wrap:wrap' },
-      el('span', { style: 'flex:1;min-width:0' }, el('b', {}, 'Данные только на этом телефоне. '), 'Войди, и они будут в облаке на всех устройствах.'),
-      el('button', { class: 'btn sm primary', onclick: () => { setMode('account'); render(); } }, 'Войти'),
-      el('button', { class: 'btn sm ghost', 'aria-label': 'Скрыть', onclick: () => { store.hideBanner = true; render(); } }, '×')));
+      el('span', { style: 'flex:1;min-width:0' }, el('b', {}, t('Данные только на этом телефоне. ')), t('Войди, и они будут в облаке на всех устройствах.')),
+      el('button', { class: 'btn sm primary', onclick: () => { setMode('account'); render(); } }, t('Войти')),
+      el('button', { class: 'btn sm ghost', 'aria-label': t('Скрыть'), onclick: () => { store.hideBanner = true; render(); } }, '×')));
   };
   // first sign-in with an empty cloud: choose how to start
   store.gate = main => {
     if (store.mode !== 'cloud' || store.cloudEmpty !== true) return false;
     const local = localLoad(); const own = store.user.email === OWNER_EMAIL;
-    main.append(el('div', { class: 'auth' }, el('h3', {}, 'С чего начнём?'), el('p', {}, 'В аккаунте пока пусто. Выбери стартовую программу, потом её можно менять как угодно.'),
+    main.append(el('div', { class: 'auth' }, el('h3', {}, t('С чего начнём?')), el('p', {}, t('В аккаунте пока пусто. Выбери стартовую программу, потом её можно менять как угодно.')),
       el('div', { class: 'choice' },
-        el('button', { class: 'main', disabled: store.busy, onclick: () => writeProgram(clone(TEMPLATE), '') }, el('b', {}, 'Стандартная программа'), el('span', {}, '6 групп мышц, 25 базовых упражнений, 4 подхода')),
-        el('button', { disabled: store.busy, onclick: () => writeProgram([], '') }, el('b', {}, 'Пустая'), el('span', {}, 'Сам добавлю группы и упражнения')),
-        local ? el('button', { disabled: store.busy, onclick: () => writeProgram(local.groups, local.notes) }, el('b', {}, 'Перенести с этого устройства'), el('span', {}, `${local.groups.length} групп, сохранено ${local.saved ? new Date(local.saved).toLocaleDateString('ru-RU') : 'ранее'}`)) : null,
-        own ? el('button', { disabled: store.busy, onclick: () => writeProgram(clone(SEED), SEED_NOTES.text) }, el('b', {}, 'Мои таблицы из Notes'), el('span', {}, 'Dosh, Biceps, Mechq, Triceps, Us, Vot со всей историей')) : null),
-      store.busy ? el('p', {}, 'Сохраняю…') : null, store.err ? el('div', { class: 'err' }, store.err) : null));
+        el('button', { class: 'main', disabled: store.busy, onclick: () => writeProgram(localizeTemplate(clone(TEMPLATE)), '') }, el('b', {}, t('Стандартная программа')), el('span', {}, t('6 групп мышц, 25 базовых упражнений, 4 подхода'))),
+        el('button', { disabled: store.busy, onclick: () => writeProgram([], '') }, el('b', {}, t('Пустая')), el('span', {}, t('Сам добавлю группы и упражнения'))),
+        local ? el('button', { disabled: store.busy, onclick: () => writeProgram(local.groups, local.notes) }, el('b', {}, t('Перенести с этого устройства')), el('span', {}, t('{0} групп, сохранено {1}', [local.groups.length, local.saved ? new Date(local.saved).toLocaleDateString(LOCALE()) : 'ранее']))) : null,
+        own ? el('button', { disabled: store.busy, onclick: () => writeProgram(clone(SEED), SEED_NOTES.text) }, el('b', {}, t('Мои таблицы из Notes')), el('span', {}, t('Dosh, Biceps, Mechq, Triceps, Us, Vot со всей историей'))) : null),
+      store.busy ? el('p', {}, t('Сохраняю…')) : null, store.err ? el('div', { class: 'err' }, store.err) : null));
     return true;
   };
   store.renderAccount = main => {
-    main.append(el('div', { class: 'ghead' }, el('h2', {}, 'Аккаунт')));
+    main.append(el('div', { class: 'ghead' }, el('h2', {}, t('Аккаунт'))));
     if (!cfg) {
-      main.append(el('div', { class: 'auth' }, el('h3', {}, 'Облако не подключено'), el('p', {}, 'Файл firebase-config.js пуст. Пока данные хранятся только в этом браузере. Инструкция по подключению Firebase лежит в README репозитория.')));
+      main.append(el('div', { class: 'auth' }, el('h3', {}, t('Облако не подключено')), el('p', {}, t('Файл firebase-config.js пуст. Пока данные хранятся только в этом браузере. Инструкция по подключению Firebase лежит в README репозитория.'))));
       return renderBackup(main);
     }
-    if (!store.fb) { main.append(el('div', { class: 'notice' }, store.err || 'Подключаюсь к Firebase…')); return; }
+    if (!store.fb) { main.append(el('div', { class: 'notice' }, store.err || t('Подключаюсь к Firebase…'))); return; }
     if (store.user) {
       const u = store.user;
       main.append(el('div', { class: 'auth' },
-        el('div', { class: 'prof' }, el('div', { class: 'av' }, initial()), el('div', { class: 'who' }, el('b', {}, u.isAnonymous ? 'Гость' : (u.displayName || u.email)), el('span', {}, u.isAnonymous ? 'Данные привязаны к этому устройству, пока не выйдешь' : (u.email || '')))),
-        el('p', {}, store.fromCache ? 'Офлайн: показана локальная копия, изменения отправятся при появлении сети.' : 'Синхронизировано с облаком. Открой этот же сайт на другом устройстве и войди тем же способом.'),
-        el('div', { class: 'row' }, el('button', { class: 'btn', disabled: store.busy, onclick: signOut }, 'Выйти'),
-          el('button', { class: 'btn ghost danger', onclick: () => { S.confirm = { type: 'reprogram' }; render(); } }, 'Заменить программу')),
-        S.confirm && S.confirm.type === 'reprogram' ? el('div', { class: 'confirm' }, 'Удалить все группы и записи в облаке и начать заново?',
-          el('button', { class: 'btn sm danger', disabled: store.busy, onclick: () => writeProgram(clone(TEMPLATE), S.notes) }, 'Стандартная'),
-          el('button', { class: 'btn sm danger', disabled: store.busy, onclick: () => writeProgram([], S.notes) }, 'Пустая'),
-          u.email === OWNER_EMAIL ? el('button', { class: 'btn sm danger', disabled: store.busy, onclick: () => writeProgram(clone(SEED), SEED_NOTES.text) }, 'Из Notes') : null,
-          el('button', { class: 'btn sm ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')) : null,
+        el('div', { class: 'prof' }, el('div', { class: 'av' }, initial()), el('div', { class: 'who' }, el('b', {}, u.isAnonymous ? t('Гость') : (u.displayName || u.email)), el('span', {}, u.isAnonymous ? t('Данные привязаны к этому устройству, пока не выйдешь') : (u.email || '')))),
+        el('p', {}, store.fromCache ? t('Офлайн: показана локальная копия, изменения отправятся при появлении сети.') : t('Синхронизировано с облаком. Открой этот же сайт на другом устройстве и войди тем же способом.')),
+        el('div', { class: 'row' }, el('button', { class: 'btn', disabled: store.busy, onclick: signOut }, t('Выйти')),
+          el('button', { class: 'btn ghost danger', onclick: () => { S.confirm = { type: 'reprogram' }; render(); } }, t('Заменить программу'))),
+        S.confirm && S.confirm.type === 'reprogram' ? el('div', { class: 'confirm' }, t('Удалить все группы и записи в облаке и начать заново?'),
+          el('button', { class: 'btn sm danger', disabled: store.busy, onclick: () => writeProgram(localizeTemplate(clone(TEMPLATE)), S.notes) }, t('Стандартная')),
+          el('button', { class: 'btn sm danger', disabled: store.busy, onclick: () => writeProgram([], S.notes) }, t('Пустая')),
+          u.email === OWNER_EMAIL ? el('button', { class: 'btn sm danger', disabled: store.busy, onclick: () => writeProgram(clone(SEED), SEED_NOTES.text) }, t('Из Notes')) : null,
+          el('button', { class: 'btn sm ghost', onclick: () => { S.confirm = null; render(); } }, t('Отмена'))) : null,
         store.err ? el('div', { class: 'err' }, store.err) : null));
-      return renderBackup(main);
+      main.append(langRow()); return renderBackup(main);
     }
     const email = el('input', { id: 'auth-email', type: 'email', placeholder: 'Email', autocomplete: 'username', inputmode: 'email' });
-    const pass = el('input', { id: 'auth-pass', type: 'password', placeholder: store.form === 'signup' ? 'Пароль (от 6 символов)' : 'Пароль', autocomplete: store.form === 'signup' ? 'new-password' : 'current-password' });
+    const pass = el('input', { id: 'auth-pass', type: 'password', placeholder: store.form === 'signup' ? t('Пароль (от 6 символов)') : t('Пароль'), autocomplete: store.form === 'signup' ? 'new-password' : 'current-password' });
     const signup = store.form === 'signup';
     main.append(el('form', { class: 'auth', onsubmit: e => { e.preventDefault(); (signup ? signUpEmail : signInEmail)(email.value, pass.value); } },
-      el('h3', {}, signup ? 'Создать аккаунт' : 'Войти'),
-      el('p', {}, 'У каждого пользователя своя программа и история. Вход по email работает и в приложении на домашнем экране.'),
+      el('h3', {}, signup ? t('Создать аккаунт') : t('Войти')),
+      el('p', {}, t('У каждого пользователя своя программа и история. Вход по email работает и в приложении на домашнем экране.')),
       email, pass,
       store.err ? el('div', { class: 'err' }, store.err) : null,
-      el('button', { type: 'submit', class: 'btn primary', disabled: store.busy }, store.busy ? 'Секунду…' : (signup ? 'Создать аккаунт' : 'Войти')),
+      el('button', { type: 'submit', class: 'btn primary', disabled: store.busy }, store.busy ? t('Секунду…') : (signup ? t('Создать аккаунт') : t('Войти'))),
       el('div', { class: 'row', style: 'justify-content:space-between' },
-        el('button', { type: 'button', class: 'btn ghost sm', onclick: () => { store.form = signup ? 'login' : 'signup'; store.err = null; render(); } }, signup ? 'У меня уже есть аккаунт' : 'Создать аккаунт'),
-        signup ? null : el('button', { type: 'button', class: 'btn ghost sm', onclick: () => resetPass(email.value) }, 'Забыл пароль')),
-      el('div', { class: 'or' }, 'или'),
-      el('button', { type: 'button', class: 'btn', disabled: store.busy, onclick: signInGoogle }, 'Войти через Google'),
-      el('button', { type: 'button', class: 'btn ghost', disabled: store.busy, onclick: signInGuest }, 'Продолжить как гость'),
-      el('p', { style: 'font-size:12px' }, 'Google-вход открывает окно: если ты добавил сайт на экран «Домой» и окно не возвращается, войди по email. Гость хранит данные в облаке без пароля, но вернуть их после выхода нельзя.')));
-    renderBackup(main);
+        el('button', { type: 'button', class: 'btn ghost sm', onclick: () => { store.form = signup ? 'login' : 'signup'; store.err = null; render(); } }, signup ? t('У меня уже есть аккаунт') : t('Создать аккаунт')),
+        signup ? null : el('button', { type: 'button', class: 'btn ghost sm', onclick: () => resetPass(email.value) }, t('Забыл пароль'))),
+      el('div', { class: 'or' }, t('или')),
+      el('button', { type: 'button', class: 'btn', disabled: store.busy, onclick: signInGoogle }, t('Войти через Google')),
+      el('button', { type: 'button', class: 'btn ghost', disabled: store.busy, onclick: signInGuest }, t('Продолжить как гость')),
+      el('p', { style: 'font-size:12px' }, t('Google-вход открывает окно: если ты добавил сайт на экран «Домой» и окно не возвращается, войди по email. Гость хранит данные в облаке без пароля, но вернуть их после выхода нельзя.'))));
+    main.append(langRow()); renderBackup(main);
   };
 
   // ---- backup (export/import works in both modes) ----
   function renderBackup(main) {
     const file = el('input', { id: 'import-file', type: 'file', accept: 'application/json,.json', onchange: e => { if (e.target.files[0]) importJSON(e.target.files[0]); e.target.value = ''; } });
-    main.append(el('div', { class: 'backup' }, el('h3', {}, 'Резервная копия'),
-      el('p', {}, store.mode === 'cloud' ? 'Скачать всё в файл или восстановить из файла (заменит программу в облаке).' : 'Данные хранятся в памяти этого браузера. Скачивай файл время от времени или войди в аккаунт.'),
-      el('div', { class: 'row' }, el('button', { class: 'btn', onclick: exportJSON }, 'Скачать файл'), el('button', { class: 'btn', onclick: () => file.click() }, 'Загрузить из файла'), file)));
+    main.append(el('div', { class: 'backup' }, el('h3', {}, t('Резервная копия')),
+      el('p', {}, store.mode === 'cloud' ? t('Скачать всё в файл или восстановить из файла (заменит программу в облаке).') : t('Данные хранятся в памяти этого браузера. Скачивай файл время от времени или войди в аккаунт.')),
+      el('div', { class: 'row' }, el('button', { class: 'btn', onclick: exportJSON }, t('Скачать файл')), el('button', { class: 'btn', onclick: () => file.click() }, t('Загрузить из файла')), file)));
   }
   function exportJSON() {
     const blob = new Blob([JSON.stringify({ groups: S.groups, notes: S.notes, body: S.body, program: S.program, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'gym-' + today() + '.json'; document.body.append(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000); toast('Файл сохраняется');
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000); toast(t('Файл сохраняется'));
   }
   function importJSON(file) {
     const r = new FileReader();
@@ -673,8 +690,8 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       if (Array.isArray(d.body)) store.saveBody(d.body);
       if (d.program && Array.isArray(d.program.days)) store.saveProgram(d.program.days);
       if (store.mode === 'cloud') { writeProgram(d.groups, typeof d.notes === 'string' ? d.notes : S.notes); return; }
-      S.groups = sortG(d.groups); S.notes = typeof d.notes === 'string' ? d.notes : S.notes; localPersist(); S.active = S.groups[0] ? S.groups[0].id : null; render(); toast('Данные загружены из файла'); }
-      catch { toast('Это не файл резервной копии GYM'); } };
+      S.groups = sortG(d.groups); S.notes = typeof d.notes === 'string' ? d.notes : S.notes; localPersist(); S.active = S.groups[0] ? S.groups[0].id : null; render(); toast(t('Данные загружены из файла')); }
+      catch { toast(t('Это не файл резервной копии GYM')); } };
     r.readAsText(file);
   }
   store.renderBackup = renderBackup;   // also shown under Notes
@@ -687,13 +704,13 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
     if (!ex.sets[si] || !ex.sets[si].length) return;
     ex.sets[si].pop(); S.confirm = null; optimistic(g);
-    if (await store.saveGroup(g)) toast('Удалено');
+    if (await store.saveGroup(g)) toast(t('Удалено'));
   }
   async function removeSession(gid, exid, date) {
     const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
     ex.sets = ex.sets.map(s => s.filter(e => ed(e) !== date));
     ex.last = exLast({ ...ex, last: null }); S.confirm = null; optimistic(g);
-    if (await store.saveGroup(g)) toast('Запись за ' + fmtDate(date) + ' удалена');
+    if (await store.saveGroup(g)) toast(t('Запись за ') + fmtDate(date) + t(' удалена'));
   }
   async function renameEx(gid, exid, name) {
     const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
@@ -701,7 +718,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   }
   async function deleteEx(gid, exid) {
     const g = clone(S.groups.find(x => x.id === gid)); g.exercises = g.exercises.filter(e => e.id !== exid);
-    S.confirm = null; S.open = null; optimistic(g); if (await store.saveGroup(g)) toast('Упражнение удалено');
+    S.confirm = null; S.open = null; optimistic(g); if (await store.saveGroup(g)) toast(t('Упражнение удалено'));
   }
   async function addEx(gid, name) {
     const g = clone(S.groups.find(x => x.id === gid)); name = name.trim(); if (!name) return;
@@ -716,7 +733,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   }
   async function removeGroup(gid) {
     S.confirm = null; S.groups = S.groups.filter(g => g.id !== gid); S.active = S.groups[0] ? S.groups[0].id : null; render();
-    if (await store.deleteGroup(gid)) toast('Группа удалена');
+    if (await store.deleteGroup(gid)) toast(t('Группа удалена'));
   }
 
   // ---------- rendering ----------
@@ -736,7 +753,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   }
 
   function renderLoader(main) {
-    main.append(el('div', { class: 'loader' }, el('span', { class: 'spin', 'aria-hidden': 'true' }), el('span', {}, store.loadMsg || 'Загружаю…')));
+    main.append(el('div', { class: 'loader' }, el('span', { class: 'spin', 'aria-hidden': 'true' }), el('span', {}, store.loadMsg || t('Загружаю…'))));
     main.append(el('div', { class: 'sk', style: 'width:46%;height:30px;margin:4px 0 6px' }), el('div', { class: 'sk', style: 'width:62%;height:14px;margin-bottom:14px' }));
     const list = el('div', { class: 'list' });
     for (let k = 0; k < 4; k++) {
@@ -748,15 +765,15 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   function renderTabs() {
     const nav = $('#tabs'); nav.replaceChildren();
     const td = today();
-    if (S.dbState === 'loading' && !S.groups.length) { for (const w of [72, 86, 78, 90, 60]) nav.append(el('div', { class: 'sk', style: `width:${w}px;height:44px;flex:0 0 auto;border-radius:10px` })); if (store.renderAcct) store.renderAcct($('#acct')); const tb = $('#today-box'); tb.replaceChildren(el('b', {}, fmtDate(td)), DAYS[new Date().getDay()]); return; }
+    if (S.dbState === 'loading' && !S.groups.length) { for (const w of [72, 86, 78, 90, 60]) nav.append(el('div', { class: 'sk', style: `width:${w}px;height:44px;flex:0 0 auto;border-radius:10px` })); if (store.renderAcct) store.renderAcct($('#acct')); const tb = $('#today-box'); tb.replaceChildren(el('b', {}, fmtDate(td)), (S.lang === 'en' ? DAYS_EN : DAYS)[new Date().getDay()]); return; }
     for (const g of S.groups) nav.append(el('button', { class: 'tab', 'aria-pressed': String(!(S.mode === 'workout' && S.day) && g.id === (activeGroup()||{}).id),
       onclick: () => { S.active = g.id; setPref('active', g.id); S.open = null; S.form = null; S.confirm = null; S.wdate = null; S.groupEdit = false; S.day = null; if (S.mode === 'notes' || S.mode === 'journal') setMode('workout'); render(); } },
-      el('b', {}, g.name), g.ru ? el('span', {}, g.ru) : null, g.lastEntry === td ? el('i', { class: 'dot', title: 'тренировка сегодня' }) : null));
-    if (S.dbState === 'ready') nav.append(el('button', { class: 'tab add', onclick: () => { S.addingGroup = true; setMode('cards'); render(); } }, '+ Группа'));
+      el('b', {}, g.name), g.ru ? el('span', {}, g.ru) : null, g.lastEntry === td ? el('i', { class: 'dot', title: t('тренировка сегодня') }) : null));
+    if (S.dbState === 'ready') nav.append(el('button', { class: 'tab add', onclick: () => { S.addingGroup = true; setMode('cards'); render(); } }, t('+ Группа')));
     if (store.renderAcct) store.renderAcct($('#acct'));
     const tb = $('#today-box'); tb.replaceChildren();
     const g = activeGroup();
-    tb.append(el('b', {}, fmtDate(td)), g && g.lastEntry ? 'последняя: ' + rel(g.lastEntry) : DAYS[new Date().getDay()]);
+    tb.append(el('b', {}, fmtDate(td)), g && g.lastEntry ? t('последняя: ') + rel(g.lastEntry) : (S.lang === 'en' ? DAYS_EN : DAYS)[new Date().getDay()]);
   }
 
   let wake = null;
@@ -773,10 +790,10 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const a = l != null ? num(ev(l)) : null, b = prev != null ? num(ev(prev)) : null; let dir = '';
     if (a != null && b != null) dir = a > b ? 'up' : a < b ? 'down' : '';
     return el('div', { class: 'set' },
-      el('div', { class: 'lbl' }, el('span', { class: 'full' }, 'Подход ' + (i+1)), el('span', { class: 'short' }, 'П' + (i+1))),
+      el('div', { class: 'lbl' }, el('span', { class: 'full' }, t('Подход ') + (i+1)), el('span', { class: 'short' }, t('П') + (i+1))),
       el('div', { class: 'val num' + (l == null ? ' empty' : '') }, l == null ? '—' : ev(l), l != null && er(l) != null ? el('small', {}, '×' + er(l)) : null),
       el('div', { class: 'cnt num' }, dir ? el('span', { class: 'd ' + dir }) : null,
-        arr.length ? [el('span', { class: 'full' }, arr.length + ' зап.'), el('span', { class: 'short' }, '×' + arr.length)] : el('span', {}, '—')));
+        arr.length ? [el('span', { class: 'full' }, arr.length + t(' зап.')), el('span', { class: 'short' }, '×' + arr.length)] : el('span', {}, '—')));
   }
 
   function renderCard(g, ex) {
@@ -787,9 +804,9 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const card = el('div', { class: 'card' + (isOpen ? ' open' : ''), style: `--n:${n}` });
     card.append(el('button', { class: 'head', 'aria-expanded': String(isOpen), onclick: () => { S.open = isOpen ? null : ex.id; S.confirm = null; S.rename = null; render(); } },
       el('div', { class: 'name' }, ex.name),
-      el('div', { class: 'last' + (ld === today() ? ' today' : '') }, ld ? rel(ld) : (ex.sets.some(st => st.length) ? 'из Заметок' : 'нет записей'), pr != null ? el('span', { class: 'pr num' }, 'max ' + fmtNum(pr, true)) : null)));
+      el('div', { class: 'last' + (ld === today() ? ' today' : '') }, ld ? rel(ld) : (ex.sets.some(st => st.length) ? t('из Заметок') : t('нет записей')), pr != null ? el('span', { class: 'pr num' }, 'max ' + fmtNum(pr, true)) : null)));
     const sets = el('div', { class: 'sets' });
-    for (let i = 0; i < n; i++) sets.append(setTile('Подход', i, ex.sets[i] || []));
+    for (let i = 0; i < n; i++) sets.append(setTile(t('Подход'), i, ex.sets[i] || []));
     card.append(sets);
     if (isOpen) card.append(renderDetail(g, ex, n));
     return card;
@@ -817,81 +834,81 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const allCount = ex.sets.reduce((a, s) => a + s.length, 0);
     // summary line
     d.append(el('div', { class: 'sum num' },
-      pr != null ? el('span', {}, el('b', {}, fmtNum(pr, true) + ' кг'), ' рекорд') : null,
-      el('span', {}, el('b', {}, String(sess.length)), ' трениров' + (sess.length % 10 === 1 && sess.length % 100 !== 11 ? 'ка' : 'ок')),
-      legacyCount ? el('span', {}, el('b', {}, String(legacyCount)), ' из Заметок') : null));
+      pr != null ? el('span', {}, el('b', {}, fmtNum(pr, true) + t(' кг')), t(' рекорд')) : null,
+      el('span', {}, el('b', {}, String(sess.length)), t(' трениров') + (sess.length % 10 === 1 && sess.length % 100 !== 11 ? t('ка') : t('ок'))),
+      legacyCount ? el('span', {}, el('b', {}, String(legacyCount)), t(' из Заметок')) : null));
     const ss = exSessions(ex); const gr = growth(ex, 30); const lastS = ss[ss.length - 1]; const bestRm = ss.reduce((m, x) => x.rm != null && (m == null || x.rm > m) ? x.rm : m, null);
     if (ss.length) d.append(el('div', { class: 'stats num' },
-      gr ? el('div', { class: 'stat' + (gr.delta > 0 ? ' up' : gr.delta < 0 ? ' down' : '') }, el('b', {}, (gr.delta > 0 ? '+' : '') + fmtNum(gr.delta, true) + ' кг'), el('span', {}, `за 30 дн. (${fmtNum(gr.from, true)} → ${fmtNum(gr.to, true)})`)) : el('div', { class: 'stat' }, el('b', {}, '—'), el('span', {}, 'рост за 30 дн.: нужно 2 тренировки')),
-      bestRm != null ? el('div', { class: 'stat' }, el('b', {}, fmtNum(Math.round(bestRm * 2) / 2, true) + ' кг'), el('span', {}, 'расчётный максимум на 1 раз')) : null,
-      lastS && lastS.vol != null ? el('div', { class: 'stat' }, el('b', {}, fmtNum(Math.round(lastS.vol), false) + ' кг'), el('span', {}, 'объём последней (вес × повторы)')) : null));
-    { const rec = recommend(g, ex); if (rec && rec.w != null) d.append(el('div', { class: 'tip' }, el('b', { class: 'num' }, `В следующий раз: ${fmtNum(rec.w, true)} кг × ${rec.r}`), el('span', {}, rec.why))); }
+      gr ? el('div', { class: 'stat' + (gr.delta > 0 ? ' up' : gr.delta < 0 ? ' down' : '') }, el('b', {}, (gr.delta > 0 ? '+' : '') + fmtNum(gr.delta, true) + t(' кг')), el('span', {}, t('за 30 дн. ({0} → {1})', [fmtNum(gr.from, true), fmtNum(gr.to, true)]))) : el('div', { class: 'stat' }, el('b', {}, '—'), el('span', {}, t('рост за 30 дн.: нужно 2 тренировки'))),
+      bestRm != null ? el('div', { class: 'stat' }, el('b', {}, fmtNum(Math.round(bestRm * 2) / 2, true) + t(' кг')), el('span', {}, t('расчётный максимум на 1 раз'))) : null,
+      lastS && lastS.vol != null ? el('div', { class: 'stat' }, el('b', {}, fmtNum(Math.round(lastS.vol), false) + t(' кг')), el('span', {}, t('объём последней (вес × повторы)'))) : null));
+    { const rec = recommend(g, ex); if (rec && rec.w != null) d.append(el('div', { class: 'tip' }, el('b', { class: 'num' }, t('В следующий раз: {0} кг × {1}', [fmtNum(rec.w, true), rec.r])), el('span', {}, rec.why))); }
     // dated sessions: tap a row to open that day in workout mode
     if (sess.length) {
       const t = el('table', { class: 'sess num' });
-      const hr = el('tr', {}, el('th', {}, 'Дата'));
-      for (let i = 0; i < n; i++) hr.append(el('th', {}, 'П' + (i+1)));
+      const hr = el('tr', {}, el('th', {}, t('Дата')));
+      for (let i = 0; i < n; i++) hr.append(el('th', {}, t('П') + (i+1)));
       hr.append(el('th', {})); t.append(el('thead', {}, hr));
       const tb = el('tbody');
       for (const [date, vals] of sess.slice(0, S.showAll === ex.id ? sess.length : 8)) {
-        const tr = el('tr', { class: 'go', tabindex: '0', title: 'Открыть этот день', onclick: () => goWorkout(ex.id, date), onkeydown: e => { if (e.key === 'Enter') goWorkout(ex.id, date); } }, el('td', { class: 'date' }, fmtDate(date)));
+        const tr = el('tr', { class: 'go', tabindex: '0', title: t('Открыть этот день'), onclick: () => goWorkout(ex.id, date), onkeydown: e => { if (e.key === 'Enter') goWorkout(ex.id, date); } }, el('td', { class: 'date' }, fmtDate(date)));
         for (let i = 0; i < n; i++) tr.append(el('td', { class: 'v' }, vals[i] || '·'));
-        tr.append(el('td', { class: 'x' }, canWrite ? el('button', { 'aria-label': 'Удалить запись за ' + fmtDate(date), onclick: e => { e.stopPropagation(); S.confirm = { type: 'sess', date }; render(); } }, '×') : null));
+        tr.append(el('td', { class: 'x' }, canWrite ? el('button', { 'aria-label': t('Удалить запись за ') + fmtDate(date), onclick: e => { e.stopPropagation(); S.confirm = { type: 'sess', date }; render(); } }, '×') : null));
         tb.append(tr);
         if (S.confirm && S.confirm.type === 'sess' && S.confirm.date === date)
-          tb.append(el('tr', {}, el('td', { colspan: n + 2, style: 'padding:6px 0' }, el('div', { class: 'confirm' }, `Удалить запись за ${fmtDate(date)}?`,
-            el('button', { class: 'btn sm danger', onclick: () => removeSession(g.id, ex.id, date) }, 'Удалить'),
-            el('button', { class: 'btn sm ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')))));
+          tb.append(el('tr', {}, el('td', { colspan: n + 2, style: 'padding:6px 0' }, el('div', { class: 'confirm' }, t('Удалить запись за {0}?', [fmtDate(date)]),
+            el('button', { class: 'btn sm danger', onclick: () => removeSession(g.id, ex.id, date) }, t('Удалить')),
+            el('button', { class: 'btn sm ghost', onclick: () => { S.confirm = null; render(); } }, t('Отмена'))))));
       }
       t.append(tb);
-      const box = el('div', {}, el('h4', {}, el('span', {}, 'Тренировки · нажми на день, чтобы открыть')), t);
-      if (sess.length > 8) box.append(el('button', { class: 'btn sm ghost', style: 'margin-top:6px', onclick: () => { S.showAll = S.showAll === ex.id ? null : ex.id; render(); } }, S.showAll === ex.id ? 'Свернуть' : `Показать все ${sess.length}`));
+      const box = el('div', {}, el('h4', {}, el('span', {}, t('Тренировки · нажми на день, чтобы открыть'))), t);
+      if (sess.length > 8) box.append(el('button', { class: 'btn sm ghost', style: 'margin-top:6px', onclick: () => { S.showAll = S.showAll === ex.id ? null : ex.id; render(); } }, S.showAll === ex.id ? t('Свернуть') : t('Показать все {0}', [sess.length])));
       d.append(box);
     }
     // trend
-    if (allCount > 1) { const tr = el('div', { class: 'hist' }, el('h4', {}, el('span', {}, 'Динамика веса · подход 1'))); const s1 = sparkline(ex.sets[0] || []); if (s1) tr.append(s1); d.append(tr); }
-    { const vols = ss.filter(x => x.vol != null).map(x => x.vol); if (vols.length > 1) { const tr = el('div', { class: 'hist' }, el('h4', {}, el('span', {}, 'Объём за тренировку · вес × повторы'))); const sv = sparkNums(vols); if (sv) tr.append(sv); d.append(tr); } }
+    if (allCount > 1) { const tr = el('div', { class: 'hist' }, el('h4', {}, el('span', {}, t('Динамика веса · подход 1')))); const s1 = sparkline(ex.sets[0] || []); if (s1) tr.append(s1); d.append(tr); }
+    { const vols = ss.filter(x => x.vol != null).map(x => x.vol); if (vols.length > 1) { const tr = el('div', { class: 'hist' }, el('h4', {}, el('span', {}, t('Объём за тренировку · вес × повторы')))); const sv = sparkNums(vols); if (sv) tr.append(sv); d.append(tr); } }
     // undated history from Notes, collapsed
     if (legacy.length) {
-      const det = el('details', { class: 'legacy' }, el('summary', {}, `История из Заметок без дат · ${legacyCount}`));
+      const det = el('details', { class: 'legacy' }, el('summary', {}, t('История из Заметок без дат · {0}', [legacyCount])));
       for (const [i, arr] of legacy) {
         const h = el('div', { class: 'hist' });
-        const title = el('h4', {}, el('span', {}, `Подход ${i+1} · ${arr.length}`));
-        if (canWrite && !ed(last(ex.sets[i]))) title.append(el('button', { onclick: () => { S.confirm = { type: 'set', si: i }; render(); } }, 'убрать последнее'));
+        const title = el('h4', {}, el('span', {}, t('Подход {0} · {1}', [i+1, arr.length])));
+        if (canWrite && !ed(last(ex.sets[i]))) title.append(el('button', { onclick: () => { S.confirm = { type: 'set', si: i }; render(); } }, t('убрать последнее')));
         h.append(title);
         if (S.confirm && S.confirm.type === 'set' && S.confirm.si === i)
-          h.append(el('div', { class: 'confirm' }, `Удалить «${ev(last(arr))}» из подхода ${i+1}?`,
-            el('button', { class: 'btn sm danger', onclick: () => removeLast(g.id, ex.id, i) }, 'Удалить'),
-            el('button', { class: 'btn sm ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')));
+          h.append(el('div', { class: 'confirm' }, t('Удалить «{0}» из подхода {1}?', [ev(last(arr)), i+1]),
+            el('button', { class: 'btn sm danger', onclick: () => removeLast(g.id, ex.id, i) }, t('Удалить')),
+            el('button', { class: 'btn sm ghost', onclick: () => { S.confirm = null; render(); } }, t('Отмена'))));
         const chips = el('div', { class: 'chips num' });
         arr.forEach((e, j) => chips.append(el('span', { class: 'chip' + (j === arr.length-1 ? ' last' : '') }, evr(e))));
         h.append(chips); det.append(h);
       }
       d.append(det);
     }
-    if (!allCount) d.append(el('div', { class: 'notice', style: 'margin:0' }, 'Пока нет записей. Нажми «Записать подход», откроется тренировка на сегодня.'));
+    if (!allCount) d.append(el('div', { class: 'notice', style: 'margin:0' }, t('Пока нет записей. Нажми «Записать подход», откроется тренировка на сегодня.')));
 
     // actions
     if (S.rename === ex.id) {
       const inp = el('input', { id: 'rename-' + ex.id, type: 'text', value: ex.name });
       d.append(el('form', { class: 'rename', onsubmit: e => { e.preventDefault(); renameEx(g.id, ex.id, inp.value); } }, inp,
-        el('button', { type: 'submit', class: 'btn primary' }, 'Ок'),
-        el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.rename = null; render(); } }, 'Отмена')));
+        el('button', { type: 'submit', class: 'btn primary' }, t('Ок')),
+        el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.rename = null; render(); } }, t('Отмена'))));
       setTimeout(() => inp.focus(), 0);
     } else if (S.confirm && S.confirm.type === 'ex') {
-      d.append(el('div', { class: 'confirm' }, `Удалить упражнение «${ex.name}» со всей историей?`,
-        el('button', { class: 'btn danger', onclick: () => deleteEx(g.id, ex.id) }, 'Удалить'),
-        el('button', { class: 'btn ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')));
+      d.append(el('div', { class: 'confirm' }, t('Удалить упражнение «{0}» со всей историей?', [ex.name]),
+        el('button', { class: 'btn danger', onclick: () => deleteEx(g.id, ex.id) }, t('Удалить')),
+        el('button', { class: 'btn ghost', onclick: () => { S.confirm = null; render(); } }, t('Отмена'))));
     } else {
       const idx = g.exercises.findIndex(e => e.id === ex.id);
       d.append(el('div', { class: 'row actions' },
-        el('button', { class: 'btn primary', disabled: !canWrite, onclick: () => goWorkout(ex.id, null) }, '+ Записать подход'),
-        el('button', { class: 'btn', disabled: !canWrite, onclick: () => { S.rename = ex.id; render(); } }, 'Переименовать'),
-        el('a', { class: 'btn', href: 'https://www.youtube.com/results?search_query=' + encodeURIComponent(ex.name + (S.lang === 'en' ? ' form' : ' техника выполнения')), target: '_blank', rel: 'noopener' }, '▶ Техника'),
+        el('button', { class: 'btn primary', disabled: !canWrite, onclick: () => goWorkout(ex.id, null) }, t('+ Записать подход')),
+        el('button', { class: 'btn', disabled: !canWrite, onclick: () => { S.rename = ex.id; render(); } }, t('Переименовать')),
+        el('a', { class: 'btn', href: 'https://www.youtube.com/results?search_query=' + encodeURIComponent(ex.name + (S.lang === 'en' ? ' form' : t(' техника выполнения'))), target: '_blank', rel: 'noopener' }, t('▶ Техника')),
         el('div', { class: 'row', style: 'gap:6px' },
-          el('button', { class: 'btn sm', disabled: !canWrite || idx === 0, 'aria-label': 'Выше', onclick: () => moveEx(g.id, ex.id, -1) }, '↑'),
-          el('button', { class: 'btn sm', disabled: !canWrite || idx === g.exercises.length - 1, 'aria-label': 'Ниже', onclick: () => moveEx(g.id, ex.id, 1) }, '↓'),
-          el('button', { class: 'btn sm ghost danger', disabled: !canWrite, onclick: () => { S.confirm = { type: 'ex' }; render(); } }, 'Удалить'))));
+          el('button', { class: 'btn sm', disabled: !canWrite || idx === 0, 'aria-label': t('Выше'), onclick: () => moveEx(g.id, ex.id, -1) }, '↑'),
+          el('button', { class: 'btn sm', disabled: !canWrite || idx === g.exercises.length - 1, 'aria-label': t('Ниже'), onclick: () => moveEx(g.id, ex.id, 1) }, '↓'),
+          el('button', { class: 'btn sm ghost danger', disabled: !canWrite, onclick: () => { S.confirm = { type: 'ex' }; render(); } }, t('Удалить')))));
     }
     return d;
   }
@@ -911,7 +928,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const t = S.timer; const box = $('#timer'); if (!t) return;
     const left = Math.ceil((t.end - Date.now()) / 1000);
     box.classList.add('show');
-    if (left <= 0) { if (!t.done) { t.done = true; beep(); box.classList.add('over'); } $('#timer-val').textContent = 'Отдых закончен'; $('#timer-bar').style.width = '100%';
+    if (left <= 0) { if (!t.done) { t.done = true; beep(); box.classList.add('over'); } $('#timer-val').textContent = t('Отдых закончен'); $('#timer-bar').style.width = '100%';
       if (left < -20) stopTimer(); return; }
     $('#timer-val').textContent = Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0'); $('#timer-bar').style.width = (100 * (1 - left / t.total)) + '%';
   }
@@ -931,7 +948,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   // ---- workout mode: one row per set, each saved on its own ----
   async function saveSet(gid, exid, si, v, r, date) {
     const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
-    v = String(v).trim().replace('.', ','); if (!v) { toast('Введи вес'); return false; }
+    v = String(v).trim().replace('.', ','); if (!v) { toast(t('Введи вес')); return false; }
     while (ex.sets.length <= si) ex.sets.push([]);
     const entry = { v, d: date }; const reps = parseInt(r, 10); if (!isNaN(reps) && reps > 0) entry.r = reps;
     const k = ex.sets[si].findIndex(e => ed(e) === date);
@@ -945,9 +962,9 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     S.editing = null; optimistic(g);
     const ok = await store.saveGroup(g);
     if (ok) {
-      if (pr === 'w') celebrate(`Новый рекорд веса: ${v} кг`, `Раньше максимум был ${fmtNum(prevW, true)} кг`);
-      else if (pr === 'rm') celebrate(`Новый расчётный максимум: ${fmtNum(Math.round(e1rm(w, entry.r) * 2) / 2, true)} кг`, `${v} кг × ${entry.r} сильнее всего, что было`);
-      else toast(`Подход ${si+1}: ${v} кг` + (entry.r ? ` × ${entry.r}` : '') + ' ✓');
+      if (pr === 'w') celebrate(t('Новый рекорд веса: {0} кг', [v]), t('Раньше максимум был {0} кг', [fmtNum(prevW, true)]));
+      else if (pr === 'rm') celebrate(t('Новый расчётный максимум: {0} кг', [fmtNum(Math.round(e1rm(w, entry.r) * 2) / 2, true)]), t('{0} кг × {1} сильнее всего, что было', [v, entry.r]));
+      else toast(t('Подход {0}: {1} кг', [si+1, v]) + (entry.r ? ` × ${entry.r}` : '') + ' ✓');
       if (date === today() && (g.rest ?? 90) > 0) startTimer(g.rest ?? 90);
     }
     return ok;
@@ -955,7 +972,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   async function deleteSet(gid, exid, si, date) {
     const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
     ex.sets[si] = (ex.sets[si] || []).filter(e => ed(e) !== date); ex.last = exLast({ ...ex, last: null });
-    S.editing = null; optimistic(g); if (await store.saveGroup(g)) toast('Подход удалён');
+    S.editing = null; optimistic(g); if (await store.saveGroup(g)) toast(t('Подход удалён'));
   }
   const dayGroups = day => day.groups.map(id => S.groups.find(g => g.id === id)).filter(Boolean);
   function plannedDay() {                                      // the day after the one trained most recently, in program order
@@ -969,33 +986,33 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const days = S.program.days; const plan = plannedDay();
     const bar = el('div', { class: 'daybar' });
     for (const d of days) bar.append(el('button', { class: 'daychip' + (S.day === d.id ? ' on' : ''), onclick: () => { S.day = S.day === d.id ? null : d.id; S.editing = null; render(); } },
-      el('b', {}, d.name), el('span', {}, dayGroups(d).map(g => g.name).join(' + ') || '—'), plan && plan.id === d.id ? el('i', {}, S.day === d.id ? 'по плану' : 'сегодня по плану') : null));
-    bar.append(el('button', { class: 'daychip edit', onclick: () => { S.programEdit = clone(S.program.days); render(); } }, days.length ? '⚙' : '+ Дни программы'));
+      el('b', {}, d.name), el('span', {}, dayGroups(d).map(g => g.name).join(' + ') || '—'), plan && plan.id === d.id ? el('i', {}, S.day === d.id ? t('по плану') : t('сегодня по плану')) : null));
+    bar.append(el('button', { class: 'daychip edit', onclick: () => { S.programEdit = clone(S.program.days); render(); } }, days.length ? '⚙' : t('+ Дни программы')));
     main.append(bar);
     if (S.programEdit) renderProgramEditor(main);
   }
   function renderProgramEditor(main) {
     const days = S.programEdit;
-    const box = el('form', { class: 'form', style: 'margin-bottom:12px', onsubmit: e => { e.preventDefault(); const clean = days.filter(d => d.name.trim() && d.groups.length); S.programEdit = null; if (!S.program.days.some(d => d.id === S.day)) S.day = null; if (store.saveProgram(clean)) toast('Программа сохранена'); render(); } },
-      el('h4', {}, 'Дни программы'), el('p', { class: 'small', style: 'margin:0 0 8px' }, 'Например «День A: Dosh + Triceps». Приложение подскажет, какой день следующий по кругу.'));
+    const box = el('form', { class: 'form', style: 'margin-bottom:12px', onsubmit: e => { e.preventDefault(); const clean = days.filter(d => d.name.trim() && d.groups.length); S.programEdit = null; if (!S.program.days.some(d => d.id === S.day)) S.day = null; if (store.saveProgram(clean)) toast(t('Программа сохранена')); render(); } },
+      el('h4', {}, t('Дни программы')), el('p', { class: 'small', style: 'margin:0 0 8px' }, t('Например «День A: Dosh + Triceps». Приложение подскажет, какой день следующий по кругу.')));
     days.forEach((d, i) => {
       const row = el('div', { class: 'dayrow' });
-      const nm = el('input', { type: 'text', value: d.name, placeholder: 'Название дня', oninput: e => { d.name = e.target.value; } });
-      row.append(el('div', { class: 'rename' }, nm, el('button', { type: 'button', class: 'btn sm ghost danger', 'aria-label': 'Удалить день', onclick: () => { days.splice(i, 1); render(); } }, '×')));
+      const nm = el('input', { type: 'text', value: d.name, placeholder: t('Название дня'), oninput: e => { d.name = e.target.value; } });
+      row.append(el('div', { class: 'rename' }, nm, el('button', { type: 'button', class: 'btn sm ghost danger', 'aria-label': t('Удалить день'), onclick: () => { days.splice(i, 1); render(); } }, '×')));
       const gs = el('div', { class: 'gchips' });
       for (const g of S.groups) gs.append(el('button', { type: 'button', class: 'gchip' + (d.groups.includes(g.id) ? ' on' : ''), onclick: e => { const k = d.groups.indexOf(g.id); if (k >= 0) d.groups.splice(k, 1); else d.groups.push(g.id); e.target.classList.toggle('on'); } }, g.name));
       row.append(gs); box.append(row);
     });
-    box.append(el('button', { type: 'button', class: 'btn sm', style: 'margin-top:4px', onclick: () => { days.push({ id: 'd' + Date.now().toString(36), name: 'День ' + String.fromCharCode(65 + days.length), groups: [] }); render(); } }, '+ День'),
-      el('div', { class: 'row end', style: 'margin-top:10px' }, el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.programEdit = null; render(); } }, 'Отмена'), el('button', { type: 'submit', class: 'btn primary' }, 'Сохранить')));
+    box.append(el('button', { type: 'button', class: 'btn sm', style: 'margin-top:4px', onclick: () => { days.push({ id: 'd' + Date.now().toString(36), name: t('День ') + String.fromCharCode(65 + days.length), groups: [] }); render(); } }, t('+ День')),
+      el('div', { class: 'row end', style: 'margin-top:10px' }, el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.programEdit = null; render(); } }, t('Отмена')), el('button', { type: 'submit', class: 'btn primary' }, t('Сохранить'))));
     main.append(box);
   }
   function renderWorkout(g, main) {
     const date = S.wdate || today();
     const dateIn = el('input', { id: 'wdate', type: 'date', value: date, max: today(), onchange: e => { S.wdate = e.target.value || today(); S.editing = null; render(); } });
     renderDayBar(main);
-    main.append(el('div', { class: 'wdate' }, el('label', { for: 'wdate' }, 'Дата тренировки'), dateIn));
-    if (!S.day && !g.exercises.length) { main.append(el('div', { class: 'notice' }, 'В этой группе пока нет упражнений. Добавь их во вкладке «Карточки».')); return; }
+    main.append(el('div', { class: 'wdate' }, el('label', { for: 'wdate' }, t('Дата тренировки')), dateIn));
+    if (!S.day && !g.exercises.length) { main.append(el('div', { class: 'notice' }, t('В этой группе пока нет упражнений. Добавь их во вкладке «Карточки».'))); return; }
     const canWrite = S.dbState === 'ready';
     const list = el('div', { class: 'list' });
     let doneTotal = 0;
@@ -1011,40 +1028,40 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       const ld = exLast(ex);
       const card = el('div', { class: 'wcard' + (doneCount ? ' filled' : ''), id: 'w-' + ex.id });
       card.append(el('div', { class: 'wh' }, el('div', { class: 'name' }, ex.name),
-        el('div', { class: 'last' + (doneCount ? ' today' : '') }, doneCount ? `${doneCount} из ${n} ✓` : ld ? 'прошлый раз: ' + rel(ld) : (ex.sets.some(st => st.length) ? 'из Заметок' : 'нет записей'))));
+        el('div', { class: 'last' + (doneCount ? ' today' : '') }, doneCount ? t('{0} из {1} ✓', [doneCount, n]) : ld ? t('прошлый раз: ') + rel(ld) : (ex.sets.some(st => st.length) ? t('из Заметок') : t('нет записей')))));
       const rec = recommend(g, ex);
-      if (rec && doneCount < n) card.append(el('div', { class: 'tip' }, el('b', { class: 'num' }, rec.w != null ? `Совет: ${fmtNum(rec.w, true)} кг × ${rec.r}` : `Совет: × ${rec.r}`), el('span', {}, rec.why)));
+      if (rec && doneCount < n) card.append(el('div', { class: 'tip' }, el('b', { class: 'num' }, rec.w != null ? t('Совет: {0} кг × {1}', [fmtNum(rec.w, true), rec.r]) : t('Совет: × {0}', [rec.r])), el('span', {}, rec.why)));
       const rows = el('div', { class: 'srows' });
       let nextOpen = todays.findIndex(t => !t); if (nextOpen < 0) nextOpen = n;
       for (let i = 0; i < n; i++) {
         const done = todays[i]; const editKey = ex.id + ':' + i; const editing = S.editing === editKey;
         if (done && !editing) {
-          rows.append(el('div', { class: 'srow done' }, el('span', { class: 'sl' }, 'П' + (i+1)), el('span', { class: 'sv num' }, done.v + ' кг', er(done) != null ? el('small', {}, ' × ' + er(done)) : null),
-            canWrite ? el('button', { class: 'sedit', 'aria-label': 'Изменить подход ' + (i+1), onclick: () => { S.editing = editKey; render(); } }, 'изменить') : null));
+          rows.append(el('div', { class: 'srow done' }, el('span', { class: 'sl' }, t('П') + (i+1)), el('span', { class: 'sv num' }, done.v + t(' кг'), er(done) != null ? el('small', {}, ' × ' + er(done)) : null),
+            canWrite ? el('button', { class: 'sedit', 'aria-label': t('Изменить подход ') + (i+1), onclick: () => { S.editing = editKey; render(); } }, t('изменить')) : null));
           continue;
         }
         if (i > nextOpen && !editing) continue;
         const prevSame = last((ex.sets[i] || []).filter(e => ed(e) !== date));
         const src = editing ? done : (prevSame || todays[i-1] || last(ex.sets[i-1] || []) || null);
         const useRec = !editing && rec && rec.w != null;
-        const kg = el('input', { id: `kg-${ex.id}-${i}`, type: 'text', inputmode: 'decimal', autocomplete: 'off', value: useRec ? fmtNum(rec.w, true) : (src ? ev(src) : ''), placeholder: 'кг', 'aria-label': 'Вес, кг' });
-        const rp = el('input', { id: `rp-${ex.id}-${i}`, type: 'text', inputmode: 'numeric', autocomplete: 'off', value: useRec ? String(rec.r) : (src && er(src) != null ? er(src) : ''), placeholder: 'раз', 'aria-label': 'Повторения' });
+        const kg = el('input', { id: `kg-${ex.id}-${i}`, type: 'text', inputmode: 'decimal', autocomplete: 'off', value: useRec ? fmtNum(rec.w, true) : (src ? ev(src) : ''), placeholder: t('кг'), 'aria-label': t('Вес, кг') });
+        const rp = el('input', { id: `rp-${ex.id}-${i}`, type: 'text', inputmode: 'numeric', autocomplete: 'off', value: useRec ? String(rec.r) : (src && er(src) != null ? er(src) : ''), placeholder: t('раз'), 'aria-label': t('Повторения') });
         const bump = (inp, d, int) => { const x = num(inp.value || inp.placeholder); if (x == null) { inp.value = int ? String(Math.max(1, d)) : fmtNum(Math.max(0, d), true); return; } inp.value = int ? String(Math.max(0, x + d)) : fmtNum(Math.max(0, x + d), true); };
         const row = el('form', { class: 'srow' + (editing ? ' editing' : ''), onsubmit: e => { e.preventDefault(); saveSet(g.id, ex.id, i, kg.value, rp.value, date); } },
-          el('span', { class: 'sl' }, 'П' + (i+1)),
-          el('div', { class: 'stp' }, el('button', { type: 'button', 'aria-label': 'минус 2,5 кг', onclick: () => bump(kg, -2.5, false) }, '−'), kg, el('button', { type: 'button', 'aria-label': 'плюс 2,5 кг', onclick: () => bump(kg, 2.5, false) }, '+')),
-          el('span', { class: 'su' }, 'кг'),
-          el('div', { class: 'stp' }, el('button', { type: 'button', 'aria-label': 'минус повтор', onclick: () => bump(rp, -1, true) }, '−'), rp, el('button', { type: 'button', 'aria-label': 'плюс повтор', onclick: () => bump(rp, 1, true) }, '+')),
-          el('button', { type: 'submit', class: 'sok', disabled: !canWrite, 'aria-label': 'Сохранить подход ' + (i+1) }, '✓'),
-          editing ? el('button', { type: 'button', class: 'sdel', 'aria-label': 'Удалить подход', onclick: () => deleteSet(g.id, ex.id, i, date) }, '×') : null);
+          el('span', { class: 'sl' }, t('П') + (i+1)),
+          el('div', { class: 'stp' }, el('button', { type: 'button', 'aria-label': t('минус 2,5 кг'), onclick: () => bump(kg, -2.5, false) }, '−'), kg, el('button', { type: 'button', 'aria-label': t('плюс 2,5 кг'), onclick: () => bump(kg, 2.5, false) }, '+')),
+          el('span', { class: 'su' }, t('кг')),
+          el('div', { class: 'stp' }, el('button', { type: 'button', 'aria-label': t('минус повтор'), onclick: () => bump(rp, -1, true) }, '−'), rp, el('button', { type: 'button', 'aria-label': t('плюс повтор'), onclick: () => bump(rp, 1, true) }, '+')),
+          el('button', { type: 'submit', class: 'sok', disabled: !canWrite, 'aria-label': t('Сохранить подход ') + (i+1) }, '✓'),
+          editing ? el('button', { type: 'button', class: 'sdel', 'aria-label': t('Удалить подход'), onclick: () => deleteSet(g.id, ex.id, i, date) }, '×') : null);
         rows.append(row);
       }
       card.append(rows);
-      if (canWrite && todays.filter(Boolean).length === n) card.append(el('button', { class: 'btn sm ghost', style: 'margin-top:8px', onclick: () => { const gg = clone(g); const e2 = gg.exercises.find(e => e.id === ex.id); e2.sets.push([]); optimistic(gg); store.saveGroup(gg); } }, '+ ещё подход'));
+      if (canWrite && todays.filter(Boolean).length === n) card.append(el('button', { class: 'btn sm ghost', style: 'margin-top:8px', onclick: () => { const gg = clone(g); const e2 = gg.exercises.find(e => e.id === ex.id); e2.sets.push([]); optimistic(gg); store.saveGroup(gg); } }, t('+ ещё подход')));
       list.append(card);
     }
     }
-    main.append(list, el('p', { class: 'tablenote' }, doneTotal ? `Сегодня записано подходов: ${doneTotal}. Каждый сохраняется сразу, можно закрыть телефон между подходами.` : 'Введи вес и повторения, нажми ✓. Подход сохранится сразу, следующий откроется сам. Цифры подставлены из прошлого раза: меняй и жми.'));
+    main.append(list, el('p', { class: 'tablenote' }, doneTotal ? t('Сегодня записано подходов: {0}. Каждый сохраняется сразу, можно закрыть телефон между подходами.', [doneTotal]) : t('Введи вес и повторения, нажми ✓. Подход сохранится сразу, следующий откроется сам. Цифры подставлены из прошлого раза: меняй и жми.')));
   }
 
   function renderTable(g) {
@@ -1066,7 +1083,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       tb.append(tr);
     }
     t.append(tb); wrap.append(t);
-    return [wrap, el('p', { class: 'tablenote' }, 'Та же таблица, что была в Заметках: столбцы — подходы, в ячейке — вся история весов через дефис. Жёлтым выделен последний вес.')];
+    return [wrap, el('p', { class: 'tablenote' }, t('Та же таблица, что была в Заметках: столбцы — подходы, в ячейке — вся история весов через дефис. Жёлтым выделен последний вес.'))];
   }
 
   function renderJournal(main) {
@@ -1078,37 +1095,37 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     }
     const dates = [...days.keys()].sort().reverse();
     const td = today(); const in30 = dates.filter(d => daysAgo(d) < 30).length; const in7 = dates.filter(d => daysAgo(d) < 7).length;
-    main.append(el('div', { class: 'ghead' }, el('h2', {}, 'Журнал'), el('div', { class: 'meta' }, dates.length ? `${dates.length} тренировок с датой` : '')));
+    main.append(el('div', { class: 'ghead' }, el('h2', {}, t('Журнал')), el('div', { class: 'meta' }, dates.length ? t('{0} тренировок с датой', [dates.length]) : '')));
     main.append(el('div', { class: 'jstats num' },
-      el('div', { class: 'jstat' }, el('b', {}, String(in7)), el('span', {}, 'за 7 дней')),
-      el('div', { class: 'jstat' }, el('b', {}, String(in30)), el('span', {}, 'за 30 дней')),
-      el('div', { class: 'jstat' }, el('b', {}, dates[0] ? rel(dates[0]) : '—'), el('span', {}, 'последняя'))));
+      el('div', { class: 'jstat' }, el('b', {}, String(in7)), el('span', {}, t('за 7 дней'))),
+      el('div', { class: 'jstat' }, el('b', {}, String(in30)), el('span', {}, t('за 30 дней'))),
+      el('div', { class: 'jstat' }, el('b', {}, dates[0] ? rel(dates[0]) : '—'), el('span', {}, t('последняя')))));
     // heat map: last 16 weeks, one square per day, colour by number of sets logged
     { const setsOn = new Map(); for (const g of S.groups) for (const ex of g.exercises) for (const st of ex.sets) for (const e of st) { const d = ed(e); if (d) setsOn.set(d, (setsOn.get(d) || 0) + 1); }
       const t0 = parseD(td); const dow = (t0.getDay() + 6) % 7; const start = new Date(t0); start.setDate(t0.getDate() - dow - 15 * 7);
-      const grid = el('div', { class: 'heat', role: 'img', 'aria-label': 'Календарь тренировок за 16 недель' });
+      const grid = el('div', { class: 'heat', role: 'img', 'aria-label': t('Календарь тренировок за 16 недель') });
       for (let r = 0; r < 7; r++) for (let c = 0; c < 16; c++) { const d = new Date(start); d.setDate(start.getDate() + c * 7 + r); const iso = [d.getFullYear(), String(d.getMonth()+1).padStart(2,'0'), String(d.getDate()).padStart(2,'0')].join('-');
-        const nSets = setsOn.get(iso) || 0; const cell = el('i', { class: (nSets ? (nSets >= 15 ? 'l3' : nSets >= 8 ? 'l2' : 'l1') : '') + (iso === td ? ' td' : ''), title: fmtDate(iso, true) + (nSets ? ` · ${nSets} подх.` : '') }); if (d > t0) cell.style.visibility = 'hidden'; grid.append(cell); }
+        const nSets = setsOn.get(iso) || 0; const cell = el('i', { class: (nSets ? (nSets >= 15 ? 'l3' : nSets >= 8 ? 'l2' : 'l1') : '') + (iso === td ? ' td' : ''), title: fmtDate(iso, true) + (nSets ? t(' · {0} подх.', [nSets]) : '') }); if (d > t0) cell.style.visibility = 'hidden'; grid.append(cell); }
       // streak: consecutive weeks (ending this week) with at least one workout
       const weekOf = iso => { const d = parseD(iso); const k = new Date(d); k.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return k.getTime(); };
       const weeks = new Set(dates.map(weekOf)); let streak = 0; let wk = weekOf(td); while (weeks.has(wk)) { streak++; wk -= 7 * 86400000; }
-      main.append(el('div', { class: 'jday' }, el('h3', {}, 'Календарь', el('span', {}, '16 недель')), grid,
-        el('div', { class: 'heatlbl' }, el('span', {}, fmtDate([start.getFullYear(), String(start.getMonth()+1).padStart(2,'0'), String(start.getDate()).padStart(2,'0')].join('-'))), el('span', {}, 'сегодня')),
-        el('div', { class: 'streak' }, streak ? [el('b', {}, streak + (streak === 1 ? ' неделя' : streak < 5 ? ' недели' : ' недель')), ' подряд с тренировками 🔥'] : 'На этой неделе ещё не было тренировки. Начни серию.'))); }
-    if (!dates.length) { main.append(el('div', { class: 'notice' }, el('b', {}, 'Пока нет тренировок с датой. '), 'Записи из Заметок перенесены без дат. Всё, что ты сохранишь через «Тренировка», появится здесь по дням, а ниже появится статистика роста.')); return; }
+      main.append(el('div', { class: 'jday' }, el('h3', {}, t('Календарь'), el('span', {}, t('16 недель'))), grid,
+        el('div', { class: 'heatlbl' }, el('span', {}, fmtDate([start.getFullYear(), String(start.getMonth()+1).padStart(2,'0'), String(start.getDate()).padStart(2,'0')].join('-'))), el('span', {}, t('сегодня'))),
+        el('div', { class: 'streak' }, streak ? [el('b', {}, streak + (streak === 1 ? t(' неделя') : streak < 5 ? t(' недели') : t(' недель'))), t(' подряд с тренировками 🔥')] : t('На этой неделе ещё не было тренировки. Начни серию.')))); }
+    if (!dates.length) { main.append(el('div', { class: 'notice' }, el('b', {}, t('Пока нет тренировок с датой. ')), t('Записи из Заметок перенесены без дат. Всё, что ты сохранишь через «Тренировка», появится здесь по дням, а ниже появится статистика роста.'))); return; }
     // growth over 30 days across all exercises
     const rows = []; let vol7 = 0, vol30 = 0;
     for (const g of S.groups) for (const ex of g.exercises) { const gr = growth(ex, 30); if (gr) rows.push({ g, ex, gr }); for (const x of exSessions(ex)) { if (x.vol != null) { if (daysAgo(x.date) < 7) vol7 += x.vol; if (daysAgo(x.date) < 30) vol30 += x.vol; } } }
     rows.sort((a, b) => b.gr.delta - a.gr.delta);
     const up = rows.filter(r => r.gr.delta > 0), flat = rows.filter(r => r.gr.delta === 0), down = rows.filter(r => r.gr.delta < 0);
-    const box = el('div', { class: 'jday' }, el('h3', {}, 'Рост за 30 дней', el('span', {}, rows.length ? `${up.length} ↑ · ${flat.length} = · ${down.length} ↓` : '')));
-    if (vol30) box.append(el('div', { class: 'stats num', style: 'margin-bottom:8px' }, el('div', { class: 'stat' }, el('b', {}, fmtNum(Math.round(vol7), false) + ' кг'), el('span', {}, 'поднято за 7 дней')), el('div', { class: 'stat' }, el('b', {}, fmtNum(Math.round(vol30), false) + ' кг'), el('span', {}, 'поднято за 30 дней'))));
-    if (!rows.length) box.append(el('p', { class: 'small', style: 'margin:0' }, 'Сравнивать пока не с чем: нужно минимум две тренировки одного упражнения с датой.'));
-    for (const r of [...up, ...down].slice(0, 8)) box.append(el('div', { class: 'jex' }, el('div', { class: 'n' }, r.ex.name, el('span', { class: 'small' }, ' · ' + r.g.name)), el('div', { class: 'v num' + (r.gr.delta > 0 ? ' good' : ' bad') }, (r.gr.delta > 0 ? '+' : '') + fmtNum(r.gr.delta, true) + ' кг')));
-    if (flat.length) box.append(el('p', { class: 'small', style: 'margin:8px 0 0' }, 'Без изменений: ' + flat.map(r => r.ex.name).join(', ')));
+    const box = el('div', { class: 'jday' }, el('h3', {}, t('Рост за 30 дней'), el('span', {}, rows.length ? `${up.length} ↑ · ${flat.length} = · ${down.length} ↓` : '')));
+    if (vol30) box.append(el('div', { class: 'stats num', style: 'margin-bottom:8px' }, el('div', { class: 'stat' }, el('b', {}, fmtNum(Math.round(vol7), false) + t(' кг')), el('span', {}, t('поднято за 7 дней'))), el('div', { class: 'stat' }, el('b', {}, fmtNum(Math.round(vol30), false) + t(' кг')), el('span', {}, t('поднято за 30 дней')))));
+    if (!rows.length) box.append(el('p', { class: 'small', style: 'margin:0' }, t('Сравнивать пока не с чем: нужно минимум две тренировки одного упражнения с датой.')));
+    for (const r of [...up, ...down].slice(0, 8)) box.append(el('div', { class: 'jex' }, el('div', { class: 'n' }, r.ex.name, el('span', { class: 'small' }, ' · ' + r.g.name)), el('div', { class: 'v num' + (r.gr.delta > 0 ? ' good' : ' bad') }, (r.gr.delta > 0 ? '+' : '') + fmtNum(r.gr.delta, true) + t(' кг'))));
+    if (flat.length) box.append(el('p', { class: 'small', style: 'margin:8px 0 0' }, t('Без изменений: ') + flat.map(r => r.ex.name).join(', ')));
     main.append(box);
     for (const d of dates) {
-      const box = el('div', { class: 'jday' }, el('h3', {}, fmtLong(d), el('span', {}, d === td ? 'сегодня' : rel(d))));
+      const box = el('div', { class: 'jday' }, el('h3', {}, fmtLong(d), el('span', {}, d === td ? t('сегодня') : rel(d))));
       for (const { g, items } of days.get(d).values()) {
         const grp = el('div', { class: 'jgroup' }, el('div', { class: 'gname' }, g.name + (g.ru ? ' · ' + g.ru : '')));
         for (const { ex, vals, n } of items) {
@@ -1122,16 +1139,17 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   }
 
   function renderNotes(main) {
-    const ta = el('textarea', { id: 'notes-ta', placeholder: 'Замеры, даты, план…' });
+    const ta = el('textarea', { id: 'notes-ta', placeholder: t('Замеры, даты, план…') });
     ta.value = S.notes ?? '';
-    main.append(el('div', { class: 'ghead' }, el('h2', {}, 'Заметки')),
-      el('div', { class: 'notes' }, ta, el('p', { class: 'hint' }, S.notesLoaded ? 'Замеры, даты начала и конца циклов, что угодно.' : 'Загружаю…'),
-        el('div', { class: 'row end' }, el('button', { class: 'btn primary', disabled: S.dbState !== 'ready', onclick: () => store.saveNotes(ta.value) }, 'Сохранить'))));
+    main.append(el('div', { class: 'ghead' }, el('h2', {}, t('Заметки'))),
+      el('div', { class: 'notes' }, ta, el('p', { class: 'hint' }, S.notesLoaded ? t('Замеры, даты начала и конца циклов, что угодно.') : t('Загружаю…')),
+        el('div', { class: 'row end' }, el('button', { class: 'btn primary', disabled: S.dbState !== 'ready', onclick: () => store.saveNotes(ta.value) }, t('Сохранить')))));
     renderBody(main);
     if (store.renderBackup) store.renderBackup(main);
+    main.append(langRow());
   }
 
-  const BODY_FIELDS = [['w', 'Вес, кг'], ['chest', 'Грудь'], ['waist', 'Талия'], ['biceps', 'Бицепс'], ['thigh', 'Бедро'], ['hips', 'Таз']];
+  const BODY_FIELDS = [['w', t('Вес, кг')], ['chest', t('Грудь')], ['waist', t('Талия')], ['biceps', t('Бицепс')], ['thigh', t('Бедро')], ['hips', t('Таз')]];
   function renderBody(main) {
     const rows = [...(S.body || [])].sort((a, b) => b.d < a.d ? -1 : 1);
     const lastRow = rows[0] || {};
@@ -1140,25 +1158,25 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     for (const [k, label] of BODY_FIELDS) { inputs[k] = el('input', { id: 'b-' + k, type: 'text', inputmode: 'decimal', placeholder: lastRow[k] != null ? fmtNum(lastRow[k], true) : '—', 'aria-label': label }); grid.append(el('label', {}, label, inputs[k])); }
     const form = el('form', { class: 'form', onsubmit: e => { e.preventDefault(); const d = dateIn.value || today(); const row = { d }; let any = false;
       for (const [k] of BODY_FIELDS) { const x = num(inputs[k].value); if (x != null) { row[k] = x; any = true; } }
-      if (!any) { toast('Введи хотя бы одно значение'); return; }
+      if (!any) { toast(t('Введи хотя бы одно значение')); return; }
       const next = (S.body || []).filter(r => r.d !== d); const prev = (S.body || []).find(r => r.d === d); next.push(prev ? { ...prev, ...row } : row);
-      if (store.saveBody(next)) { toast('Замеры сохранены'); render(); } } },
-      el('h4', {}, 'Замеры тела'), el('div', { class: 'row', style: 'margin-bottom:8px' }, dateIn), grid,
-      el('div', { class: 'row end', style: 'margin-top:10px' }, el('button', { type: 'submit', class: 'btn primary', disabled: S.dbState !== 'ready' }, 'Сохранить замеры')));
-    const wrap = el('div', { style: 'margin-top:18px' }, el('div', { class: 'ghead' }, el('h2', {}, 'Замеры'), el('div', { class: 'meta' }, rows.length ? `${rows.length} записей` : '')), form);
+      if (store.saveBody(next)) { toast(t('Замеры сохранены')); render(); } } },
+      el('h4', {}, t('Замеры тела')), el('div', { class: 'row', style: 'margin-bottom:8px' }, dateIn), grid,
+      el('div', { class: 'row end', style: 'margin-top:10px' }, el('button', { type: 'submit', class: 'btn primary', disabled: S.dbState !== 'ready' }, t('Сохранить замеры'))));
+    const wrap = el('div', { style: 'margin-top:18px' }, el('div', { class: 'ghead' }, el('h2', {}, t('Замеры')), el('div', { class: 'meta' }, rows.length ? t('{0} записей', [rows.length]) : '')), form);
     if (rows.length) {
       const ws = [...rows].reverse().filter(r => r.w != null).map(r => r.w);
-      if (ws.length > 1) { const h = el('div', { class: 'hist', style: 'margin-top:12px' }, el('h4', {}, el('span', {}, `Вес тела · ${fmtNum(ws[0], true)} → ${fmtNum(ws[ws.length-1], true)} кг`))); const sp = sparkNums(ws); if (sp) h.append(sp); wrap.append(h); }
+      if (ws.length > 1) { const h = el('div', { class: 'hist', style: 'margin-top:12px' }, el('h4', {}, el('span', {}, t('Вес тела · {0} → {1} кг', [fmtNum(ws[0], true), fmtNum(ws[ws.length-1], true)])))); const sp = sparkNums(ws); if (sp) h.append(sp); wrap.append(h); }
       const used = BODY_FIELDS.filter(([k]) => rows.some(r => r[k] != null));
-      const t = el('table', { class: 'btable num' }); const hr = el('tr', {}, el('th', {}, 'Дата')); for (const [, label] of used) hr.append(el('th', {}, label.replace(', кг', ''))); hr.append(el('th', {})); t.append(el('thead', {}, hr));
+      const t = el('table', { class: 'btable num' }); const hr = el('tr', {}, el('th', {}, t('Дата'))); for (const [, label] of used) hr.append(el('th', {}, label.replace(t(', кг'), ''))); hr.append(el('th', {})); t.append(el('thead', {}, hr));
       const tb = el('tbody');
       rows.slice(0, S.showAll === 'body' ? rows.length : 10).forEach((r, i) => { const prev = rows[i + 1]; const tr = el('tr', {}, el('td', {}, fmtDate(r.d)));
         for (const [k] of used) { const v = r[k]; const pv = prev ? prev[k] : null; const dlt = v != null && pv != null ? v - pv : null;
           tr.append(el('td', {}, v != null ? fmtNum(v, true) : '·', dlt ? el('div', { class: 'delta', style: 'color:' + (dlt > 0 ? 'var(--good)' : 'var(--bad)') }, (dlt > 0 ? '+' : '') + fmtNum(dlt, true)) : null)); }
-        tr.append(el('td', {}, el('button', { class: 'dl', 'aria-label': 'Удалить замер', onclick: () => { if (store.saveBody((S.body || []).filter(x => x.d !== r.d))) { toast('Удалено'); render(); } } }, '×'))); tb.append(tr); });
+        tr.append(el('td', {}, el('button', { class: 'dl', 'aria-label': t('Удалить замер'), onclick: () => { if (store.saveBody((S.body || []).filter(x => x.d !== r.d))) { toast(t('Удалено')); render(); } } }, '×'))); tb.append(tr); });
       t.append(tb); wrap.append(t);
-      if (rows.length > 10) wrap.append(el('button', { class: 'btn sm ghost', style: 'margin-top:6px', onclick: () => { S.showAll = S.showAll === 'body' ? null : 'body'; render(); } }, S.showAll === 'body' ? 'Свернуть' : `Показать все ${rows.length}`));
-    } else wrap.append(el('p', { class: 'hint' }, 'Запиши вес и объёмы раз в неделю-две, здесь появится таблица с изменениями и график веса.'));
+      if (rows.length > 10) wrap.append(el('button', { class: 'btn sm ghost', style: 'margin-top:6px', onclick: () => { S.showAll = S.showAll === 'body' ? null : 'body'; render(); } }, S.showAll === 'body' ? t('Свернуть') : t('Показать все {0}', [rows.length])));
+    } else wrap.append(el('p', { class: 'hint' }, t('Запиши вес и объёмы раз в неделю-две, здесь появится таблица с изменениями и график веса.')));
     main.append(wrap);
   }
 
@@ -1166,58 +1184,58 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     renderTabs();
     const main = $('#main'); main.replaceChildren();
     const g = activeGroup();
-    $('#brand-sub').textContent = S.dbState === 'offline' ? 'только просмотр' : 'дневник весов';
+    $('#brand-sub').textContent = S.dbState === 'offline' ? t('только просмотр') : t('дневник весов');
     wakeLock(S.mode === 'workout');
-    $('#brand-sub').textContent = S.dbState === 'loading' ? 'подключаюсь…' : $('#brand-sub').textContent;
+    $('#brand-sub').textContent = S.dbState === 'loading' ? t('подключаюсь…') : $('#brand-sub').textContent;
     if (S.mode === 'account' && store.renderAccount) return store.renderAccount(main);
     if (S.dbState === 'loading' && !S.groups.length) return renderLoader(main);
     if (store.gate && store.gate(main)) return;
     if (store.banner) store.banner(main);
 
-    if (S.dbState === 'offline') main.append(el('div', { class: 'notice' }, el('b', {}, 'Нет доступа к базе. '), 'Открой ссылку, войдя в свой аккаунт claude.ai, тогда записи можно будет добавлять. Сейчас показана последняя сохранённая копия.'));
+    if (S.dbState === 'offline') main.append(el('div', { class: 'notice' }, el('b', {}, t('Нет доступа к базе. ')), t('Открой ссылку, войдя в свой аккаунт claude.ai, тогда записи можно будет добавлять. Сейчас показана последняя сохранённая копия.')));
 
     if (S.mode === 'notes') return renderNotes(main);
     if (S.mode === 'journal') return renderJournal(main);
 
     if (S.addingGroup) {
-      const nm = el('input', { id: 'ng-name', type: 'text', placeholder: 'Название (напр. Press)' });
-      const ru = el('input', { id: 'ng-ru', type: 'text', placeholder: 'Подпись (напр. Пресс)' });
+      const nm = el('input', { id: 'ng-name', type: 'text', placeholder: t('Название (напр. Press)') });
+      const ru = el('input', { id: 'ng-ru', type: 'text', placeholder: t('Подпись (напр. Пресс)') });
       main.append(el('form', { class: 'form', style: 'margin-bottom:12px', onsubmit: e => { e.preventDefault(); addGroup(nm.value, ru.value); } },
-        el('h4', {}, 'Новая группа мышц'), el('div', { class: 'rename' }, nm), el('div', { class: 'rename', style: 'margin-top:6px' }, ru),
-        el('div', { class: 'row end', style: 'margin-top:10px' }, el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.addingGroup = false; render(); } }, 'Отмена'), el('button', { type: 'submit', class: 'btn primary' }, 'Создать'))));
+        el('h4', {}, t('Новая группа мышц')), el('div', { class: 'rename' }, nm), el('div', { class: 'rename', style: 'margin-top:6px' }, ru),
+        el('div', { class: 'row end', style: 'margin-top:10px' }, el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.addingGroup = false; render(); } }, t('Отмена')), el('button', { type: 'submit', class: 'btn primary' }, t('Создать')))));
       setTimeout(() => nm.focus(), 0);
     }
     if (!g) {
-      main.append(el('div', { class: 'notice' }, S.dbState === 'loading' ? 'Загружаю твои таблицы…' :
-        [el('b', {}, 'Пока пусто. '), 'Нажми «+ Группа» сверху, чтобы добавить первую группу мышц, потом упражнения и веса.']));
+      main.append(el('div', { class: 'notice' }, S.dbState === 'loading' ? t('Загружаю твои таблицы…') :
+        [el('b', {}, t('Пока пусто. ')), t('Нажми «+ Группа» сверху, чтобы добавить первую группу мышц, потом упражнения и веса.')]));
       return;
     }
     const total = g.exercises.reduce((a, e) => a + e.sets.reduce((b, s) => b + s.length, 0), 0);
-    if (S.mode === 'workout' && S.day) { const d = S.program.days.find(x => x.id === S.day); if (d) { main.append(el('div', { class: 'ghead' }, el('h2', {}, d.name, el('span', {}, dayGroups(d).map(x => x.name).join(' + '))), el('div', { class: 'meta' }, 'тренировка по программе'))); return renderWorkout(g, main); } S.day = null; }
+    if (S.mode === 'workout' && S.day) { const d = S.program.days.find(x => x.id === S.day); if (d) { main.append(el('div', { class: 'ghead' }, el('h2', {}, d.name, el('span', {}, dayGroups(d).map(x => x.name).join(' + '))), el('div', { class: 'meta' }, t('тренировка по программе')))); return renderWorkout(g, main); } S.day = null; }
     main.append(el('div', { class: 'ghead' },
-      el('h2', {}, g.name, g.ru ? el('span', {}, g.ru) : null, S.mode === 'cards' && S.dbState === 'ready' ? el('button', { class: 'gear', 'aria-label': 'Настройки группы', onclick: () => { S.groupEdit = !S.groupEdit; S.confirm = null; render(); } }, '⚙') : null),
-      el('div', { class: 'meta num' }, `${g.exercises.length} упр. · ${total} записей`, g.lastEntry ? ' · последняя ' + rel(g.lastEntry) : '')));
+      el('h2', {}, g.name, g.ru ? el('span', {}, g.ru) : null, S.mode === 'cards' && S.dbState === 'ready' ? el('button', { class: 'gear', 'aria-label': t('Настройки группы'), onclick: () => { S.groupEdit = !S.groupEdit; S.confirm = null; render(); } }, '⚙') : null),
+      el('div', { class: 'meta num' }, t('{0} упр. · {1} записей', [g.exercises.length, total]), g.lastEntry ? t(' · последняя ') + rel(g.lastEntry) : '')));
     if (S.mode === 'cards' && S.groupEdit) {
-      const nm = el('input', { id: 'g-name', type: 'text', value: g.name, placeholder: 'Название' });
-      const ru = el('input', { id: 'g-ru', type: 'text', value: g.ru || '', placeholder: 'Подпись (напр. Грудь)' });
+      const nm = el('input', { id: 'g-name', type: 'text', value: g.name, placeholder: t('Название') });
+      const ru = el('input', { id: 'g-ru', type: 'text', value: g.ru || '', placeholder: t('Подпись (напр. Грудь)') });
       const ns = el('select', { id: 'g-nsets', style: 'border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 10px;min-height:44px' });
       const selStyle = 'border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 10px;min-height:44px';
       const mkSel = (id, vals, cur, label) => { const sel = el('select', { id, style: selStyle, 'aria-label': label }); for (const v of vals) sel.append(el('option', { value: String(v), selected: v === cur ? '' : null }, String(v).replace('.', ','))); return sel; };
-      const rst = mkSel('g-rest', [0,45,60,90,120,150,180,240], g.rest ?? 90, 'Отдых между подходами, секунд');
-      const rmin = mkSel('g-rmin', [3,4,5,6,8,10,12,15], g.repMin || 8, 'Минимум повторений'), rmax = mkSel('g-rmax', [5,6,8,10,12,15,20], g.repMax || 12, 'Максимум повторений'), stp = mkSel('g-step', [1.25,2.5,5,10], g.step || 2.5, 'Шаг веса, кг');
-      for (let i = 1; i <= 8; i++) ns.append(el('option', { value: String(i), selected: i === (g.nsets || 4) ? '' : null }, i + (i === 1 ? ' подход' : i < 5 ? ' подхода' : ' подходов')));
-      main.append(el('form', { class: 'form', style: 'margin-bottom:12px', onsubmit: async e => { e.preventDefault(); const gg = clone(g); gg.name = nm.value.trim() || g.name; gg.ru = ru.value.trim(); gg.nsets = +ns.value; gg.repMin = +rmin.value; gg.repMax = Math.max(+rmin.value, +rmax.value); gg.step = +stp.value; gg.rest = +rst.value; S.groupEdit = false; optimistic(gg); if (await store.saveGroup(gg)) toast('Сохранено'); } },
-        el('h4', {}, 'Настройки группы'),
+      const rst = mkSel('g-rest', [0,45,60,90,120,150,180,240], g.rest ?? 90, t('Отдых между подходами, секунд'));
+      const rmin = mkSel('g-rmin', [3,4,5,6,8,10,12,15], g.repMin || 8, t('Минимум повторений')), rmax = mkSel('g-rmax', [5,6,8,10,12,15,20], g.repMax || 12, t('Максимум повторений')), stp = mkSel('g-step', [1.25,2.5,5,10], g.step || 2.5, t('Шаг веса, кг'));
+      for (let i = 1; i <= 8; i++) ns.append(el('option', { value: String(i), selected: i === (g.nsets || 4) ? '' : null }, i + (i === 1 ? t(' подход') : i < 5 ? t(' подхода') : t(' подходов'))));
+      main.append(el('form', { class: 'form', style: 'margin-bottom:12px', onsubmit: async e => { e.preventDefault(); const gg = clone(g); gg.name = nm.value.trim() || g.name; gg.ru = ru.value.trim(); gg.nsets = +ns.value; gg.repMin = +rmin.value; gg.repMax = Math.max(+rmin.value, +rmax.value); gg.step = +stp.value; gg.rest = +rst.value; S.groupEdit = false; optimistic(gg); if (await store.saveGroup(gg)) toast(t('Сохранено')); } },
+        el('h4', {}, t('Настройки группы')),
         el('div', { class: 'rename' }, nm), el('div', { class: 'rename', style: 'margin-top:6px' }, ru), el('div', { class: 'rename', style: 'margin-top:6px' }, ns),
-        el('h4', { style: 'margin-top:12px' }, 'Правило прогрессии'),
-        el('div', { class: 'rename', style: 'align-items:center;flex-wrap:wrap;gap:6px' }, el('span', { class: 'small' }, 'повторений от'), rmin, el('span', { class: 'small' }, 'до'), rmax, el('span', { class: 'small' }, '· шаг веса'), stp),
-        el('p', { class: 'small', style: 'margin:6px 0 0' }, 'Дошёл до верхней границы во всех подходах → совет добавить шаг веса. Ниже нижней → держать вес и добирать повторы.'),
-        el('div', { class: 'rename', style: 'align-items:center;flex-wrap:wrap;gap:6px;margin-top:10px' }, el('span', { class: 'small' }, 'Таймер отдыха после подхода, сек'), rst, el('span', { class: 'small' }, '(0 = выключить)')),
+        el('h4', { style: 'margin-top:12px' }, t('Правило прогрессии')),
+        el('div', { class: 'rename', style: 'align-items:center;flex-wrap:wrap;gap:6px' }, el('span', { class: 'small' }, t('повторений от')), rmin, el('span', { class: 'small' }, t('до')), rmax, el('span', { class: 'small' }, t('· шаг веса')), stp),
+        el('p', { class: 'small', style: 'margin:6px 0 0' }, t('Дошёл до верхней границы во всех подходах → совет добавить шаг веса. Ниже нижней → держать вес и добирать повторы.')),
+        el('div', { class: 'rename', style: 'align-items:center;flex-wrap:wrap;gap:6px;margin-top:10px' }, el('span', { class: 'small' }, t('Таймер отдыха после подхода, сек')), rst, el('span', { class: 'small' }, t('(0 = выключить)'))),
         el('div', { class: 'row', style: 'margin-top:10px;justify-content:space-between' },
-          el('button', { type: 'button', class: 'btn ghost danger', onclick: () => { S.confirm = { type: 'group' }; render(); } }, 'Удалить группу'),
-          el('div', { class: 'row' }, el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.groupEdit = false; render(); } }, 'Отмена'), el('button', { type: 'submit', class: 'btn primary' }, 'Сохранить'))),
-        S.confirm && S.confirm.type === 'group' ? el('div', { class: 'confirm', style: 'margin-top:10px' }, `Удалить группу «${g.name}» со всеми упражнениями и историей?`,
-          el('button', { type: 'button', class: 'btn sm danger', onclick: () => removeGroup(g.id) }, 'Удалить'), el('button', { type: 'button', class: 'btn sm ghost', onclick: () => { S.confirm = null; render(); } }, 'Отмена')) : null));
+          el('button', { type: 'button', class: 'btn ghost danger', onclick: () => { S.confirm = { type: 'group' }; render(); } }, t('Удалить группу')),
+          el('div', { class: 'row' }, el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.groupEdit = false; render(); } }, t('Отмена')), el('button', { type: 'submit', class: 'btn primary' }, t('Сохранить')))),
+        S.confirm && S.confirm.type === 'group' ? el('div', { class: 'confirm', style: 'margin-top:10px' }, t('Удалить группу «{0}» со всеми упражнениями и историей?', [g.name]),
+          el('button', { type: 'button', class: 'btn sm danger', onclick: () => removeGroup(g.id) }, t('Удалить')), el('button', { type: 'button', class: 'btn sm ghost', onclick: () => { S.confirm = null; render(); } }, t('Отмена'))) : null));
     }
 
     if (S.mode === 'workout') return renderWorkout(g, main);
@@ -1228,21 +1246,22 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     main.append(list);
     if (S.dbState === 'ready') {
       if (S.addingEx) {
-        const inp = el('input', { id: 'newex', type: 'text', placeholder: 'Название или поиск по базе', autocomplete: 'off' });
+        const inp = el('input', { id: 'newex', type: 'text', placeholder: t('Название или поиск по базе'), autocomplete: 'off' });
         const sug = el('div', { class: 'sug' });
         const fill = () => { sug.replaceChildren(); for (const e of libSuggest(g, inp.value)) sug.append(el('button', { type: 'button', class: 'sugi', onclick: () => addEx(g.id, libName(e)) }, el('b', {}, libName(e)), el('span', {}, S.lang === 'en' ? e[1] : e[2]))); };
         inp.addEventListener('input', fill); fill();
         main.append(el('form', { class: 'form', style: 'margin-top:10px', onsubmit: e => { e.preventDefault(); addEx(g.id, inp.value); } },
-          el('h4', {}, 'Новое упражнение'), el('div', { class: 'rename' }, inp, el('button', { type: 'submit', class: 'btn primary' }, 'Добавить'), el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.addingEx = false; render(); } }, 'Отмена')),
-          el('p', { class: 'small', style: 'margin:8px 0 4px' }, 'Из базы упражнений, сначала для этой группы:'), sug));
+          el('h4', {}, t('Новое упражнение')), el('div', { class: 'rename' }, inp, el('button', { type: 'submit', class: 'btn primary' }, t('Добавить')), el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.addingEx = false; render(); } }, t('Отмена'))),
+          el('p', { class: 'small', style: 'margin:8px 0 4px' }, t('Из базы упражнений, сначала для этой группы:')), sug));
         setTimeout(() => inp.focus(), 0);
-      } else main.append(el('button', { class: 'addex', onclick: () => { S.addingEx = true; render(); } }, '+ Упражнение'));
+      } else main.append(el('button', { class: 'addex', onclick: () => { S.addingEx = true; render(); } }, t('+ Упражнение')));
     }
   }
 
   for (const b of document.querySelectorAll('#nav button')) b.addEventListener('click', () => { setMode(b.dataset.mode); S.open = null; S.form = null; S.groupEdit = false; render(); window.scrollTo({ top: 0 }); });
   $('#acct').addEventListener('click', () => { setMode('account'); S.open = null; render(); window.scrollTo({ top: 0 }); });
   if (S.mode === 'account' && !store.renderAccount) S.mode = 'workout';
+  applyStatic();
   setMode(S.mode);
   render();
   store.init();
