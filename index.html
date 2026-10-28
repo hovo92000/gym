@@ -588,7 +588,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     catch (e) { console.warn('persistent cache unavailable', e); db = fs.getFirestore(a); }
     const au = auth.getAuth(a); au.languageCode = 'ru';
     store.fb = { auth, fs, db, au };
-    auth.onAuthStateChanged(au, user => { const wasOut = store.authKnown && !store.user; store.authKnown = true; clearTimeout(store.authTimer); store.user = user; if (user) { attach(); if (wasOut) { toast(t('Привет, {0}!', [user.isAnonymous ? t('Гость') : (user.displayName || user.email || '')])); if (S.mode === 'account') setMode('workout'); } } else detach(); S.menu = false; render(); });
+    auth.onAuthStateChanged(au, user => { const wasOut = store.authKnown && !store.user; store.authKnown = true; clearTimeout(store.authTimer); store.user = user; if (user) { attach(); if (wasOut) { toast(t('Привет, {0}!', [user.isAnonymous ? t('Гость') : (user.displayName || user.email || '')])); if (S.mode === 'account') setMode('workout'); } } else { detach(); if (wasOut === false && store.authKnown) { setMode('account'); } } S.menu = false; render(); });
   }
 
   function detach() { for (const u of store.unsub) u(); store.unsub = []; if (store.mode === 'cloud' || S.dbState === 'loading') { store.mode = 'local'; applyLocal(); } }
@@ -697,10 +697,11 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     if (store.user) { const u = store.user;
       box.append(el('div', { class: 'prof' }, el('div', { class: 'av' }, u.photoURL ? el('img', { src: u.photoURL, alt: '', referrerpolicy: 'no-referrer' }) : initial()), el('div', { class: 'who' }, el('b', {}, u.isAnonymous ? t('Гость') : (u.displayName || u.email)), el('span', {}, u.isAnonymous ? t('Данные привязаны к этому устройству, пока не выйдешь') : (u.email || '')))));
       box.append(el('div', { class: 'mrow' },
-        !u.isAnonymous ? el('button', { class: 'btn sm', disabled: store.busy, onclick: switchGoogle }, t('Сменить аккаунт Google')) : null,
-        el('button', { class: 'btn sm ghost danger', disabled: store.busy, onclick: signOut }, t('Выйти'))));
+        !u.isAnonymous ? el('button', { class: 'btn sm', disabled: store.busy, onclick: () => { S.menu = false; renderMenu(); switchGoogle(); } }, t('Сменить аккаунт Google')) : null,
+        el('button', { class: 'btn sm ghost danger', disabled: store.busy, onclick: () => { S.menu = false; renderMenu(); signOut(); } }, t('Выйти'))));
     } else {
-      box.append(el('p', { class: 'small', style: 'margin:0 0 8px' }, t('Войди, и данные будут в облаке на всех устройствах.')), googleBtn(),
+      const gb = googleBtn(); gb.addEventListener('click', () => { S.menu = false; renderMenu(); }, { capture: true });
+      box.append(el('p', { class: 'small', style: 'margin:0 0 8px' }, t('Войди, и данные будут в облаке на всех устройствах.')), gb,
         el('button', { class: 'btn', style: 'margin-top:6px', onclick: () => { S.menu = false; setMode('account'); render(); } }, t('Войти по email')));
       if (store.err) box.append(el('div', { class: 'err', style: 'margin-top:6px' }, store.err));
     }
@@ -1349,7 +1350,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     [...main.children].forEach((c, i) => { c.classList.add('enter'); c.style.setProperty('--i', Math.min(i, 8)); });
     const nb = document.querySelector('#nav button[aria-pressed="true"] svg'); if (nb) { nb.classList.remove('bump'); void nb.getBoundingClientRect(); nb.classList.add('bump'); }
   }
-  function render() { renderInner(); animateView($('#main')); }
+  function render() { renderInner(); animateView($('#main')); renderMenu(); }
   function renderInner() {
     renderTabs();
     const main = $('#main'); main.replaceChildren();
@@ -1432,7 +1433,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   for (const b of document.querySelectorAll('#nav button')) b.addEventListener('click', () => { setMode(b.dataset.mode); S.open = null; S.form = null; S.groupEdit = false; render(); window.scrollTo({ top: 0 }); });
   $('#acct').addEventListener('click', e => { e.stopPropagation(); S.menu = !S.menu; renderMenu(); });
   $('#menu').addEventListener('click', e => { if (e.target === e.currentTarget) { S.menu = false; renderMenu(); } });
-  document.addEventListener('click', e => { if (S.menu && !e.target.closest('#menu') && !e.target.closest('#acct')) { S.menu = false; renderMenu(); } });
+  document.addEventListener('click', e => { const path = e.composedPath ? e.composedPath() : []; if (S.menu && !path.includes($('#menu')) && !path.includes($('#acct'))) { S.menu = false; renderMenu(); } });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && S.menu) { S.menu = false; renderMenu(); } });
   if (S.mode === 'account' && !store.renderAccount) S.mode = 'workout';
   applyStatic();
