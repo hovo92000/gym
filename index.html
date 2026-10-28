@@ -244,6 +244,47 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
 .backup input[type=file]{display:none}
 .backup .status{font-size:12px;color:var(--muted);margin-top:8px}
 
+/* rest timer */
+.timer{position:fixed;left:12px;right:12px;bottom:calc(var(--nav-h) + 10px + env(safe-area-inset-bottom,0px));z-index:8;background:var(--fg);color:var(--bg);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);transform:translateY(300%);visibility:hidden;transition:transform .25s,visibility 0s .25s;overflow:hidden}
+.timer.show{transform:none;visibility:visible;transition:transform .25s}
+.timer .tbar{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--accent);opacity:.28;transition:width .25s linear}
+.timer .tl{position:relative;font-size:12px;text-transform:uppercase;letter-spacing:.08em;opacity:.8}
+.timer b{position:relative;flex:1;font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:.02em}
+.timer button{position:relative;min-width:44px;min-height:40px;border-radius:10px;background:rgba(255,255,255,.14);color:inherit;font-weight:700;padding:0 10px}
+.timer.over{background:var(--good);color:#06240f}
+.timer.over .tbar{display:none}
+@media (prefers-reduced-motion:reduce){ .timer{transition:none} }
+/* record celebration */
+.pr{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .3s}
+.pr.show{opacity:1;pointer-events:auto}
+.pr-box{position:relative;background:var(--surface);border:2px solid var(--accent);border-radius:20px;padding:22px 24px;text-align:center;max-width:320px;margin:0 20px;box-shadow:0 20px 60px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:6px;animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+.pr-ic{font-size:44px;line-height:1}
+.pr-box b{font-family:var(--display);font-size:24px;font-weight:700;letter-spacing:.02em;line-height:1.15}
+.pr-box span{color:var(--muted);font-size:14px}
+.pr-conf{position:absolute;inset:0;overflow:hidden}
+.pr-conf i{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;animation:fall 2.6s linear forwards;opacity:.95}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@media (prefers-reduced-motion:reduce){ .pr-conf{display:none} .pr-box{animation:none} }
+/* heatmap */
+.heat{display:grid;grid-template-columns:repeat(16,1fr);gap:3px;margin:6px 0 4px}
+.heat i{aspect-ratio:1;border-radius:3px;background:var(--surface-2);display:block}
+.heat i.l1{background:#5f5a2a} .heat i.l2{background:#9c8a2c} .heat i.l3{background:var(--accent)}
+.heat i.td{outline:2px solid var(--fg);outline-offset:-2px}
+.heatlbl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
+.streak{font-size:13px;color:var(--muted);margin-top:6px}
+.streak b{color:var(--fg)}
+/* body measurements */
+.bgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.bgrid label{display:flex;flex-direction:column;gap:3px;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);min-width:0}
+.bgrid input{width:100%;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:9px 6px;text-align:center;font-weight:600;min-height:44px}
+.btable{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+.btable th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;text-align:right;padding:4px 4px}
+.btable th:first-child,.btable td:first-child{text-align:left;white-space:nowrap}
+.btable td{padding:7px 4px;border-top:1px solid var(--line);text-align:right;font-family:var(--display);font-weight:600;font-size:16px}
+.btable td:first-child{font-family:var(--body);font-weight:500;font-size:13px;color:var(--muted)}
+.btable td .dl{color:var(--muted);font-size:14px;min-width:32px;min-height:32px}
+.btable td.delta{font-family:var(--body);font-size:11px;font-weight:600}
 /* bottom nav */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:7;background:var(--surface);border-top:1px solid var(--line);padding:0 env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);display:flex}
 .nav button{flex:1;min-height:var(--nav-h);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--muted);font-size:10.5px;font-weight:600;letter-spacing:.02em}
@@ -292,6 +333,8 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   <nav class="tabs" id="tabs" aria-label="Группы мышц"></nav>
 </header>
 <main id="main" class="gutter"></main>
+<div class="timer" id="timer" role="status"><div class="tbar" id="timer-bar"></div><span class="tl">Отдых</span><b id="timer-val" class="num">1:30</b><button id="timer-add" type="button">+30</button><button id="timer-stop" type="button" aria-label="Остановить">✕</button></div>
+<div class="pr" id="pr" aria-live="polite"><div class="pr-conf" id="pr-conf"></div><div class="pr-box"><div class="pr-ic">🏆</div><b id="pr-title"></b><span id="pr-sub"></span></div></div>
 <nav class="nav" id="nav" aria-label="Разделы">
   <button data-mode="workout"><svg viewBox="0 0 24 24"><path d="M3 10v4M6 8v8M18 8v8M21 10v4M6 12h12"/></svg>Тренировка</button>
   <button data-mode="cards"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/></svg>Карточки</button>
@@ -320,7 +363,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
 
   // ---------- state ----------
   const S = {
-    dbState: 'loading', groups: pref('cache', []), notes: null, notesLoaded: false,
+    dbState: 'loading', groups: pref('cache', []), notes: null, notesLoaded: false, body: [], timer: null,
     active: pref('active', null), mode: pref('mode', 'workout'),
     open: null, form: null, confirm: null, rename: null, addingGroup: false, addingEx: false,
     wdate: null, editing: null, groupEdit: false, showAll: null,
@@ -401,13 +444,13 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
 
   const sortG = gs => gs.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const localLoad = () => { try { const raw = localStorage.getItem(KEY); if (raw) { const p = JSON.parse(raw); if (p && Array.isArray(p.groups)) return p; } } catch {} return null; };
-  const localPersist = () => { try { localStorage.setItem(KEY, JSON.stringify({ groups: S.groups, notes: S.notes, saved: new Date().toISOString() })); return true; }
+  const localPersist = () => { try { localStorage.setItem(KEY, JSON.stringify({ groups: S.groups, notes: S.notes, body: S.body, saved: new Date().toISOString() })); return true; }
     catch (e) { console.error(e); toast('Не сохранилось: память браузера недоступна'); return false; } };
   const applyData = (groups, notes) => { S.groups = sortG(groups); if (notes != null) S.notes = notes; S.notesLoaded = true; S.dbState = 'ready';
     if (!S.groups.some(g => g.id === S.active)) S.active = S.groups[0] ? S.groups[0].id : null; render(); };
   const uid = () => store.user && store.user.uid;
 
-  const applyLocal = () => { const d = localLoad(); if (d) applyData(d.groups, d.notes); else if (cfg) applyData(clone(TEMPLATE), ''); else applyData(clone(SEED), SEED_NOTES.text); };
+  const applyLocal = () => { const d = localLoad(); S.body = (d && Array.isArray(d.body)) ? d.body : []; if (d) applyData(d.groups, d.notes); else if (cfg) applyData(clone(TEMPLATE), ''); else applyData(clone(SEED), SEED_NOTES.text); };
   store.init = () => {
     if (!cfg) { applyLocal(); return; }
     // cloud app: keep the loader up until Firebase says who is signed in, so the user's own data appears without a template flash
@@ -440,6 +483,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       applyData(snap.docs.map(d => decG(d.id, d.data())), null);
     }, e => { console.error(e); store.err = 'Ошибка чтения: ' + e.code; S.dbState = 'offline'; render(); }));
     store.unsub.push(fs.onSnapshot(fs.doc(db, 'users', u, 'meta', 'notes'), snap => { S.notes = snap.exists() ? (snap.data().text || '') : ''; S.notesLoaded = true; if (S.mode === 'notes') render(); }, e => console.error(e)));
+    store.unsub.push(fs.onSnapshot(fs.doc(db, 'users', u, 'meta', 'body'), snap => { S.body = snap.exists() ? (snap.data().rows || []) : []; if (S.mode === 'notes') render(); }, e => console.error(e)));
   }
 
   // Firestore forbids arrays inside arrays: sets [[...],[...]] travel as [{e:[...]},{e:[...]}]
@@ -464,6 +508,11 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     S.notes = text;
     if (store.mode !== 'cloud') { if (localPersist()) toast('Заметки сохранены'); return; }
     const { fs, db } = store.fb; fs.setDoc(fs.doc(db, 'users', uid(), 'meta', 'notes'), { text, updated: today() }).catch(cloudErr); toast('Заметки сохранены');
+  };
+  store.saveBody = rows => {
+    S.body = rows;
+    if (store.mode !== 'cloud') return localPersist();
+    const { fs, db } = store.fb; fs.setDoc(fs.doc(db, 'users', uid(), 'meta', 'body'), { rows, updated: today() }).catch(cloudErr); return true;
   };
   async function writeProgram(groups, notes) {
     store.busy = true; store.err = null; render();
@@ -569,13 +618,14 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       el('div', { class: 'row' }, el('button', { class: 'btn', onclick: exportJSON }, 'Скачать файл'), el('button', { class: 'btn', onclick: () => file.click() }, 'Загрузить из файла'), file)));
   }
   function exportJSON() {
-    const blob = new Blob([JSON.stringify({ groups: S.groups, notes: S.notes, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify({ groups: S.groups, notes: S.notes, body: S.body, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'gym-' + today() + '.json'; document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000); toast('Файл сохраняется');
   }
   function importJSON(file) {
     const r = new FileReader();
     r.onload = () => { try { const d = JSON.parse(r.result); if (!d || !Array.isArray(d.groups)) throw 0;
+      if (Array.isArray(d.body)) store.saveBody(d.body);
       if (store.mode === 'cloud') { writeProgram(d.groups, typeof d.notes === 'string' ? d.notes : S.notes); return; }
       S.groups = sortG(d.groups); S.notes = typeof d.notes === 'string' ? d.notes : S.notes; localPersist(); S.active = S.groups[0] ? S.groups[0].id : null; render(); toast('Данные загружены из файла'); }
       catch { toast('Это не файл резервной копии GYM'); } };
@@ -702,7 +752,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
 
   function sessions(ex) {
     const by = new Map();
-    ex.sets.forEach((s, i) => s.forEach(e => { const d = ed(e); if (!d) return; if (!by.has(d)) by.set(d, []); const r = by.get(d); r[i] = r[i] ? r[i] + '/' + evr(e) : evr(e); }));
+    ex.sets.forEach((s, i) => s.forEach(e => { const d = ed(e); if (!d) return; if (!by.has(d)) by.set(d, []); const r = by.get(d); const t = evr(e) + (e && e.pr ? '🏆' : ''); r[i] = r[i] ? r[i] + '/' + t : t; }));
     return [...by.entries()].sort((a, b) => b[0] < a[0] ? -1 : 1);
   }
   function goWorkout(exid, date) { S.wdate = date && date !== today() ? date : null; S.editing = null; setMode('workout'); S.open = null; render();
@@ -799,6 +849,38 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     return d;
   }
 
+  // ---- rest timer (lives outside render: updates its own DOM) ----
+  let audioCtx = null;
+  function beep() { try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); const t = audioCtx.currentTime;
+    [0, .18, .36].forEach((o, i) => { const osc = audioCtx.createOscillator(), gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.frequency.value = i === 2 ? 1320 : 880; gain.gain.setValueAtTime(.0001, t + o); gain.gain.exponentialRampToValueAtTime(.3, t + o + .02); gain.gain.exponentialRampToValueAtTime(.0001, t + o + .15); osc.start(t + o); osc.stop(t + o + .16); }); } catch {} 
+    try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch {} }
+  function startTimer(sec) {
+    try { audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); } catch {}
+    S.timer = { end: Date.now() + sec * 1000, total: sec, done: false }; tickTimer();
+    if (!S.timerInt) S.timerInt = setInterval(tickTimer, 250);
+  }
+  function stopTimer() { S.timer = null; clearInterval(S.timerInt); S.timerInt = null; $('#timer').classList.remove('show', 'over'); }
+  function tickTimer() {
+    const t = S.timer; const box = $('#timer'); if (!t) return;
+    const left = Math.ceil((t.end - Date.now()) / 1000);
+    box.classList.add('show');
+    if (left <= 0) { if (!t.done) { t.done = true; beep(); box.classList.add('over'); } $('#timer-val').textContent = 'Отдых закончен'; $('#timer-bar').style.width = '100%';
+      if (left < -20) stopTimer(); return; }
+    $('#timer-val').textContent = Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0'); $('#timer-bar').style.width = (100 * (1 - left / t.total)) + '%';
+  }
+  $('#timer-stop').addEventListener('click', stopTimer);
+  $('#timer-add').addEventListener('click', () => { if (S.timer) { S.timer.end += 30000; S.timer.total += 30; S.timer.done = false; $('#timer').classList.remove('over'); tickTimer(); } });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && S.timer) tickTimer(); });
+
+  function celebrate(title, sub) {
+    const ov = $('#pr'); $('#pr-title').textContent = title; $('#pr-sub').textContent = sub || '';
+    const conf = $('#pr-conf'); conf.replaceChildren();
+    for (let i = 0; i < 60; i++) { const c = document.createElement('i'); c.style.left = Math.random() * 100 + '%'; c.style.animationDelay = (Math.random() * .8) + 's'; c.style.background = ['#F2C14E', '#5BC489', '#E0646A', '#EEF0F4', '#7cc0ff'][i % 5]; c.style.transform = `rotate(${Math.random() * 360}deg)`; conf.append(c); }
+    ov.classList.add('show'); beep();
+    clearTimeout(S.prT); S.prT = setTimeout(() => ov.classList.remove('show'), 3500);
+  }
+  $('#pr').addEventListener('click', () => $('#pr').classList.remove('show'));
+
   // ---- workout mode: one row per set, each saved on its own ----
   async function saveSet(gid, exid, si, v, r, date) {
     const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
@@ -806,10 +888,22 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     while (ex.sets.length <= si) ex.sets.push([]);
     const entry = { v, d: date }; const reps = parseInt(r, 10); if (!isNaN(reps) && reps > 0) entry.r = reps;
     const k = ex.sets[si].findIndex(e => ed(e) === date);
+    // records: compare with everything recorded before this entry
+    const w = num(v); let prevW = null, prevRm = null;
+    ex.sets.forEach((st, j) => st.forEach((e, idx) => { if (j === si && idx === k) return; const x = num(ev(e)); if (x == null) return; if (prevW == null || x > prevW) prevW = x; const rr = er(e); if (rr != null) { const m = e1rm(x, rr); if (prevRm == null || m > prevRm) prevRm = m; } }));
+    let pr = null; if (w != null && prevW != null && w > prevW) pr = 'w'; else if (w != null && entry.r && prevRm != null && e1rm(w, entry.r) > prevRm + 0.01) pr = 'rm';
+    if (pr) entry.pr = pr;
     if (k >= 0) ex.sets[si][k] = entry; else ex.sets[si].push(entry);
     if (!ex.last || date > ex.last) ex.last = date; if (!g.lastEntry || date > g.lastEntry) g.lastEntry = date;
     S.editing = null; optimistic(g);
-    const ok = await store.saveGroup(g); if (ok) toast(`Подход ${si+1}: ${v} кг` + (entry.r ? ` × ${entry.r}` : '') + ' ✓'); return ok;
+    const ok = await store.saveGroup(g);
+    if (ok) {
+      if (pr === 'w') celebrate(`Новый рекорд веса: ${v} кг`, `Раньше максимум был ${fmtNum(prevW, true)} кг`);
+      else if (pr === 'rm') celebrate(`Новый расчётный максимум: ${fmtNum(Math.round(e1rm(w, entry.r) * 2) / 2, true)} кг`, `${v} кг × ${entry.r} сильнее всего, что было`);
+      else toast(`Подход ${si+1}: ${v} кг` + (entry.r ? ` × ${entry.r}` : '') + ' ✓');
+      if (date === today() && (g.rest ?? 90) > 0) startTimer(g.rest ?? 90);
+    }
+    return ok;
   }
   async function deleteSet(gid, exid, si, date) {
     const g = clone(S.groups.find(x => x.id === gid)); const ex = g.exercises.find(e => e.id === exid);
@@ -892,7 +986,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const days = new Map(); // date -> Map(gid -> [{ex, vals}])
     for (const g of S.groups) for (const ex of g.exercises) {
       const by = new Map();
-      ex.sets.forEach((s, i) => s.forEach(e => { const d = ed(e); if (!d) return; if (!by.has(d)) by.set(d, []); const r = by.get(d); r[i] = r[i] ? r[i] + '/' + evr(e) : evr(e); }));
+      ex.sets.forEach((s, i) => s.forEach(e => { const d = ed(e); if (!d) return; if (!by.has(d)) by.set(d, []); const r = by.get(d); const t = evr(e) + (e && e.pr ? '🏆' : ''); r[i] = r[i] ? r[i] + '/' + t : t; }));
       for (const [d, vals] of by) { if (!days.has(d)) days.set(d, new Map()); const gm = days.get(d); if (!gm.has(g.id)) gm.set(g.id, { g, items: [] }); gm.get(g.id).items.push({ ex, vals, n: g.nsets || 4 }); }
     }
     const dates = [...days.keys()].sort().reverse();
@@ -902,6 +996,18 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       el('div', { class: 'jstat' }, el('b', {}, String(in7)), el('span', {}, 'за 7 дней')),
       el('div', { class: 'jstat' }, el('b', {}, String(in30)), el('span', {}, 'за 30 дней')),
       el('div', { class: 'jstat' }, el('b', {}, dates[0] ? rel(dates[0]) : '—'), el('span', {}, 'последняя'))));
+    // heat map: last 16 weeks, one square per day, colour by number of sets logged
+    { const setsOn = new Map(); for (const g of S.groups) for (const ex of g.exercises) for (const st of ex.sets) for (const e of st) { const d = ed(e); if (d) setsOn.set(d, (setsOn.get(d) || 0) + 1); }
+      const t0 = parseD(td); const dow = (t0.getDay() + 6) % 7; const start = new Date(t0); start.setDate(t0.getDate() - dow - 15 * 7);
+      const grid = el('div', { class: 'heat', role: 'img', 'aria-label': 'Календарь тренировок за 16 недель' });
+      for (let r = 0; r < 7; r++) for (let c = 0; c < 16; c++) { const d = new Date(start); d.setDate(start.getDate() + c * 7 + r); const iso = [d.getFullYear(), String(d.getMonth()+1).padStart(2,'0'), String(d.getDate()).padStart(2,'0')].join('-');
+        const nSets = setsOn.get(iso) || 0; const cell = el('i', { class: (nSets ? (nSets >= 15 ? 'l3' : nSets >= 8 ? 'l2' : 'l1') : '') + (iso === td ? ' td' : ''), title: fmtDate(iso, true) + (nSets ? ` · ${nSets} подх.` : '') }); if (d > t0) cell.style.visibility = 'hidden'; grid.append(cell); }
+      // streak: consecutive weeks (ending this week) with at least one workout
+      const weekOf = iso => { const d = parseD(iso); const k = new Date(d); k.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return k.getTime(); };
+      const weeks = new Set(dates.map(weekOf)); let streak = 0; let wk = weekOf(td); while (weeks.has(wk)) { streak++; wk -= 7 * 86400000; }
+      main.append(el('div', { class: 'jday' }, el('h3', {}, 'Календарь', el('span', {}, '16 недель')), grid,
+        el('div', { class: 'heatlbl' }, el('span', {}, fmtDate([start.getFullYear(), String(start.getMonth()+1).padStart(2,'0'), String(start.getDate()).padStart(2,'0')].join('-'))), el('span', {}, 'сегодня')),
+        el('div', { class: 'streak' }, streak ? [el('b', {}, streak + (streak === 1 ? ' неделя' : streak < 5 ? ' недели' : ' недель')), ' подряд с тренировками 🔥'] : 'На этой неделе ещё не было тренировки. Начни серию.'))); }
     if (!dates.length) { main.append(el('div', { class: 'notice' }, el('b', {}, 'Пока нет тренировок с датой. '), 'Записи из Заметок перенесены без дат. Всё, что ты сохранишь через «Тренировка», появится здесь по дням, а ниже появится статистика роста.')); return; }
     // growth over 30 days across all exercises
     const rows = []; let vol7 = 0, vol30 = 0;
@@ -934,7 +1040,39 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     main.append(el('div', { class: 'ghead' }, el('h2', {}, 'Заметки')),
       el('div', { class: 'notes' }, ta, el('p', { class: 'hint' }, S.notesLoaded ? 'Замеры, даты начала и конца циклов, что угодно.' : 'Загружаю…'),
         el('div', { class: 'row end' }, el('button', { class: 'btn primary', disabled: S.dbState !== 'ready', onclick: () => store.saveNotes(ta.value) }, 'Сохранить'))));
+    renderBody(main);
     if (store.renderBackup) store.renderBackup(main);
+  }
+
+  const BODY_FIELDS = [['w', 'Вес, кг'], ['chest', 'Грудь'], ['waist', 'Талия'], ['biceps', 'Бицепс'], ['thigh', 'Бедро'], ['hips', 'Таз']];
+  function renderBody(main) {
+    const rows = [...(S.body || [])].sort((a, b) => b.d < a.d ? -1 : 1);
+    const lastRow = rows[0] || {};
+    const inputs = {}; const dateIn = el('input', { id: 'b-date', type: 'date', value: today(), max: today(), style: 'border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 10px;min-height:44px;width:100%' });
+    const grid = el('div', { class: 'bgrid' });
+    for (const [k, label] of BODY_FIELDS) { inputs[k] = el('input', { id: 'b-' + k, type: 'text', inputmode: 'decimal', placeholder: lastRow[k] != null ? fmtNum(lastRow[k], true) : '—', 'aria-label': label }); grid.append(el('label', {}, label, inputs[k])); }
+    const form = el('form', { class: 'form', onsubmit: e => { e.preventDefault(); const d = dateIn.value || today(); const row = { d }; let any = false;
+      for (const [k] of BODY_FIELDS) { const x = num(inputs[k].value); if (x != null) { row[k] = x; any = true; } }
+      if (!any) { toast('Введи хотя бы одно значение'); return; }
+      const next = (S.body || []).filter(r => r.d !== d); const prev = (S.body || []).find(r => r.d === d); next.push(prev ? { ...prev, ...row } : row);
+      if (store.saveBody(next)) { toast('Замеры сохранены'); render(); } } },
+      el('h4', {}, 'Замеры тела'), el('div', { class: 'row', style: 'margin-bottom:8px' }, dateIn), grid,
+      el('div', { class: 'row end', style: 'margin-top:10px' }, el('button', { type: 'submit', class: 'btn primary', disabled: S.dbState !== 'ready' }, 'Сохранить замеры')));
+    const wrap = el('div', { style: 'margin-top:18px' }, el('div', { class: 'ghead' }, el('h2', {}, 'Замеры'), el('div', { class: 'meta' }, rows.length ? `${rows.length} записей` : '')), form);
+    if (rows.length) {
+      const ws = [...rows].reverse().filter(r => r.w != null).map(r => r.w);
+      if (ws.length > 1) { const h = el('div', { class: 'hist', style: 'margin-top:12px' }, el('h4', {}, el('span', {}, `Вес тела · ${fmtNum(ws[0], true)} → ${fmtNum(ws[ws.length-1], true)} кг`))); const sp = sparkNums(ws); if (sp) h.append(sp); wrap.append(h); }
+      const used = BODY_FIELDS.filter(([k]) => rows.some(r => r[k] != null));
+      const t = el('table', { class: 'btable num' }); const hr = el('tr', {}, el('th', {}, 'Дата')); for (const [, label] of used) hr.append(el('th', {}, label.replace(', кг', ''))); hr.append(el('th', {})); t.append(el('thead', {}, hr));
+      const tb = el('tbody');
+      rows.slice(0, S.showAll === 'body' ? rows.length : 10).forEach((r, i) => { const prev = rows[i + 1]; const tr = el('tr', {}, el('td', {}, fmtDate(r.d)));
+        for (const [k] of used) { const v = r[k]; const pv = prev ? prev[k] : null; const dlt = v != null && pv != null ? v - pv : null;
+          tr.append(el('td', {}, v != null ? fmtNum(v, true) : '·', dlt ? el('div', { class: 'delta', style: 'color:' + (dlt > 0 ? 'var(--good)' : 'var(--bad)') }, (dlt > 0 ? '+' : '') + fmtNum(dlt, true)) : null)); }
+        tr.append(el('td', {}, el('button', { class: 'dl', 'aria-label': 'Удалить замер', onclick: () => { if (store.saveBody((S.body || []).filter(x => x.d !== r.d))) { toast('Удалено'); render(); } } }, '×'))); tb.append(tr); });
+      t.append(tb); wrap.append(t);
+      if (rows.length > 10) wrap.append(el('button', { class: 'btn sm ghost', style: 'margin-top:6px', onclick: () => { S.showAll = S.showAll === 'body' ? null : 'body'; render(); } }, S.showAll === 'body' ? 'Свернуть' : `Показать все ${rows.length}`));
+    } else wrap.append(el('p', { class: 'hint' }, 'Запиши вес и объёмы раз в неделю-две, здесь появится таблица с изменениями и график веса.'));
+    main.append(wrap);
   }
 
   function render() {
@@ -977,14 +1115,16 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       const ns = el('select', { id: 'g-nsets', style: 'border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 10px;min-height:44px' });
       const selStyle = 'border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 10px;min-height:44px';
       const mkSel = (id, vals, cur, label) => { const sel = el('select', { id, style: selStyle, 'aria-label': label }); for (const v of vals) sel.append(el('option', { value: String(v), selected: v === cur ? '' : null }, String(v).replace('.', ','))); return sel; };
+      const rst = mkSel('g-rest', [0,45,60,90,120,150,180,240], g.rest ?? 90, 'Отдых между подходами, секунд');
       const rmin = mkSel('g-rmin', [3,4,5,6,8,10,12,15], g.repMin || 8, 'Минимум повторений'), rmax = mkSel('g-rmax', [5,6,8,10,12,15,20], g.repMax || 12, 'Максимум повторений'), stp = mkSel('g-step', [1.25,2.5,5,10], g.step || 2.5, 'Шаг веса, кг');
       for (let i = 1; i <= 8; i++) ns.append(el('option', { value: String(i), selected: i === (g.nsets || 4) ? '' : null }, i + (i === 1 ? ' подход' : i < 5 ? ' подхода' : ' подходов')));
-      main.append(el('form', { class: 'form', style: 'margin-bottom:12px', onsubmit: async e => { e.preventDefault(); const gg = clone(g); gg.name = nm.value.trim() || g.name; gg.ru = ru.value.trim(); gg.nsets = +ns.value; gg.repMin = +rmin.value; gg.repMax = Math.max(+rmin.value, +rmax.value); gg.step = +stp.value; S.groupEdit = false; optimistic(gg); if (await store.saveGroup(gg)) toast('Сохранено'); } },
+      main.append(el('form', { class: 'form', style: 'margin-bottom:12px', onsubmit: async e => { e.preventDefault(); const gg = clone(g); gg.name = nm.value.trim() || g.name; gg.ru = ru.value.trim(); gg.nsets = +ns.value; gg.repMin = +rmin.value; gg.repMax = Math.max(+rmin.value, +rmax.value); gg.step = +stp.value; gg.rest = +rst.value; S.groupEdit = false; optimistic(gg); if (await store.saveGroup(gg)) toast('Сохранено'); } },
         el('h4', {}, 'Настройки группы'),
         el('div', { class: 'rename' }, nm), el('div', { class: 'rename', style: 'margin-top:6px' }, ru), el('div', { class: 'rename', style: 'margin-top:6px' }, ns),
         el('h4', { style: 'margin-top:12px' }, 'Правило прогрессии'),
         el('div', { class: 'rename', style: 'align-items:center;flex-wrap:wrap;gap:6px' }, el('span', { class: 'small' }, 'повторений от'), rmin, el('span', { class: 'small' }, 'до'), rmax, el('span', { class: 'small' }, '· шаг веса'), stp),
         el('p', { class: 'small', style: 'margin:6px 0 0' }, 'Дошёл до верхней границы во всех подходах → совет добавить шаг веса. Ниже нижней → держать вес и добирать повторы.'),
+        el('div', { class: 'rename', style: 'align-items:center;flex-wrap:wrap;gap:6px;margin-top:10px' }, el('span', { class: 'small' }, 'Таймер отдыха после подхода, сек'), rst, el('span', { class: 'small' }, '(0 = выключить)')),
         el('div', { class: 'row', style: 'margin-top:10px;justify-content:space-between' },
           el('button', { type: 'button', class: 'btn ghost danger', onclick: () => { S.confirm = { type: 'group' }; render(); } }, 'Удалить группу'),
           el('div', { class: 'row' }, el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.groupEdit = false; render(); } }, 'Отмена'), el('button', { type: 'submit', class: 'btn primary' }, 'Сохранить'))),
