@@ -120,6 +120,15 @@ main{padding-block:14px calc(var(--nav-h) + 28px + env(safe-area-inset-bottom,0p
 .gear{margin-left:10px;font-size:18px;color:var(--muted);min-width:36px;min-height:36px;vertical-align:middle;border-radius:8px}
 .gear:hover{color:var(--fg);background:var(--surface-2)}
 .wcard{scroll-margin-top:calc(140px + env(safe-area-inset-top,0px))}
+.tip{display:flex;flex-direction:column;gap:2px;background:var(--accent-soft);border-radius:10px;padding:8px 10px;margin:8px 0;font-size:13px;color:var(--fg)}
+.tip b{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.02em}
+.tip span{color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px}
+.stat{background:var(--surface-2);border-radius:10px;padding:8px 10px;min-width:0}
+.stat b{display:block;font-family:var(--display);font-weight:700;font-size:20px;line-height:1.1}
+.stat span{font-size:11px;color:var(--muted)}
+.stat.up b{color:var(--good)} .stat.down b{color:var(--bad)}
+.jex .v.good{color:var(--good)} .jex .v.bad{color:var(--bad)}
 .detail{border-top:1px solid var(--line);padding:12px 14px 14px;display:flex;flex-direction:column;gap:14px}
 .detail h4{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:8px}
 .detail h4 button{font-size:11px;color:var(--bad);font-weight:600;letter-spacing:0;text-transform:none;min-height:32px;padding:0 6px;margin:-6px -6px -6px 0}
@@ -331,6 +340,44 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   const activeGroup = () => S.groups.find(g => g.id === S.active) || S.groups[0] || null;
   const clone = g => JSON.parse(JSON.stringify(g));
   const exLast = ex => { let m = ex.last || null; for (const s of ex.sets) for (const e of s) { const d = ed(e); if (d && (!m || d > m)) m = d; } return m; };
+  // ---------- stats & recommendation ----------
+  const e1rm = (w, r) => r > 0 ? w * (1 + r / 30) : w;           // Epley estimate of a one-rep max
+  function exSessions(ex) {                                        // dated sessions, oldest first: { date, top, vol, rm, sets:[{w,r}] }
+    const by = new Map();
+    ex.sets.forEach((st, i) => st.forEach(e => { const d = ed(e); if (!d) return; if (!by.has(d)) by.set(d, []); by.get(d)[i] = { w: num(ev(e)), r: er(e) }; }));
+    return [...by.entries()].sort((a, b) => a[0] < b[0] ? -1 : 1).map(([date, sets]) => {
+      const ws = sets.filter(x => x && x.w != null); const top = ws.length ? Math.max(...ws.map(x => x.w)) : null;
+      const withR = ws.filter(x => x.r != null); const vol = withR.reduce((a, x) => a + x.w * x.r, 0);
+      const rm = withR.length ? Math.max(...withR.map(x => e1rm(x.w, x.r))) : null;
+      return { date, top, vol: withR.length ? vol : null, rm, sets: ws };
+    });
+  }
+  function growth(ex, days) {                                      // weight change of the top working set over the last N days
+    const ss = exSessions(ex).filter(x => x.top != null); if (ss.length < 2) return null;
+    const recent = ss.filter(x => daysAgo(x.date) <= days); const base = recent.length >= 2 ? recent[0] : ss[ss.length - 2];
+    const lastS = ss[ss.length - 1]; if (base === lastS) return null;
+    return { from: base.top, to: lastS.top, delta: lastS.top - base.top, since: base.date };
+  }
+  function recommend(g, ex) {
+    const rmin = g.repMin || 8, rmax = g.repMax || 12, step = g.step || 2.5;
+    const ss = exSessions(ex);
+    const lastS = ss[ss.length - 1];
+    const topLegacy = (() => { let m = null; for (const st of ex.sets) { const e = last(st.filter(x => !ed(x))); const w = e ? num(ev(e)) : null; if (w != null && (m == null || w > m)) m = w; } return m; })();
+    if (!lastS || lastS.top == null) {
+      if (topLegacy == null) return { w: null, r: rmin, why: `Первая запись: подбери вес, с которым выходит ${rmin}–${rmax} раз в подходе.` };
+      return { w: topLegacy, r: rmin, why: `Повторения ещё не записаны. Возьми прошлый вес ${fmtNum(topLegacy, true)} кг и сделай ${rmin}–${rmax} раз, дальше подскажу точнее.` };
+    }
+    const working = lastS.sets.filter(x => x.w === lastS.top && x.r != null);
+    if (!working.length) return { w: lastS.top, r: rmin, why: `${fmtNum(lastS.top, true)} кг в прошлый раз, без повторений. Запиши их, и совет станет точным.` };
+    const minR = Math.min(...working.map(x => x.r)), maxR = Math.max(...working.map(x => x.r));
+    // three sessions in a row below the range at the same weight → deload
+    const prev = ss.slice(-3).filter(x => x.top === lastS.top && x.sets.some(y => y.w === x.top && y.r != null) && Math.min(...x.sets.filter(y => y.w === x.top && y.r != null).map(y => y.r)) < rmin);
+    if (prev.length >= 3) return { w: Math.max(0, lastS.top - step), r: rmin, why: `Три тренировки подряд с ${fmtNum(lastS.top, true)} кг не доходят до ${rmin} раз. Сбрось вес, набери повторения и вернёшься сильнее.` };
+    if (minR >= rmax) return { w: lastS.top + step, r: rmin, why: `В прошлый раз все подходы с ${fmtNum(lastS.top, true)} кг вышли по ${minR}${maxR > minR ? '–' + maxR : ''} раз. Пора добавить вес, цель ${rmin} раз.` };
+    if (minR < rmin) return { w: lastS.top, r: Math.min(rmin, minR + 1), why: `${fmtNum(lastS.top, true)} кг × ${minR}${maxR > minR ? '–' + maxR : ''} в прошлый раз. Держи вес, цель ${rmin}+ в каждом подходе.` };
+    return { w: lastS.top, r: Math.min(rmax, maxR + 1), why: `Прошлый раз ${fmtNum(lastS.top, true)} кг × ${minR}${maxR > minR ? '–' + maxR : ''}. Тот же вес, плюс одно повторение: цель ${Math.min(rmax, maxR + 1)}. На ${rmax} добавим вес.` };
+  }
+  const sparkNums = (nums) => sparkline(nums.map(x => String(x)));
 
   let toastT;
   const toast = msg => { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2000); };
@@ -658,6 +705,12 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       pr != null ? el('span', {}, el('b', {}, fmtNum(pr, true) + ' кг'), ' рекорд') : null,
       el('span', {}, el('b', {}, String(sess.length)), ' трениров' + (sess.length % 10 === 1 && sess.length % 100 !== 11 ? 'ка' : 'ок')),
       legacyCount ? el('span', {}, el('b', {}, String(legacyCount)), ' из Заметок') : null));
+    const ss = exSessions(ex); const gr = growth(ex, 30); const lastS = ss[ss.length - 1]; const bestRm = ss.reduce((m, x) => x.rm != null && (m == null || x.rm > m) ? x.rm : m, null);
+    if (ss.length) d.append(el('div', { class: 'stats num' },
+      gr ? el('div', { class: 'stat' + (gr.delta > 0 ? ' up' : gr.delta < 0 ? ' down' : '') }, el('b', {}, (gr.delta > 0 ? '+' : '') + fmtNum(gr.delta, true) + ' кг'), el('span', {}, `за 30 дн. (${fmtNum(gr.from, true)} → ${fmtNum(gr.to, true)})`)) : el('div', { class: 'stat' }, el('b', {}, '—'), el('span', {}, 'рост за 30 дн.: нужно 2 тренировки')),
+      bestRm != null ? el('div', { class: 'stat' }, el('b', {}, fmtNum(Math.round(bestRm * 2) / 2, true) + ' кг'), el('span', {}, 'расчётный максимум на 1 раз')) : null,
+      lastS && lastS.vol != null ? el('div', { class: 'stat' }, el('b', {}, fmtNum(Math.round(lastS.vol), false) + ' кг'), el('span', {}, 'объём последней (вес × повторы)')) : null));
+    { const rec = recommend(g, ex); if (rec && rec.w != null) d.append(el('div', { class: 'tip' }, el('b', { class: 'num' }, `В следующий раз: ${fmtNum(rec.w, true)} кг × ${rec.r}`), el('span', {}, rec.why))); }
     // dated sessions: tap a row to open that day in workout mode
     if (sess.length) {
       const t = el('table', { class: 'sess num' });
@@ -681,7 +734,8 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       d.append(box);
     }
     // trend
-    if (allCount > 1) { const tr = el('div', { class: 'hist' }, el('h4', {}, el('span', {}, 'Динамика · подход 1'))); const s1 = sparkline(ex.sets[0] || []); if (s1) tr.append(s1); d.append(tr); }
+    if (allCount > 1) { const tr = el('div', { class: 'hist' }, el('h4', {}, el('span', {}, 'Динамика веса · подход 1'))); const s1 = sparkline(ex.sets[0] || []); if (s1) tr.append(s1); d.append(tr); }
+    { const vols = ss.filter(x => x.vol != null).map(x => x.vol); if (vols.length > 1) { const tr = el('div', { class: 'hist' }, el('h4', {}, el('span', {}, 'Объём за тренировку · вес × повторы'))); const sv = sparkNums(vols); if (sv) tr.append(sv); d.append(tr); } }
     // undated history from Notes, collapsed
     if (legacy.length) {
       const det = el('details', { class: 'legacy' }, el('summary', {}, `История из Заметок без дат · ${legacyCount}`));
@@ -759,6 +813,8 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       const card = el('div', { class: 'wcard' + (doneCount ? ' filled' : ''), id: 'w-' + ex.id });
       card.append(el('div', { class: 'wh' }, el('div', { class: 'name' }, ex.name),
         el('div', { class: 'last' + (doneCount ? ' today' : '') }, doneCount ? `${doneCount} из ${n} ✓` : ld ? 'прошлый раз: ' + rel(ld) : (ex.sets.some(st => st.length) ? 'из Заметок' : 'нет записей'))));
+      const rec = recommend(g, ex);
+      if (rec && doneCount < n) card.append(el('div', { class: 'tip' }, el('b', { class: 'num' }, rec.w != null ? `Совет: ${fmtNum(rec.w, true)} кг × ${rec.r}` : `Совет: × ${rec.r}`), el('span', {}, rec.why)));
       const rows = el('div', { class: 'srows' });
       let nextOpen = todays.findIndex(t => !t); if (nextOpen < 0) nextOpen = n;
       for (let i = 0; i < n; i++) {
@@ -771,8 +827,9 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
         if (i > nextOpen && !editing) continue;
         const prevSame = last((ex.sets[i] || []).filter(e => ed(e) !== date));
         const src = editing ? done : (prevSame || todays[i-1] || last(ex.sets[i-1] || []) || null);
-        const kg = el('input', { id: `kg-${ex.id}-${i}`, type: 'text', inputmode: 'decimal', autocomplete: 'off', value: src ? ev(src) : '', placeholder: 'кг', 'aria-label': 'Вес, кг' });
-        const rp = el('input', { id: `rp-${ex.id}-${i}`, type: 'text', inputmode: 'numeric', autocomplete: 'off', value: src && er(src) != null ? er(src) : '', placeholder: 'раз', 'aria-label': 'Повторения' });
+        const useRec = !editing && rec && rec.w != null;
+        const kg = el('input', { id: `kg-${ex.id}-${i}`, type: 'text', inputmode: 'decimal', autocomplete: 'off', value: useRec ? fmtNum(rec.w, true) : (src ? ev(src) : ''), placeholder: 'кг', 'aria-label': 'Вес, кг' });
+        const rp = el('input', { id: `rp-${ex.id}-${i}`, type: 'text', inputmode: 'numeric', autocomplete: 'off', value: useRec ? String(rec.r) : (src && er(src) != null ? er(src) : ''), placeholder: 'раз', 'aria-label': 'Повторения' });
         const bump = (inp, d, int) => { const x = num(inp.value || inp.placeholder); if (x == null) { inp.value = int ? String(Math.max(1, d)) : fmtNum(Math.max(0, d), true); return; } inp.value = int ? String(Math.max(0, x + d)) : fmtNum(Math.max(0, x + d), true); };
         const row = el('form', { class: 'srow' + (editing ? ' editing' : ''), onsubmit: e => { e.preventDefault(); saveSet(g.id, ex.id, i, kg.value, rp.value, date); } },
           el('span', { class: 'sl' }, 'П' + (i+1)),
@@ -826,7 +883,18 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       el('div', { class: 'jstat' }, el('b', {}, String(in7)), el('span', {}, 'за 7 дней')),
       el('div', { class: 'jstat' }, el('b', {}, String(in30)), el('span', {}, 'за 30 дней')),
       el('div', { class: 'jstat' }, el('b', {}, dates[0] ? rel(dates[0]) : '—'), el('span', {}, 'последняя'))));
-    if (!dates.length) { main.append(el('div', { class: 'notice' }, el('b', {}, 'Пока нет тренировок с датой. '), 'Записи из Заметок перенесены без дат. Всё, что ты сохранишь через «Тренировка» или «Записать веса», появится здесь по дням.')); return; }
+    if (!dates.length) { main.append(el('div', { class: 'notice' }, el('b', {}, 'Пока нет тренировок с датой. '), 'Записи из Заметок перенесены без дат. Всё, что ты сохранишь через «Тренировка», появится здесь по дням, а ниже появится статистика роста.')); return; }
+    // growth over 30 days across all exercises
+    const rows = []; let vol7 = 0, vol30 = 0;
+    for (const g of S.groups) for (const ex of g.exercises) { const gr = growth(ex, 30); if (gr) rows.push({ g, ex, gr }); for (const x of exSessions(ex)) { if (x.vol != null) { if (daysAgo(x.date) < 7) vol7 += x.vol; if (daysAgo(x.date) < 30) vol30 += x.vol; } } }
+    rows.sort((a, b) => b.gr.delta - a.gr.delta);
+    const up = rows.filter(r => r.gr.delta > 0), flat = rows.filter(r => r.gr.delta === 0), down = rows.filter(r => r.gr.delta < 0);
+    const box = el('div', { class: 'jday' }, el('h3', {}, 'Рост за 30 дней', el('span', {}, rows.length ? `${up.length} ↑ · ${flat.length} = · ${down.length} ↓` : '')));
+    if (vol30) box.append(el('div', { class: 'stats num', style: 'margin-bottom:8px' }, el('div', { class: 'stat' }, el('b', {}, fmtNum(Math.round(vol7), false) + ' кг'), el('span', {}, 'поднято за 7 дней')), el('div', { class: 'stat' }, el('b', {}, fmtNum(Math.round(vol30), false) + ' кг'), el('span', {}, 'поднято за 30 дней'))));
+    if (!rows.length) box.append(el('p', { class: 'small', style: 'margin:0' }, 'Сравнивать пока не с чем: нужно минимум две тренировки одного упражнения с датой.'));
+    for (const r of [...up, ...down].slice(0, 8)) box.append(el('div', { class: 'jex' }, el('div', { class: 'n' }, r.ex.name, el('span', { class: 'small' }, ' · ' + r.g.name)), el('div', { class: 'v num' + (r.gr.delta > 0 ? ' good' : ' bad') }, (r.gr.delta > 0 ? '+' : '') + fmtNum(r.gr.delta, true) + ' кг')));
+    if (flat.length) box.append(el('p', { class: 'small', style: 'margin:8px 0 0' }, 'Без изменений: ' + flat.map(r => r.ex.name).join(', ')));
+    main.append(box);
     for (const d of dates) {
       const box = el('div', { class: 'jday' }, el('h3', {}, fmtLong(d), el('span', {}, d === td ? 'сегодня' : rel(d))));
       for (const { g, items } of days.get(d).values()) {
@@ -886,10 +954,16 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       const nm = el('input', { id: 'g-name', type: 'text', value: g.name, placeholder: 'Название' });
       const ru = el('input', { id: 'g-ru', type: 'text', value: g.ru || '', placeholder: 'Подпись (напр. Грудь)' });
       const ns = el('select', { id: 'g-nsets', style: 'border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 10px;min-height:44px' });
+      const selStyle = 'border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:8px 10px;min-height:44px';
+      const mkSel = (id, vals, cur, label) => { const sel = el('select', { id, style: selStyle, 'aria-label': label }); for (const v of vals) sel.append(el('option', { value: String(v), selected: v === cur ? '' : null }, String(v).replace('.', ','))); return sel; };
+      const rmin = mkSel('g-rmin', [3,4,5,6,8,10,12,15], g.repMin || 8, 'Минимум повторений'), rmax = mkSel('g-rmax', [5,6,8,10,12,15,20], g.repMax || 12, 'Максимум повторений'), stp = mkSel('g-step', [1.25,2.5,5,10], g.step || 2.5, 'Шаг веса, кг');
       for (let i = 1; i <= 8; i++) ns.append(el('option', { value: String(i), selected: i === (g.nsets || 4) ? '' : null }, i + (i === 1 ? ' подход' : i < 5 ? ' подхода' : ' подходов')));
-      main.append(el('form', { class: 'form', style: 'margin-bottom:12px', onsubmit: async e => { e.preventDefault(); const gg = clone(g); gg.name = nm.value.trim() || g.name; gg.ru = ru.value.trim(); gg.nsets = +ns.value; S.groupEdit = false; optimistic(gg); if (await store.saveGroup(gg)) toast('Сохранено'); } },
+      main.append(el('form', { class: 'form', style: 'margin-bottom:12px', onsubmit: async e => { e.preventDefault(); const gg = clone(g); gg.name = nm.value.trim() || g.name; gg.ru = ru.value.trim(); gg.nsets = +ns.value; gg.repMin = +rmin.value; gg.repMax = Math.max(+rmin.value, +rmax.value); gg.step = +stp.value; S.groupEdit = false; optimistic(gg); if (await store.saveGroup(gg)) toast('Сохранено'); } },
         el('h4', {}, 'Настройки группы'),
         el('div', { class: 'rename' }, nm), el('div', { class: 'rename', style: 'margin-top:6px' }, ru), el('div', { class: 'rename', style: 'margin-top:6px' }, ns),
+        el('h4', { style: 'margin-top:12px' }, 'Правило прогрессии'),
+        el('div', { class: 'rename', style: 'align-items:center;flex-wrap:wrap;gap:6px' }, el('span', { class: 'small' }, 'повторений от'), rmin, el('span', { class: 'small' }, 'до'), rmax, el('span', { class: 'small' }, '· шаг веса'), stp),
+        el('p', { class: 'small', style: 'margin:6px 0 0' }, 'Дошёл до верхней границы во всех подходах → совет добавить шаг веса. Ниже нижней → держать вес и добирать повторы.'),
         el('div', { class: 'row', style: 'margin-top:10px;justify-content:space-between' },
           el('button', { type: 'button', class: 'btn ghost danger', onclick: () => { S.confirm = { type: 'group' }; render(); } }, 'Удалить группу'),
           el('div', { class: 'row' }, el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.groupEdit = false; render(); } }, 'Отмена'), el('button', { type: 'submit', class: 'btn primary' }, 'Сохранить'))),
