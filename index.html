@@ -244,6 +244,25 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
 .backup input[type=file]{display:none}
 .backup .status{font-size:12px;color:var(--muted);margin-top:8px}
 
+/* exercise library suggestions */
+.sug{display:flex;flex-direction:column;gap:4px}
+.sugi{display:flex;justify-content:space-between;gap:10px;align-items:baseline;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 12px;min-height:44px}
+.sugi b{font-weight:600} .sugi span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45%}
+/* program days */
+.daybar{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;scrollbar-width:none;padding-bottom:2px}
+.daybar::-webkit-scrollbar{display:none}
+.daychip{flex:0 0 auto;min-height:48px;padding:6px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);text-align:left;line-height:1.15;display:flex;flex-direction:column;gap:1px;position:relative}
+.daychip b{font-family:var(--display);font-weight:600;font-size:16px;letter-spacing:.02em}
+.daychip span{font-size:11px;color:var(--muted)}
+.daychip i{font-style:normal;font-size:10px;color:var(--good);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.daychip.on{border-color:var(--accent);background:var(--accent-soft)}
+.daychip.edit{justify-content:center;color:var(--muted);border-style:dashed;font-weight:600;font-size:14px}
+.dayhead{margin:6px 0 0;font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.03em}
+.dayhead span{color:var(--muted);font-weight:500;font-size:15px;margin-left:8px}
+.dayrow{border-top:1px solid var(--line);padding:10px 0}
+.gchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.gchip{min-height:36px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-weight:600;font-size:13px}
+.gchip.on{background:var(--accent);color:var(--accent-fg);border-color:transparent}
 /* rest timer */
 .timer{position:fixed;left:12px;right:12px;bottom:calc(var(--nav-h) + 10px + env(safe-area-inset-bottom,0px));z-index:8;background:var(--fg);color:var(--bg);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);transform:translateY(300%);visibility:hidden;transition:transform .25s,visibility 0s .25s;overflow:hidden}
 .timer.show{transform:none;visibility:visible;transition:transform .25s}
@@ -363,7 +382,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
 
   // ---------- state ----------
   const S = {
-    dbState: 'loading', groups: pref('cache', []), notes: null, notesLoaded: false, body: [], timer: null,
+    dbState: 'loading', groups: pref('cache', []), notes: null, notesLoaded: false, body: [], timer: null, program: { days: [] }, day: null, programEdit: null,
     active: pref('active', null), mode: pref('mode', 'workout'),
     open: null, form: null, confirm: null, rename: null, addingGroup: false, addingEx: false,
     wdate: null, editing: null, groupEdit: false, showAll: null,
@@ -390,6 +409,26 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   const activeGroup = () => S.groups.find(g => g.id === S.active) || S.groups[0] || null;
   const clone = g => JSON.parse(JSON.stringify(g));
   const exLast = ex => { let m = ex.last || null; for (const s of ex.sets) for (const e of s) { const d = ed(e); if (d && (!m || d > m)) m = d; } return m; };
+  // ---------- exercise library ----------
+  const LIB = [
+    ['chest','Жим штанги лёжа','Barbell bench press'],['chest','Жим штанги на наклонной','Incline barbell press'],['chest','Жим гантелей лёжа','Dumbbell bench press'],['chest','Жим гантелей на наклонной','Incline dumbbell press'],['chest','Разводка гантелей','Dumbbell fly'],['chest','Бабочка','Pec deck'],['chest','Сведение в кроссовере','Cable crossover'],['chest','Отжимания на брусьях','Dips'],['chest','Отжимания от пола','Push-ups'],['chest','Жим в тренажёре сидя','Machine chest press'],['chest','Пуловер','Pullover'],
+    ['back','Подтягивания','Pull-ups'],['back','Тяга верхнего блока','Lat pulldown'],['back','Тяга штанги в наклоне','Barbell row'],['back','Тяга гантели в наклоне','One-arm dumbbell row'],['back','Тяга горизонтального блока','Seated cable row'],['back','Тяга Т-грифа','T-bar row'],['back','Становая тяга','Deadlift'],['back','Гиперэкстензия','Back extension'],['back','Шраги','Shrugs'],['back','Тяга блока прямыми руками','Straight-arm pulldown'],['back','Тяга в тренажёре Хаммер','Hammer strength row'],
+    ['legs','Присед со штангой','Barbell squat'],['legs','Фронтальный присед','Front squat'],['legs','Жим ногами','Leg press'],['legs','Разгибание ног','Leg extension'],['legs','Сгибание ног лёжа','Lying leg curl'],['legs','Сгибание ног сидя','Seated leg curl'],['legs','Румынская тяга','Romanian deadlift'],['legs','Выпады','Lunges'],['legs','Болгарские выпады','Bulgarian split squat'],['legs','Гакк-присед','Hack squat'],['legs','Икры стоя','Standing calf raise'],['legs','Икры сидя','Seated calf raise'],['legs','Ягодичный мост','Hip thrust'],['legs','Сведение ног','Hip adduction'],['legs','Разведение ног','Hip abduction'],
+    ['shoulders','Жим штанги стоя','Overhead press'],['shoulders','Жим гантелей сидя','Seated dumbbell press'],['shoulders','Махи гантелей в стороны','Lateral raise'],['shoulders','Махи в наклоне','Rear delt raise'],['shoulders','Обратная бабочка','Reverse pec deck'],['shoulders','Тяга к подбородку','Upright row'],['shoulders','Подъём гантелей перед собой','Front raise'],['shoulders','Жим Арнольда','Arnold press'],['shoulders','Тяга каната к лицу','Face pull'],['shoulders','Жим в тренажёре','Machine shoulder press'],
+    ['biceps','Подъём штанги на бицепс','Barbell curl'],['biceps','Подъём EZ-штанги','EZ-bar curl'],['biceps','Подъём гантелей на бицепс','Dumbbell curl'],['biceps','Молотки','Hammer curl'],['biceps','Сгибания на скамье Скотта','Preacher curl'],['biceps','Концентрированный подъём','Concentration curl'],['biceps','Сгибания на нижнем блоке','Cable curl'],['biceps','Подъём гантелей на наклонной','Incline dumbbell curl'],
+    ['triceps','Разгибание на блоке','Triceps pushdown'],['triceps','Разгибание с канатом','Rope pushdown'],['triceps','Французский жим','Skull crusher'],['triceps','Жим узким хватом','Close-grip bench press'],['triceps','Разгибание гантели из-за головы','Overhead dumbbell extension'],['triceps','Отжимания на брусьях (трицепс)','Bench dips'],['triceps','Разгибание руки в наклоне','Triceps kickback'],['triceps','Жим в тренажёре на трицепс','Machine triceps press'],
+    ['abs','Скручивания','Crunches'],['abs','Подъём ног в висе','Hanging leg raise'],['abs','Планка','Plank'],['abs','Скручивания на блоке','Cable crunch'],['abs','Велосипед','Bicycle crunches'],['abs','Русские скручивания','Russian twist'],
+    ['other','Берпи','Burpees'],['other','Гребля','Rowing machine'],['other','Беговая дорожка','Treadmill'],['other','Велотренажёр','Stationary bike'],['other','Прыжки на скакалке','Jump rope'],
+  ];
+  const GROUP_KEYS = { chest: ['груд', 'chest', 'dosh', 'pec'], back: ['спин', 'back', 'mechq', 'lat'], legs: ['ног', 'leg', 'vot', 'quad', 'ягод', 'glute'], shoulders: ['плеч', 'shoulder', 'delt', 'us'], biceps: ['бицепс', 'bicep'], triceps: ['трицепс', 'tricep'], abs: ['пресс', 'abs', 'core'] };
+  const groupKey = g => { const n = ((g.name || '') + ' ' + (g.ru || '')).toLowerCase(); for (const [k, ws] of Object.entries(GROUP_KEYS)) if (ws.some(w => n.split(/[^a-zа-яё]+/).some(tok => tok === w || tok.startsWith(w) && w.length > 2))) return k; return null; };
+  const libName = e => (S.lang === 'en' ? e[2] : e[1]);
+  function libSuggest(g, q) {
+    q = (q || '').trim().toLowerCase(); const key = groupKey(g); const have = new Set(g.exercises.map(e => e.name.toLowerCase()));
+    return LIB.filter(e => !have.has(e[1].toLowerCase()) && !have.has(e[2].toLowerCase()) && (!q || e[1].toLowerCase().includes(q) || e[2].toLowerCase().includes(q)))
+      .sort((a, b) => (b[0] === key) - (a[0] === key)).slice(0, q ? 8 : 6);
+  }
+
   // ---------- stats & recommendation ----------
   const e1rm = (w, r) => r > 0 ? w * (1 + r / 30) : w;           // Epley estimate of a one-rep max
   function exSessions(ex) {                                        // dated sessions, oldest first: { date, top, vol, rm, sets:[{w,r}] }
@@ -444,13 +483,13 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
 
   const sortG = gs => gs.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const localLoad = () => { try { const raw = localStorage.getItem(KEY); if (raw) { const p = JSON.parse(raw); if (p && Array.isArray(p.groups)) return p; } } catch {} return null; };
-  const localPersist = () => { try { localStorage.setItem(KEY, JSON.stringify({ groups: S.groups, notes: S.notes, body: S.body, saved: new Date().toISOString() })); return true; }
+  const localPersist = () => { try { localStorage.setItem(KEY, JSON.stringify({ groups: S.groups, notes: S.notes, body: S.body, program: S.program, saved: new Date().toISOString() })); return true; }
     catch (e) { console.error(e); toast('Не сохранилось: память браузера недоступна'); return false; } };
   const applyData = (groups, notes) => { S.groups = sortG(groups); if (notes != null) S.notes = notes; S.notesLoaded = true; S.dbState = 'ready';
     if (!S.groups.some(g => g.id === S.active)) S.active = S.groups[0] ? S.groups[0].id : null; render(); };
   const uid = () => store.user && store.user.uid;
 
-  const applyLocal = () => { const d = localLoad(); S.body = (d && Array.isArray(d.body)) ? d.body : []; if (d) applyData(d.groups, d.notes); else if (cfg) applyData(clone(TEMPLATE), ''); else applyData(clone(SEED), SEED_NOTES.text); };
+  const applyLocal = () => { const d = localLoad(); S.body = (d && Array.isArray(d.body)) ? d.body : []; S.program = (d && d.program && Array.isArray(d.program.days)) ? d.program : { days: [] }; if (d) applyData(d.groups, d.notes); else if (cfg) applyData(clone(TEMPLATE), ''); else applyData(clone(SEED), SEED_NOTES.text); };
   store.init = () => {
     if (!cfg) { applyLocal(); return; }
     // cloud app: keep the loader up until Firebase says who is signed in, so the user's own data appears without a template flash
@@ -483,6 +522,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       applyData(snap.docs.map(d => decG(d.id, d.data())), null);
     }, e => { console.error(e); store.err = 'Ошибка чтения: ' + e.code; S.dbState = 'offline'; render(); }));
     store.unsub.push(fs.onSnapshot(fs.doc(db, 'users', u, 'meta', 'notes'), snap => { S.notes = snap.exists() ? (snap.data().text || '') : ''; S.notesLoaded = true; if (S.mode === 'notes') render(); }, e => console.error(e)));
+    store.unsub.push(fs.onSnapshot(fs.doc(db, 'users', u, 'meta', 'program'), snap => { S.program = snap.exists() && Array.isArray(snap.data().days) ? { days: snap.data().days } : { days: [] }; if (S.mode === 'workout') render(); }, e => console.error(e)));
     store.unsub.push(fs.onSnapshot(fs.doc(db, 'users', u, 'meta', 'body'), snap => { S.body = snap.exists() ? (snap.data().rows || []) : []; if (S.mode === 'notes') render(); }, e => console.error(e)));
   }
 
@@ -508,6 +548,11 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     S.notes = text;
     if (store.mode !== 'cloud') { if (localPersist()) toast('Заметки сохранены'); return; }
     const { fs, db } = store.fb; fs.setDoc(fs.doc(db, 'users', uid(), 'meta', 'notes'), { text, updated: today() }).catch(cloudErr); toast('Заметки сохранены');
+  };
+  store.saveProgram = days => {
+    S.program = { days };
+    if (store.mode !== 'cloud') return localPersist();
+    const { fs, db } = store.fb; fs.setDoc(fs.doc(db, 'users', uid(), 'meta', 'program'), { days, updated: today() }).catch(cloudErr); return true;
   };
   store.saveBody = rows => {
     S.body = rows;
@@ -618,7 +663,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       el('div', { class: 'row' }, el('button', { class: 'btn', onclick: exportJSON }, 'Скачать файл'), el('button', { class: 'btn', onclick: () => file.click() }, 'Загрузить из файла'), file)));
   }
   function exportJSON() {
-    const blob = new Blob([JSON.stringify({ groups: S.groups, notes: S.notes, body: S.body, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify({ groups: S.groups, notes: S.notes, body: S.body, program: S.program, exported: new Date().toISOString() }, null, 2)], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'gym-' + today() + '.json'; document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000); toast('Файл сохраняется');
   }
@@ -626,6 +671,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const r = new FileReader();
     r.onload = () => { try { const d = JSON.parse(r.result); if (!d || !Array.isArray(d.groups)) throw 0;
       if (Array.isArray(d.body)) store.saveBody(d.body);
+      if (d.program && Array.isArray(d.program.days)) store.saveProgram(d.program.days);
       if (store.mode === 'cloud') { writeProgram(d.groups, typeof d.notes === 'string' ? d.notes : S.notes); return; }
       S.groups = sortG(d.groups); S.notes = typeof d.notes === 'string' ? d.notes : S.notes; localPersist(); S.active = S.groups[0] ? S.groups[0].id : null; render(); toast('Данные загружены из файла'); }
       catch { toast('Это не файл резервной копии GYM'); } };
@@ -703,8 +749,8 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const nav = $('#tabs'); nav.replaceChildren();
     const td = today();
     if (S.dbState === 'loading' && !S.groups.length) { for (const w of [72, 86, 78, 90, 60]) nav.append(el('div', { class: 'sk', style: `width:${w}px;height:44px;flex:0 0 auto;border-radius:10px` })); if (store.renderAcct) store.renderAcct($('#acct')); const tb = $('#today-box'); tb.replaceChildren(el('b', {}, fmtDate(td)), DAYS[new Date().getDay()]); return; }
-    for (const g of S.groups) nav.append(el('button', { class: 'tab', 'aria-pressed': String(g.id === (activeGroup()||{}).id),
-      onclick: () => { S.active = g.id; setPref('active', g.id); S.open = null; S.form = null; S.confirm = null; S.wdate = null; S.groupEdit = false; if (S.mode === 'notes' || S.mode === 'journal') setMode('workout'); render(); } },
+    for (const g of S.groups) nav.append(el('button', { class: 'tab', 'aria-pressed': String(!(S.mode === 'workout' && S.day) && g.id === (activeGroup()||{}).id),
+      onclick: () => { S.active = g.id; setPref('active', g.id); S.open = null; S.form = null; S.confirm = null; S.wdate = null; S.groupEdit = false; S.day = null; if (S.mode === 'notes' || S.mode === 'journal') setMode('workout'); render(); } },
       el('b', {}, g.name), g.ru ? el('span', {}, g.ru) : null, g.lastEntry === td ? el('i', { class: 'dot', title: 'тренировка сегодня' }) : null));
     if (S.dbState === 'ready') nav.append(el('button', { class: 'tab add', onclick: () => { S.addingGroup = true; setMode('cards'); render(); } }, '+ Группа'));
     if (store.renderAcct) store.renderAcct($('#acct'));
@@ -841,6 +887,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       d.append(el('div', { class: 'row actions' },
         el('button', { class: 'btn primary', disabled: !canWrite, onclick: () => goWorkout(ex.id, null) }, '+ Записать подход'),
         el('button', { class: 'btn', disabled: !canWrite, onclick: () => { S.rename = ex.id; render(); } }, 'Переименовать'),
+        el('a', { class: 'btn', href: 'https://www.youtube.com/results?search_query=' + encodeURIComponent(ex.name + (S.lang === 'en' ? ' form' : ' техника выполнения')), target: '_blank', rel: 'noopener' }, '▶ Техника'),
         el('div', { class: 'row', style: 'gap:6px' },
           el('button', { class: 'btn sm', disabled: !canWrite || idx === 0, 'aria-label': 'Выше', onclick: () => moveEx(g.id, ex.id, -1) }, '↑'),
           el('button', { class: 'btn sm', disabled: !canWrite || idx === g.exercises.length - 1, 'aria-label': 'Ниже', onclick: () => moveEx(g.id, ex.id, 1) }, '↓'),
@@ -910,15 +957,54 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     ex.sets[si] = (ex.sets[si] || []).filter(e => ed(e) !== date); ex.last = exLast({ ...ex, last: null });
     S.editing = null; optimistic(g); if (await store.saveGroup(g)) toast('Подход удалён');
   }
+  const dayGroups = day => day.groups.map(id => S.groups.find(g => g.id === id)).filter(Boolean);
+  function plannedDay() {                                      // the day after the one trained most recently, in program order
+    const days = S.program.days; if (!days.length) return null;
+    let lastIdx = -1, lastDate = null;
+    days.forEach((d, i) => { for (const g of dayGroups(d)) if (g.lastEntry && (!lastDate || g.lastEntry > lastDate)) { lastDate = g.lastEntry; lastIdx = i; } });
+    if (lastDate === today()) return days[lastIdx];
+    return days[(lastIdx + 1) % days.length];
+  }
+  function renderDayBar(main) {
+    const days = S.program.days; const plan = plannedDay();
+    const bar = el('div', { class: 'daybar' });
+    for (const d of days) bar.append(el('button', { class: 'daychip' + (S.day === d.id ? ' on' : ''), onclick: () => { S.day = S.day === d.id ? null : d.id; S.editing = null; render(); } },
+      el('b', {}, d.name), el('span', {}, dayGroups(d).map(g => g.name).join(' + ') || '—'), plan && plan.id === d.id ? el('i', {}, S.day === d.id ? 'по плану' : 'сегодня по плану') : null));
+    bar.append(el('button', { class: 'daychip edit', onclick: () => { S.programEdit = clone(S.program.days); render(); } }, days.length ? '⚙' : '+ Дни программы'));
+    main.append(bar);
+    if (S.programEdit) renderProgramEditor(main);
+  }
+  function renderProgramEditor(main) {
+    const days = S.programEdit;
+    const box = el('form', { class: 'form', style: 'margin-bottom:12px', onsubmit: e => { e.preventDefault(); const clean = days.filter(d => d.name.trim() && d.groups.length); S.programEdit = null; if (!S.program.days.some(d => d.id === S.day)) S.day = null; if (store.saveProgram(clean)) toast('Программа сохранена'); render(); } },
+      el('h4', {}, 'Дни программы'), el('p', { class: 'small', style: 'margin:0 0 8px' }, 'Например «День A: Dosh + Triceps». Приложение подскажет, какой день следующий по кругу.'));
+    days.forEach((d, i) => {
+      const row = el('div', { class: 'dayrow' });
+      const nm = el('input', { type: 'text', value: d.name, placeholder: 'Название дня', oninput: e => { d.name = e.target.value; } });
+      row.append(el('div', { class: 'rename' }, nm, el('button', { type: 'button', class: 'btn sm ghost danger', 'aria-label': 'Удалить день', onclick: () => { days.splice(i, 1); render(); } }, '×')));
+      const gs = el('div', { class: 'gchips' });
+      for (const g of S.groups) gs.append(el('button', { type: 'button', class: 'gchip' + (d.groups.includes(g.id) ? ' on' : ''), onclick: e => { const k = d.groups.indexOf(g.id); if (k >= 0) d.groups.splice(k, 1); else d.groups.push(g.id); e.target.classList.toggle('on'); } }, g.name));
+      row.append(gs); box.append(row);
+    });
+    box.append(el('button', { type: 'button', class: 'btn sm', style: 'margin-top:4px', onclick: () => { days.push({ id: 'd' + Date.now().toString(36), name: 'День ' + String.fromCharCode(65 + days.length), groups: [] }); render(); } }, '+ День'),
+      el('div', { class: 'row end', style: 'margin-top:10px' }, el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.programEdit = null; render(); } }, 'Отмена'), el('button', { type: 'submit', class: 'btn primary' }, 'Сохранить')));
+    main.append(box);
+  }
   function renderWorkout(g, main) {
     const date = S.wdate || today();
     const dateIn = el('input', { id: 'wdate', type: 'date', value: date, max: today(), onchange: e => { S.wdate = e.target.value || today(); S.editing = null; render(); } });
+    renderDayBar(main);
     main.append(el('div', { class: 'wdate' }, el('label', { for: 'wdate' }, 'Дата тренировки'), dateIn));
-    if (!g.exercises.length) { main.append(el('div', { class: 'notice' }, 'В этой группе пока нет упражнений. Добавь их во вкладке «Карточки».')); return; }
+    if (!S.day && !g.exercises.length) { main.append(el('div', { class: 'notice' }, 'В этой группе пока нет упражнений. Добавь их во вкладке «Карточки».')); return; }
     const canWrite = S.dbState === 'ready';
     const list = el('div', { class: 'list' });
     let doneTotal = 0;
-    for (const ex of g.exercises) {
+    const day = S.day ? S.program.days.find(d => d.id === S.day) : null;
+    const groups = day ? dayGroups(day) : [g];
+    for (const gg of groups) {
+    if (day) list.append(el('h3', { class: 'dayhead' }, gg.name, gg.ru ? el('span', {}, gg.ru) : null));
+    for (const ex of gg.exercises) {
+      const g = gg;
       const n = Math.max(g.nsets || 4, ex.sets.length);
       const todays = ex.sets.map(st => (st || []).find(e => ed(e) === date) || null);
       const doneCount = todays.filter(Boolean).length; doneTotal += doneCount;
@@ -956,6 +1042,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       card.append(rows);
       if (canWrite && todays.filter(Boolean).length === n) card.append(el('button', { class: 'btn sm ghost', style: 'margin-top:8px', onclick: () => { const gg = clone(g); const e2 = gg.exercises.find(e => e.id === ex.id); e2.sets.push([]); optimistic(gg); store.saveGroup(gg); } }, '+ ещё подход'));
       list.append(card);
+    }
     }
     main.append(list, el('p', { class: 'tablenote' }, doneTotal ? `Сегодня записано подходов: ${doneTotal}. Каждый сохраняется сразу, можно закрыть телефон между подходами.` : 'Введи вес и повторения, нажми ✓. Подход сохранится сразу, следующий откроется сам. Цифры подставлены из прошлого раза: меняй и жми.'));
   }
@@ -1106,6 +1193,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
       return;
     }
     const total = g.exercises.reduce((a, e) => a + e.sets.reduce((b, s) => b + s.length, 0), 0);
+    if (S.mode === 'workout' && S.day) { const d = S.program.days.find(x => x.id === S.day); if (d) { main.append(el('div', { class: 'ghead' }, el('h2', {}, d.name, el('span', {}, dayGroups(d).map(x => x.name).join(' + '))), el('div', { class: 'meta' }, 'тренировка по программе'))); return renderWorkout(g, main); } S.day = null; }
     main.append(el('div', { class: 'ghead' },
       el('h2', {}, g.name, g.ru ? el('span', {}, g.ru) : null, S.mode === 'cards' && S.dbState === 'ready' ? el('button', { class: 'gear', 'aria-label': 'Настройки группы', onclick: () => { S.groupEdit = !S.groupEdit; S.confirm = null; render(); } }, '⚙') : null),
       el('div', { class: 'meta num' }, `${g.exercises.length} упр. · ${total} записей`, g.lastEntry ? ' · последняя ' + rel(g.lastEntry) : '')));
@@ -1140,9 +1228,13 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     main.append(list);
     if (S.dbState === 'ready') {
       if (S.addingEx) {
-        const inp = el('input', { id: 'newex', type: 'text', placeholder: 'Название упражнения' });
+        const inp = el('input', { id: 'newex', type: 'text', placeholder: 'Название или поиск по базе', autocomplete: 'off' });
+        const sug = el('div', { class: 'sug' });
+        const fill = () => { sug.replaceChildren(); for (const e of libSuggest(g, inp.value)) sug.append(el('button', { type: 'button', class: 'sugi', onclick: () => addEx(g.id, libName(e)) }, el('b', {}, libName(e)), el('span', {}, S.lang === 'en' ? e[1] : e[2]))); };
+        inp.addEventListener('input', fill); fill();
         main.append(el('form', { class: 'form', style: 'margin-top:10px', onsubmit: e => { e.preventDefault(); addEx(g.id, inp.value); } },
-          el('h4', {}, 'Новое упражнение'), el('div', { class: 'rename' }, inp, el('button', { type: 'submit', class: 'btn primary' }, 'Добавить'), el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.addingEx = false; render(); } }, 'Отмена'))));
+          el('h4', {}, 'Новое упражнение'), el('div', { class: 'rename' }, inp, el('button', { type: 'submit', class: 'btn primary' }, 'Добавить'), el('button', { type: 'button', class: 'btn ghost', onclick: () => { S.addingEx = false; render(); } }, 'Отмена')),
+          el('p', { class: 'small', style: 'margin:8px 0 4px' }, 'Из базы упражнений, сначала для этой группы:'), sug));
         setTimeout(() => inp.focus(), 0);
       } else main.append(el('button', { class: 'addex', onclick: () => { S.addingEx = true; render(); } }, '+ Упражнение'));
     }
