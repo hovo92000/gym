@@ -85,6 +85,12 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .tab.add{color:var(--muted);border-style:dashed;display:flex;align-items:center;font-weight:600}
 
 main{padding-block:14px calc(var(--nav-h) + 28px + env(safe-area-inset-bottom,0px));max-width:720px;margin:0 auto}
+.sk{background:linear-gradient(90deg,var(--surface-2) 25%,var(--line) 50%,var(--surface-2) 75%);background-size:200% 100%;animation:shimmer 1.3s linear infinite;border-radius:10px}
+@keyframes shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+.loader{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:14px;margin:2px 0 14px}
+.spin{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);border-top-color:var(--accent);animation:spin .9s linear infinite;flex:0 0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){ .sk{animation:none} .spin{animation-duration:2s} }
 .notice{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--muted);font-size:14px;margin-bottom:12px}
 .notice b{color:var(--fg)}
 .ghead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:2px 0 12px;flex-wrap:wrap}
@@ -401,12 +407,13 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     if (!S.groups.some(g => g.id === S.active)) S.active = S.groups[0] ? S.groups[0].id : null; render(); };
   const uid = () => store.user && store.user.uid;
 
+  const applyLocal = () => { const d = localLoad(); if (d) applyData(d.groups, d.notes); else if (cfg) applyData(clone(TEMPLATE), ''); else applyData(clone(SEED), SEED_NOTES.text); };
   store.init = () => {
-    const d = localLoad();
-    if (d) applyData(d.groups, d.notes);
-    else if (cfg) applyData(clone(TEMPLATE), '');          // cloud app, nobody signed in yet: generic template
-    else applyData(clone(SEED), SEED_NOTES.text);           // no Firebase configured: single-user page with the Notes tables
-    if (cfg) initFirebase().catch(e => { console.error(e); store.err = 'Firebase не загрузился: ' + (e && e.message || e); render(); });
+    if (!cfg) { applyLocal(); return; }
+    // cloud app: keep the loader up until Firebase says who is signed in, so the user's own data appears without a template flash
+    S.dbState = 'loading'; store.loadMsg = 'Подключаюсь к облаку…'; render();
+    store.authTimer = setTimeout(() => { if (!store.authKnown) { store.err = 'Облако не ответило. Показываю данные с этого устройства.'; applyLocal(); } }, 9000);
+    initFirebase().catch(e => { console.error(e); clearTimeout(store.authTimer); store.err = 'Firebase не загрузился: ' + (e && e.message || e); applyLocal(); });
   };
 
   async function initFirebase() {
@@ -418,18 +425,18 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     catch (e) { console.warn('persistent cache unavailable', e); db = fs.getFirestore(a); }
     const au = auth.getAuth(a); au.languageCode = 'ru';
     store.fb = { auth, fs, db, au };
-    auth.onAuthStateChanged(au, user => { store.user = user; if (user) attach(); else detach(); render(); });
+    auth.onAuthStateChanged(au, user => { store.authKnown = true; clearTimeout(store.authTimer); store.user = user; if (user) attach(); else detach(); render(); });
   }
 
-  function detach() { for (const u of store.unsub) u(); store.unsub = []; if (store.mode === 'cloud') { store.mode = 'local'; const d = localLoad(); applyData(d ? d.groups : clone(TEMPLATE), d ? d.notes : ''); } }
+  function detach() { for (const u of store.unsub) u(); store.unsub = []; if (store.mode === 'cloud' || S.dbState === 'loading') { store.mode = 'local'; applyLocal(); } }
   function attach() {
     for (const u of store.unsub) u(); store.unsub = [];
     const { fs, db } = store.fb; const u = uid();
-    store.mode = 'cloud'; store.cloudEmpty = null; S.dbState = 'loading'; S.groups = []; S.notes = ''; render();
+    store.mode = 'cloud'; store.cloudEmpty = null; S.dbState = 'loading'; store.loadMsg = 'Загружаю твои тренировки…'; S.groups = []; S.notes = ''; render();
     store.unsub.push(fs.onSnapshot(fs.collection(db, 'users', u, 'groups'), { includeMetadataChanges: true }, snap => {
       store.fromCache = snap.metadata.fromCache;
       if (!snap.empty) store.cloudEmpty = false; else if (!snap.metadata.fromCache) store.cloudEmpty = true;
-      if (snap.empty && snap.metadata.fromCache) { S.dbState = 'loading'; render(); return; }
+      if (snap.empty && snap.metadata.fromCache) { S.dbState = 'loading'; store.loadMsg = 'Жду ответ сервера… если нет сети, подожди, данные придут при подключении'; render(); return; }
       applyData(snap.docs.map(d => decG(d.id, d.data())), null);
     }, e => { console.error(e); store.err = 'Ошибка чтения: ' + e.code; S.dbState = 'offline'; render(); }));
     store.unsub.push(fs.onSnapshot(fs.doc(db, 'users', u, 'meta', 'notes'), snap => { S.notes = snap.exists() ? (snap.data().text || '') : ''; S.notesLoaded = true; if (S.mode === 'notes') render(); }, e => console.error(e)));
@@ -488,7 +495,7 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
   // ---- UI pieces ----
   const initial = () => { const u = store.user; if (!u) return '?'; const s = (u.displayName || u.email || 'Г'); return s[0].toUpperCase(); };
   store.renderAcct = btn => {
-    if (!cfg) { btn.hidden = true; return; }
+    if (!cfg || (!store.authKnown && S.dbState === 'loading')) { btn.hidden = true; return; }
     btn.hidden = false; btn.replaceChildren();
     if (store.user) { btn.className = 'acct on'; btn.textContent = initial(); btn.title = store.user.email || 'Гость'; }
     else { btn.className = 'acct warn'; btn.textContent = 'Войти'; }
@@ -632,9 +639,20 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     return svg;
   }
 
+  function renderLoader(main) {
+    main.append(el('div', { class: 'loader' }, el('span', { class: 'spin', 'aria-hidden': 'true' }), el('span', {}, store.loadMsg || 'Загружаю…')));
+    main.append(el('div', { class: 'sk', style: 'width:46%;height:30px;margin:4px 0 6px' }), el('div', { class: 'sk', style: 'width:62%;height:14px;margin-bottom:14px' }));
+    const list = el('div', { class: 'list' });
+    for (let k = 0; k < 4; k++) {
+      const c = el('div', { class: 'card', style: 'padding:12px 14px' }, el('div', { class: 'sk', style: `width:${55 + (k * 13) % 30}%;height:20px;margin-bottom:12px` }));
+      const row = el('div', { class: 'sets', style: 'padding:0;--n:4' }); for (let i = 0; i < 4; i++) row.append(el('div', { class: 'sk', style: 'height:58px' })); c.append(row); list.append(c);
+    }
+    main.append(list);
+  }
   function renderTabs() {
     const nav = $('#tabs'); nav.replaceChildren();
     const td = today();
+    if (S.dbState === 'loading' && !S.groups.length) { for (const w of [72, 86, 78, 90, 60]) nav.append(el('div', { class: 'sk', style: `width:${w}px;height:44px;flex:0 0 auto;border-radius:10px` })); if (store.renderAcct) store.renderAcct($('#acct')); const tb = $('#today-box'); tb.replaceChildren(el('b', {}, fmtDate(td)), DAYS[new Date().getDay()]); return; }
     for (const g of S.groups) nav.append(el('button', { class: 'tab', 'aria-pressed': String(g.id === (activeGroup()||{}).id),
       onclick: () => { S.active = g.id; setPref('active', g.id); S.open = null; S.form = null; S.confirm = null; S.wdate = null; S.groupEdit = false; if (S.mode === 'notes' || S.mode === 'journal') setMode('workout'); render(); } },
       el('b', {}, g.name), g.ru ? el('span', {}, g.ru) : null, g.lastEntry === td ? el('i', { class: 'dot', title: 'тренировка сегодня' }) : null));
@@ -925,7 +943,9 @@ table.grid{border-collapse:collapse;font-size:13px;min-width:100%}
     const g = activeGroup();
     $('#brand-sub').textContent = S.dbState === 'offline' ? 'только просмотр' : 'дневник весов';
     wakeLock(S.mode === 'workout');
+    $('#brand-sub').textContent = S.dbState === 'loading' ? 'подключаюсь…' : $('#brand-sub').textContent;
     if (S.mode === 'account' && store.renderAccount) return store.renderAccount(main);
+    if (S.dbState === 'loading' && !S.groups.length) return renderLoader(main);
     if (store.gate && store.gate(main)) return;
     if (store.banner) store.banner(main);
 
