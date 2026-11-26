@@ -182,7 +182,6 @@ header.hero p{color:var(--muted);font-size:15px;max-width:420px;margin:0 auto}
 /* certificate */
 .cert{text-align:center}
 .cert img{width:100%;max-width:420px;border-radius:6px;box-shadow:0 30px 60px rgba(0,0,0,.6);border:1px solid rgba(217,184,92,.3);display:block;margin:0 auto 16px}
-.cert .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
 /* finale */
 .exit{text-align:center;padding:50px 0 30px}
@@ -300,11 +299,11 @@ footer a{color:var(--gold2)}
   </section>
 
   <!-- certificate -->
-  <section class="hall" id="h7" data-guide="Зал седьмой. Здесь выдают документы. Сертификат самого важного человека. Напечатан, подписан, с печатью. Сохраните, покажите подругам, поставьте на заставку. Подделке не подлежит, потому что оригинал один.">
+  <section class="hall" id="h7" data-guide="Зал седьмой. Здесь выдают документы. Сертификат самого важного человека. Напечатан, подписан, с печатью. Подделке не подлежит, потому что оригинал один. Выставлен бессрочно.">
     <div class="plate"><i>VII</i><span class="cap">Зал седьмой</span></div>
     <h2>Отдел <em>документов</em></h2>
-    <p class="lead">Официальная бумага. С печатью. Можно сохранить и показывать всем.</p>
-    <div class="cert"><img id="certimg" alt="Сертификат"><div class="btns"><button class="btn" id="certsave">Сохранить сертификат</button></div></div>
+    <p class="lead">Официальная бумага. С печатью и подписью. Подделке не подлежит.</p>
+    <div class="cert"><img id="certimg" alt="Сертификат"></div>
     <div class="guide"><button class="btn ghost sm" data-g>📜 Экскурсовод</button></div>
   </section>
 
@@ -487,7 +486,6 @@ function links() { const c = CONFIG.contact, tt = encodeURIComponent(msg()); $('
 rtext.addEventListener('input', links); rname.addEventListener('input', links); links();
 
 // ---------- certificate ----------
-let certBlob = null;
 async function drawCert() {
   try { await document.fonts.ready; await Promise.all([document.fonts.load('700 80px "Cormorant Garamond"'), document.fonts.load('italic 600 80px "Cormorant Garamond"'), document.fonts.load('500 30px Manrope')]); } catch (e) {}
   const W = 1080, H = 1350, c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
@@ -517,12 +515,9 @@ async function drawCert() {
   x.fillStyle = '#a79f90'; x.font = '500 20px Manrope'; x.fillText(CONFIG.author ? CONFIG.author + ', директор музея' : 'Директор музея', 730, 1145);
   const d = new Date(); x.fillText('Выдан ' + d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }), 730, 1180);
   x.fillStyle = '#d9b85c'; x.font = '700 18px Manrope'; x.letterSpacing = '6px'; x.fillText('ОРИГИНАЛ ОДИН · ПОДДЕЛКЕ НЕ ПОДЛЕЖИТ', W / 2, 1265);
-  return new Promise(res => c.toBlob(b => { certBlob = b; $('#certimg').src = URL.createObjectURL(b); res(); }, 'image/png'));
+  c.toBlob(b => { $('#certimg').src = URL.createObjectURL(b); }, 'image/png');
 }
 drawCert();
-$('#certsave').addEventListener('click', async () => { if (!certBlob) await drawCert(); const f = new File([certBlob], 'sertifikat.png', { type: 'image/png' }); vib(15); ding();
-  if (navigator.canShare && navigator.canShare({ files: [f] })) { try { await navigator.share({ files: [f], title: 'Сертификат самого важного человека' }); return; } catch (e) { if (e.name === 'AbortError') return; } }
-  const a = document.createElement('a'); a.href = URL.createObjectURL(certBlob); a.download = 'sertifikat.png'; document.body.appendChild(a); a.click(); a.remove(); });
 </script>
 </body>
 </html>
