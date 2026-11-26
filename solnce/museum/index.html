@@ -382,6 +382,9 @@ const CONFIG = {
     { av: '🛣️', who: 'Расстояние', st: 1, p: 'Меня здесь не уважают. Все делают вид, что меня нет.' },
     { av: '🪞', who: 'Зеркало', st: 5, p: 'Лучшее, что я показываю за день.' },
   ],
+  // Твой голос вместо синтезатора. Запиши голосовое для зала и положи файл в solnce/museum/audio/,
+  // потом впиши путь: h1: 'audio/zal1.m4a'. Пустое = аудиогид печатает текст (и читает голосом телефона, если он есть).
+  audio: { h1: '', h2: '', h3: '', h4: '', h5: '', h6: '', h7: '', h8: '' },
   voiceLines: ['«привет» звучит так', '«я соскучилась» звучит так', 'смех. громкость на максимум', '«ещё пять минут…» сонный вариант', '«ладно, спим». Не спим.'],
 };
 // =====================================================
@@ -461,11 +464,18 @@ new IntersectionObserver(es => { if (es[0].isIntersecting) countStats(); }, { th
 // ---------- audio guide ----------
 const gpanel = $('#guide'), gtxt = $('#gtxt'); let typing = null, curHall = null, speaking = false;
 const halls = $$('.hall[data-guide]');
-function guideSay(text, hall) { curHall = hall || curHall; gpanel.classList.add('on'); clearInterval(typing); gtxt.classList.remove('done'); gtxt.textContent = ''; let i = 0; if (reduced) { gtxt.textContent = text; gtxt.classList.add('done'); } else typing = setInterval(() => { gtxt.textContent = text.slice(0, ++i); if (i >= text.length) { clearInterval(typing); gtxt.classList.add('done'); } }, 28); if (speaking) speak(text); }
-function speak(text) { try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'ru-RU'; const v = speechSynthesis.getVoices().find(v => /^ru/i.test(v.lang)); if (v) u.voice = v; u.rate = .95; speechSynthesis.speak(u); } catch (e) {} }
+let player = null, ruVoice = null;
+function pickVoice() { try { const vs = speechSynthesis.getVoices().filter(v => /^ru/i.test(v.lang)); const score = v => (/milena/i.test(v.name) ? 8 : 0) + (/premium|enhanced|улучш|расшир/i.test(v.name) ? 6 : 0) + (/google|microsoft/i.test(v.name) ? 3 : 0) + (/yuri|юрий/i.test(v.name) ? 1 : 0) + (v.localService ? 1 : 0); ruVoice = vs.sort((a, b) => score(b) - score(a))[0] || null; } catch (e) { ruVoice = null; } $('#gspeak').hidden = !ruVoice && !(curHall && CONFIG.audio[curHall.id]); }
+if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.addEventListener('voiceschanged', pickVoice); } else $('#gspeak').hidden = true;
+function stopVoice() { try { speechSynthesis.cancel(); } catch (e) {} if (player) { player.pause(); player = null; } $('#gspeak').classList.remove('act'); }
+function guideSay(text, hall) { curHall = hall || curHall; gpanel.classList.add('on'); clearInterval(typing); gtxt.classList.remove('done'); gtxt.textContent = ''; let i = 0; if (reduced) { gtxt.textContent = text; gtxt.classList.add('done'); } else typing = setInterval(() => { gtxt.textContent = text.slice(0, ++i); if (i >= text.length) { clearInterval(typing); gtxt.classList.add('done'); } }, 28);
+  const own = curHall && CONFIG.audio[curHall.id]; $('#gspeak').textContent = own ? '▶ Голос директора' : '🔊 Озвучить'; $('#gspeak').hidden = !own && !ruVoice; stopVoice(); if (speaking) speak(text); }
+function speak(text) { stopVoice(); const own = curHall && CONFIG.audio[curHall.id];
+  if (own) { player = new Audio(own); player.play().catch(() => {}); player.addEventListener('ended', () => $('#gspeak').classList.remove('act')); $('#gspeak').classList.add('act'); return; }
+  if (!ruVoice) return; try { const u = new SpeechSynthesisUtterance(text); u.lang = 'ru-RU'; u.voice = ruVoice; u.rate = .9; u.pitch = 1; u.addEventListener('end', () => $('#gspeak').classList.remove('act')); speechSynthesis.speak(u); $('#gspeak').classList.add('act'); } catch (e) {} }
 $$('[data-g]').forEach(b => b.addEventListener('click', () => { const h = b.closest('.hall'); vib(10); tone(1046, .2, 'sine', .04); guideSay(h.dataset.guide, h); }));
-$('#gclose').addEventListener('click', () => { gpanel.classList.remove('on'); try { speechSynthesis.cancel(); } catch (e) {} });
-$('#gspeak').addEventListener('click', () => { if (!('speechSynthesis' in window)) { $('#gspeak').textContent = '🔇 Нет голоса'; return; } speaking = !speaking; $('#gspeak').classList.toggle('act', speaking); if (speaking) speak(gtxt.textContent || ''); else speechSynthesis.cancel(); });
+$('#gclose').addEventListener('click', () => { gpanel.classList.remove('on'); stopVoice(); });
+$('#gspeak').addEventListener('click', () => { const playing = $('#gspeak').classList.contains('act'); if (playing) { speaking = false; stopVoice(); return; } speaking = true; speak(curHall ? curHall.dataset.guide : gtxt.textContent); });
 $('#gnext').addEventListener('click', () => { const i = halls.indexOf(curHall); const n = halls[i + 1]; if (!n) { guideSay('Экскурсия окончена. Главный экспонат может оставаться в музее столько, сколько захочет.'); return; } n.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); setTimeout(() => guideSay(n.dataset.guide, n), 500); });
 
 // ---------- guestbook ----------
