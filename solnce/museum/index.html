@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e0c12">
+<title>Музей тебя</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;700&display=swap">
+<style>
+:root{
+  --bg:#0e0c12;--bg2:#161320;--wall:#1b1724;--ink:#f3ecdc;--muted:#a79f90;
+  --gold:#d9b85c;--gold2:#f3dd93;--gold3:#8a6d2a;--brass:#c49a3c;
+  --rose:#e07a8c;--glass:rgba(255,255,255,.06);
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Manrope',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;overflow-x:hidden;min-height:100dvh}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+#spot{position:fixed;inset:0;pointer-events:none;z-index:1;mix-blend-mode:screen;opacity:.55;
+  background:radial-gradient(360px 360px at var(--x,50%) var(--y,25%),rgba(243,221,147,.28),rgba(243,221,147,.08) 40%,transparent 70%)}
+[hidden]{display:none!important}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+a{color:var(--gold2)}
+.wrap{position:relative;z-index:2;max-width:620px;margin:0 auto;padding:0 18px 80px}
+.cap{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700}
+h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.05}
+.serif{font-family:var(--serif)}
+
+/* ---------- entrance ---------- */
+#gate{position:fixed;inset:0;z-index:50;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;transition:opacity .9s ease,visibility .9s}
+#gate.out{opacity:0;visibility:hidden}
+#gate .cap{margin-bottom:14px}
+#gate h1{font-size:clamp(44px,13vw,76px);letter-spacing:.02em;background:linear-gradient(180deg,var(--gold2),var(--gold) 55%,var(--gold3));-webkit-background-clip:text;background-clip:text;color:transparent}
+#gate h1 small{display:block;font-size:.34em;font-style:italic;font-weight:500;letter-spacing:.06em;color:var(--muted);-webkit-text-fill-color:var(--muted);margin-top:6px}
+.ticket{margin:34px auto 18px;width:min(340px,92vw);display:grid;grid-template-columns:1fr 84px;filter:drop-shadow(0 20px 40px rgba(0,0,0,.6));transform:rotate(-2deg);transition:transform .4s}
+.ticket>div{background:linear-gradient(135deg,#f7eacb,#e8d39f);color:#2a2113;padding:16px 14px;text-align:left;position:relative}
+.ticket .main{border-radius:14px 0 0 14px}
+.ticket .stub{border-radius:0 14px 14px 0;border-left:2px dashed #a98d4c;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:transform .6s cubic-bezier(.3,1.4,.5,1),opacity .6s}
+.ticket .stub b{font-family:var(--serif);font-size:30px;line-height:1}
+.ticket .stub span{font-size:9px;letter-spacing:.2em;text-transform:uppercase}
+.ticket .main::before,.ticket .main::after{content:"";position:absolute;right:-9px;width:18px;height:18px;border-radius:50%;background:var(--bg);z-index:2}
+.ticket .main::before{top:-9px}.ticket .main::after{bottom:-9px}
+.ticket .t1{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#8a6d2a;font-weight:700}
+.ticket .t2{font-family:var(--serif);font-size:26px;font-weight:700;line-height:1.05;margin:6px 0 8px}
+.ticket .t3{font-size:12px;color:#5b4a26;display:grid;grid-template-columns:auto 1fr;gap:2px 10px}
+.ticket .t3 b{font-weight:700;color:#2a2113}
+.ticket.torn .stub{transform:translate(40px,30px) rotate(18deg);opacity:0}
+.ticket.torn{transform:rotate(0) scale(.96)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 22px;border-radius:999px;background:linear-gradient(180deg,var(--gold2),var(--gold));color:#2a2113;font-weight:700;font-size:15px;box-shadow:0 10px 30px rgba(217,184,92,.25);transition:transform .15s,box-shadow .2s;user-select:none}
+.btn:active{transform:scale(.96)}
+.btn.ghost{background:transparent;color:var(--gold2);border:1px solid rgba(217,184,92,.5);box-shadow:none}
+.btn.sm{padding:10px 16px;font-size:13px}
+#gate p.hint{margin-top:14px;color:var(--muted);font-size:13px}
+
+/* ---------- hero ---------- */
+header.hero{padding:64px 0 28px;text-align:center}
+header.hero h1{font-size:clamp(40px,11vw,64px);margin:10px 0 8px;color:var(--gold2)}
+header.hero p{color:var(--muted);font-size:15px;max-width:420px;margin:0 auto}
+.rule{display:flex;align-items:center;gap:12px;color:var(--gold);margin:26px 0;opacity:.8}
+.rule::before,.rule::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold3),transparent)}
+.rule span{font-family:var(--serif);font-style:italic;font-size:15px}
+
+/* ---------- halls ---------- */
+.hall{position:relative;padding:38px 0 30px;opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease}
+.hall.in{opacity:1;transform:none}
+.plate{display:inline-flex;align-items:center;gap:10px;padding:7px 14px;border:1px solid rgba(217,184,92,.45);border-radius:6px;background:linear-gradient(180deg,rgba(217,184,92,.14),rgba(217,184,92,.04));margin-bottom:14px}
+.plate i{font-style:normal;font-family:var(--serif);font-weight:700;font-size:18px;color:var(--gold2);line-height:1}
+.plate .cap{letter-spacing:.2em}
+.hall h2{font-size:34px;margin-bottom:6px}
+.hall h2 em{font-style:italic;font-weight:500;color:var(--gold2)}
+.hall .lead{color:var(--muted);font-size:15px;margin-bottom:22px}
+
+.lamp{position:relative;height:30px;margin:0 auto 2px;width:120px}
+.lamp::before{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);width:70px;height:12px;border-radius:0 0 30px 30px/0 0 12px 12px;background:linear-gradient(180deg,var(--gold2),var(--gold3));box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.lamp::after{content:"";position:absolute;left:50%;top:10px;transform:translateX(-50%);width:0;height:0;border-left:150px solid transparent;border-right:150px solid transparent;border-top:0;border-bottom:220px solid rgba(243,221,147,.10);filter:blur(10px);pointer-events:none}
+.frame{position:relative;margin:0 auto;padding:14px;background:
+  linear-gradient(135deg,#f3dd93,#8a6d2a 30%,#f3dd93 50%,#8a6d2a 72%,#f3dd93);border-radius:6px;
+  box-shadow:0 30px 60px rgba(0,0,0,.6),inset 0 0 0 3px #3d2f12,inset 0 0 0 5px #c8a650;transform-style:preserve-3d;transition:transform .25s ease-out}
+.frame::after{content:"";position:absolute;inset:11px;border:1px solid rgba(0,0,0,.45);border-radius:2px;pointer-events:none}
+.canvas{position:relative;background:radial-gradient(120% 90% at 50% 20%,#2a2436,#141019 70%);border-radius:2px;min-height:200px;display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden;color:var(--ink)}
+.plaque{margin:18px auto 0;max-width:420px;background:linear-gradient(180deg,#d7b35c,#a98335 60%,#8a6d2a);color:#2a2113;border-radius:5px;padding:12px 16px;box-shadow:0 8px 18px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.4);font-size:13px;position:relative}
+.plaque::before,.plaque::after{content:"";position:absolute;top:50%;width:6px;height:6px;border-radius:50%;background:#5a4517;box-shadow:inset 0 1px 1px rgba(255,255,255,.4);transform:translateY(-50%)}
+.plaque::before{left:6px}.plaque::after{right:6px}
+.plaque b{display:block;font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:.02em;line-height:1.1;margin-bottom:4px}
+.plaque .row{display:grid;grid-template-columns:auto 1fr;gap:1px 10px;color:#4a3a18;font-size:12px;margin-top:6px}
+.plaque .row span:nth-child(odd){text-transform:uppercase;letter-spacing:.12em;font-size:10px;font-weight:700;padding-top:2px}
+.guide{margin-top:16px;display:flex;justify-content:center}
+
+/* exhibit I: smile */
+.smile{width:220px;height:200px}
+.smile path{stroke:var(--gold2);stroke-width:8;fill:none;stroke-linecap:round;stroke-dasharray:400;stroke-dashoffset:400;animation:draw 2.2s ease forwards .4s;filter:drop-shadow(0 0 12px rgba(243,221,147,.6))}
+.smile circle{fill:var(--gold2);opacity:0;animation:pop .5s ease forwards 1.6s;filter:drop-shadow(0 0 10px rgba(243,221,147,.8))}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes pop{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:scale(1)}}
+.hall:not(.in) .smile path,.hall:not(.in) .smile circle{animation-play-state:paused}
+
+/* exhibit II: voice */
+.wave{display:flex;align-items:center;gap:6px;height:180px;padding:30px}
+.wave i{display:block;width:8px;height:20px;border-radius:4px;background:linear-gradient(180deg,var(--gold2),var(--gold3));animation:bar 1.3s ease-in-out infinite;animation-delay:calc(var(--d) * -.11s);box-shadow:0 0 12px rgba(243,221,147,.3)}
+@keyframes bar{0%,100%{height:14px;opacity:.6}50%{height:calc(40px + var(--h) * 1px);opacity:1}}
+.wave.quiet i{animation-play-state:paused;height:14px}
+.voice-note{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--gold2);padding:0 20px 24px;text-align:center}
+
+/* exhibit III: collection */
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:20px 14px;width:100%}
+.mini>div{background:linear-gradient(180deg,#2a2436,#1a1521);border:2px solid var(--gold3);box-shadow:inset 0 0 0 1px #0b0910,0 10px 20px rgba(0,0,0,.4);border-radius:4px;padding:16px 6px 10px;text-align:center;transition:transform .2s}
+.mini>div:active{transform:scale(.95)}
+.mini .ico{font-size:40px;line-height:1;display:block;margin-bottom:8px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.5))}
+.mini .nm{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--gold2)}
+.mini .ds{font-size:11px;color:var(--muted);line-height:1.3;margin-top:3px}
+.mini .blue{display:block;width:40px;height:40px;border-radius:50%;margin:0 auto 8px;background:radial-gradient(circle at 35% 30%,#8fc3ff,#1f5fd1 60%,#0b2e7a);box-shadow:0 6px 14px rgba(31,95,209,.5)}
+
+/* exhibit IV: medals */
+.medals{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:18px 14px;width:100%}
+.medal{display:flex;gap:12px;align-items:center;background:rgba(255,255,255,.04);border:1px solid rgba(217,184,92,.25);border-radius:10px;padding:12px;text-align:left;transition:transform .15s,background .2s;position:relative;overflow:hidden}
+.medal:active{transform:scale(.97)}
+.medal .coin{flex:none;width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff2b8,#d9b85c 45%,#8a6d2a);display:grid;place-items:center;font-size:20px;box-shadow:0 6px 12px rgba(0,0,0,.5),inset 0 0 0 2px rgba(0,0,0,.25);position:relative}
+.medal .coin::before{content:"";position:absolute;top:-16px;left:50%;transform:translateX(-50%);width:16px;height:22px;background:linear-gradient(90deg,#c0392b 50%,#2b63c0 50%);clip-path:polygon(0 0,100% 0,100% 70%,50% 100%,0 70%)}
+.medal b{display:block;font-family:var(--serif);font-size:17px;line-height:1.1;color:var(--gold2)}
+.medal small{font-size:11px;color:var(--muted);line-height:1.3;display:block;margin-top:2px}
+.medal.won::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);animation:shine .9s ease}
+@keyframes shine{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+@media (max-width:440px){.medals{grid-template-columns:1fr}}
+
+/* exhibit V: alarm */
+.case{position:relative;width:100%;padding:34px 20px 26px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.glass{position:relative;width:170px;height:190px;border-radius:14px 14px 6px 6px;background:linear-gradient(160deg,rgba(255,255,255,.18),rgba(255,255,255,.04) 40%,rgba(255,255,255,.1));border:1px solid rgba(255,255,255,.35);box-shadow:inset 0 0 30px rgba(255,255,255,.08),0 20px 30px rgba(0,0,0,.5);display:grid;place-items:center;backdrop-filter:blur(2px);cursor:pointer;user-select:none}
+.glass::after{content:"";position:absolute;left:-10px;right:-10px;bottom:-14px;height:16px;background:linear-gradient(180deg,#5a4517,#2a2113);border-radius:4px}
+.glass .heart{font-size:74px;line-height:1;filter:drop-shadow(0 10px 18px rgba(224,122,140,.5));animation:beat 1.6s ease-in-out infinite;transition:transform .3s}
+@keyframes beat{0%,100%{transform:scale(1)}14%{transform:scale(1.12)}28%{transform:scale(1)}42%{transform:scale(1.1)}}
+.sign{background:#c0392b;color:#fff;font-weight:800;letter-spacing:.2em;font-size:12px;padding:6px 12px;border-radius:4px;transform:rotate(-3deg);box-shadow:0 6px 12px rgba(0,0,0,.4);border:2px solid #fff}
+.case .status{min-height:44px;text-align:center;color:var(--muted);font-size:14px;transition:color .3s}
+.hall.alarm .canvas{animation:flash .25s steps(2) 8}
+@keyframes flash{50%{background:#5a1216}}
+.hall.alarm .glass{animation:shake .12s linear 10}
+@keyframes shake{25%{transform:translateX(-4px) rotate(-1deg)}75%{transform:translateX(4px) rotate(1deg)}}
+
+/* exhibit VI: numbers */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:18px 14px;width:100%}
+.stat{background:rgba(217,184,92,.06);border:1px solid rgba(217,184,92,.2);border-radius:10px;padding:14px 10px;text-align:center}
+.stat b{display:block;font-family:var(--serif);font-size:38px;line-height:1;color:var(--gold2);font-weight:700}
+.stat span{display:block;font-size:11px;color:var(--muted);margin-top:6px;line-height:1.3}
+.stat.wide{grid-column:1/-1}
+
+/* audio guide */
+#guide{position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:40;background:rgba(22,19,32,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(217,184,92,.35);border-radius:18px;padding:14px 16px 12px;box-shadow:0 20px 50px rgba(0,0,0,.6);transform:translateY(140%);transition:transform .45s cubic-bezier(.2,.9,.3,1.1);max-width:596px;margin:0 auto}
+#guide.on{transform:none}
+#guide .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+#guide .top .cap{display:flex;align-items:center;gap:8px}
+#guide .dot{width:8px;height:8px;border-radius:50%;background:#e74c3c;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.2}}
+#guide .txt{font-family:var(--serif);font-size:19px;line-height:1.35;min-height:52px}
+#guide .txt::after{content:"▍";color:var(--gold);animation:blink .8s infinite}
+#guide .txt.done::after{content:""}
+#guide .ctl{display:flex;gap:8px;margin-top:8px}
+#guide .ctl button{font-size:12px;color:var(--muted);padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.06)}
+#guide .ctl button.act{color:var(--gold2)}
+
+/* guestbook */
+.book{background:linear-gradient(180deg,#f6ecd2,#e9dcb5);color:#2a2113;border-radius:8px;padding:18px;box-shadow:0 20px 40px rgba(0,0,0,.5);position:relative;overflow:hidden}
+.book::before{content:"";position:absolute;left:0;top:0;bottom:0;width:14px;background:linear-gradient(90deg,#8a6d2a,#c8a650 60%,#8a6d2a)}
+.book h3{font-size:26px;text-align:center;margin:0 0 12px 10px;color:#2a2113}
+.rev{margin-left:10px;padding:10px 0;border-bottom:1px dashed rgba(42,33,19,.25);display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start}
+.rev .av{width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:18px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.rev b{font-family:var(--serif);font-size:17px;display:block;line-height:1.1}
+.rev .stars{color:#c49a3c;font-size:12px;letter-spacing:2px}
+.rev p{font-size:13px;color:#4a3a18;margin-top:3px;line-height:1.35}
+.rev.mine{background:rgba(255,255,255,.4);border-radius:8px;padding:10px;margin-top:8px;border:0}
+.book textarea,.book input{width:100%;border:1px solid rgba(42,33,19,.3);background:rgba(255,255,255,.7);border-radius:8px;padding:10px 12px;font:15px var(--serif);color:#2a2113;resize:none;outline:none}
+.book textarea{min-height:84px;margin-bottom:8px}
+.book input{margin-bottom:10px;font-family:var(--sans);font-size:14px}
+.book .starpick{display:flex;gap:4px;font-size:26px;margin:0 0 10px;color:#b9a67a;user-select:none}
+.book .starpick span{cursor:pointer;transition:transform .15s}
+.book .starpick span.on{color:#c49a3c;text-shadow:0 0 10px rgba(196,154,60,.6)}
+.book .send{display:flex;gap:8px;flex-wrap:wrap}
+.book .send a{flex:1;text-align:center;text-decoration:none;padding:12px 10px;border-radius:999px;font-weight:700;font-size:14px;color:#fff}
+.book .send .tg{background:#2aa1da}.book .send .wa{background:#25a95b}
+
+/* certificate */
+.cert{text-align:center}
+.cert img{width:100%;max-width:420px;border-radius:6px;box-shadow:0 30px 60px rgba(0,0,0,.6);border:1px solid rgba(217,184,92,.3);display:block;margin:0 auto 16px}
+.cert .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* finale */
+.exit{text-align:center;padding:50px 0 30px}
+.exit h2{font-size:36px;margin-bottom:10px}
+.exit p{color:var(--muted);max-width:420px;margin:0 auto 20px;font-size:15px}
+.exit .sig{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--gold2);margin-top:18px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:30px 0 10px;line-height:1.8}
+footer a{color:var(--gold2)}
+
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.hall{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div id="spot"></div>
+
+<div id="gate">
+  <div class="cap">Единственный в мире</div>
+  <h1>Музей тебя<small>постоянная экспозиция</small></h1>
+  <div class="ticket" id="ticket">
+    <div class="main">
+      <div class="t1">Входной билет</div>
+      <div class="t2" id="t-name">Солнышко</div>
+      <div class="t3"><span>Статус</span><b>Главный экспонат</b><span>Цена</span><b>Бесценно</b><span>Срок</span><b>Навсегда</b></div>
+    </div>
+    <div class="stub"><b>№1</b><span>из 1</span></div>
+  </div>
+  <button class="btn" id="enter">Оторвать билет и войти</button>
+  <p class="hint">Контролёр уже предупреждён. Тебя пропустят.</p>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="cap">Добро пожаловать</div>
+    <h1 id="h-title">Музей тебя</h1>
+    <p>Здесь собрано всё, что делает тебя главным человеком в моей жизни. Вход свободный. Трогать экспонаты можно. Один нельзя, но ты всё равно попробуешь.</p>
+    <div class="rule"><span>экскурсия начинается</span></div>
+  </header>
+
+  <!-- I -->
+  <section class="hall" id="h1" data-guide="Перед вами первый и самый ценный экспонат. Улыбка. Найдена в первый день нашего знакомства, с тех пор не выпускается из вида. Учёные до сих пор не понимают, как она действует на меня через телефон.">
+    <div class="plate"><i>I</i><span class="cap">Зал первый</span></div>
+    <h2>Улыбка <em>оригинал</em></h2>
+    <p class="lead">Самый посещаемый зал музея. Мной. Ежедневно.</p>
+    <div class="lamp"></div>
+    <div class="frame"><div class="canvas">
+      <svg class="smile" viewBox="0 0 220 200" aria-hidden="true">
+        <circle cx="70" cy="70" r="9"/><circle cx="150" cy="70" r="9"/>
+        <path d="M50 120 Q110 190 170 120"/>
+      </svg>
+    </div></div>
+    <div class="plaque"><b>«Улыбка»</b><div class="row"><span>Автор</span><span id="p-name1">Солнышко</span><span>Материал</span><span>чистое счастье, немного хитрости</span><span>Воздействие</span><span>мгновенное, необратимое</span></div></div>
+    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+  </section>
+
+  <!-- II -->
+  <section class="hall" id="h2" data-guide="Зал второй. Голос. Особенно утренний, сонный вариант, который говорит «ещё пять минут». Экспонат хранится в избранных голосовых и прослушивается чаще, чем любая музыка. Коснитесь витрины, чтобы услышать, как он звучит для меня.">
+    <div class="plate"><i>II</i><span class="cap">Зал второй</span></div>
+    <h2>Голос <em>в записи</em></h2>
+    <p class="lead">Коснись витрины. Так я слышу тебя, когда ты говоришь «привет».</p>
+    <div class="lamp"></div>
+    <div class="frame"><div class="canvas" id="voice">
+      <div class="wave quiet" id="wave"></div>
+      <div class="voice-note" id="vnote">тихо… нажми</div>
+    </div></div>
+    <div class="plaque"><b>«Голос»</b><div class="row"><span>Жанр</span><span>утренний, сонный</span><span>Хранится</span><span>в избранных голосовых</span><span>Прослушано</span><span>больше, чем любой плейлист</span></div></div>
+    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+  </section>
+
+  <!-- III -->
+  <section class="hall" id="h3" data-guide="Зал третий. Личная коллекция. Синий, как море и её любимое платье. Сникерс, который официально признан лекарством. И капучино, которое она держит двумя руками и щурится от удовольствия. Куратор знает это наизусть.">
+    <div class="plate"><i>III</i><span class="cap">Зал третий</span></div>
+    <h2>Личная <em>коллекция</em></h2>
+    <p class="lead">Три предмета, без которых экспозиция неполная.</p>
+    <div class="lamp"></div>
+    <div class="frame"><div class="canvas"><div class="mini" id="mini"></div></div></div>
+    <div class="plaque"><b>«Что она любит»</b><div class="row"><span>Источник</span><span>наблюдения куратора</span><span>Точность</span><span>проверена лично</span></div></div>
+    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+  </section>
+
+  <!-- IV -->
+  <section class="hall" id="h4" data-guide="Зал четвёртый. Зал славы. Медали вручены за реальные заслуги, подтверждённые свидетелем, то есть мной. Коснитесь медали, чтобы услышать, как она звенит. Все награды пожизненные, отзыву не подлежат.">
+    <div class="plate"><i>IV</i><span class="cap">Зал четвёртый</span></div>
+    <h2>Зал <em>славы</em></h2>
+    <p class="lead">Награды, которых ты не просила, но заслужила. Нажми на каждую.</p>
+    <div class="lamp"></div>
+    <div class="frame"><div class="canvas"><div class="medals" id="medals"></div></div></div>
+    <div class="plaque"><b>«Награды»</b><div class="row"><span>Вручил</span><span>главный свидетель твоей жизни</span><span>Статус</span><span>пожизненно</span></div></div>
+    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+  </section>
+
+  <!-- V -->
+  <section class="hall" id="h5" data-guide="Зал пятый. Экспонат под охраной. Сердце куратора. Находится под стеклом, под сигнализацией и под твоим полным контролем. Табличка «не трогать» висит для всех остальных. Вам можно. Проверьте.">
+    <div class="plate"><i>V</i><span class="cap">Зал пятый</span></div>
+    <h2>Под <em>охраной</em></h2>
+    <p class="lead">Самый охраняемый экспонат. Сигнализация, стекло, табличка. Ну-ка, что будет.</p>
+    <div class="lamp"></div>
+    <div class="frame"><div class="canvas"><div class="case">
+      <div class="sign">НЕ ТРОГАТЬ</div>
+      <div class="glass" id="glass"><div class="heart">❤️</div></div>
+      <div class="status" id="astatus">Сердце куратора. Принадлежит одному человеку.</div>
+    </div></div></div>
+    <div class="plaque"><b>«Сердце»</b><div class="row"><span>Владелец</span><span id="p-name2">Солнышко</span><span>Охрана</span><span>есть, но она на твоей стороне</span><span>Срок</span><span>бессрочно</span></div></div>
+    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+  </section>
+
+  <!-- VI -->
+  <section class="hall" id="h6" data-guide="Зал шестой. Цифры. Музей ведёт строгий учёт. Количество таких, как ты, в мире: ровно один экземпляр. Место в списке важных людей куратора: первое, и список на этом заканчивается. Срок хранения: пожизненно, с возможностью продления.">
+    <div class="plate"><i>VI</i><span class="cap">Зал шестой</span></div>
+    <h2>Отдел <em>учёта</em></h2>
+    <p class="lead">Музей любит точность. Вот официальная статистика.</p>
+    <div class="lamp"></div>
+    <div class="frame"><div class="canvas"><div class="stats" id="stats"></div></div></div>
+    <div class="plaque"><b>«Статистика»</b><div class="row"><span>Проверено</span><span>лично, несколько раз в день</span><span>Погрешность</span><span>ноль</span></div></div>
+    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+  </section>
+
+  <!-- certificate -->
+  <section class="hall" id="h7" data-guide="Зал седьмой. Здесь выдают документы. Сертификат самого важного человека. Напечатан, подписан, с печатью. Сохраните, покажите подругам, поставьте на заставку. Подделке не подлежит, потому что оригинал один.">
+    <div class="plate"><i>VII</i><span class="cap">Зал седьмой</span></div>
+    <h2>Отдел <em>документов</em></h2>
+    <p class="lead">Официальная бумага. С печатью. Можно сохранить и показывать всем.</p>
+    <div class="cert"><img id="certimg" alt="Сертификат"><div class="btns"><button class="btn" id="certsave">Сохранить сертификат</button></div></div>
+    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+  </section>
+
+  <!-- guestbook -->
+  <section class="hall" id="h8" data-guide="Выход через книгу отзывов. Как в любом уважающем себя музее. Другие посетители уже оставили свои впечатления. Ждём ваше. Его прочитает директор лично.">
+    <div class="plate"><i>VIII</i><span class="cap">На выходе</span></div>
+    <h2>Книга <em>отзывов</em></h2>
+    <p class="lead">Посетители уже написали. Теперь ты.</p>
+    <div class="book">
+      <h3>Книга отзывов</h3>
+      <div id="reviews"></div>
+      <div class="rev mine">
+        <div class="av">✍️</div>
+        <div>
+          <b>Твой отзыв</b>
+          <div class="starpick" id="starpick"><span data-s="1">★</span><span data-s="2">★</span><span data-s="3">★</span><span data-s="4">★</span><span data-s="5">★</span></div>
+          <textarea id="rtext" placeholder="Что думаешь о музее? Что понравилось, чего не хватает…"></textarea>
+          <input id="rname" placeholder="Подпись (можно «главный экспонат»)">
+          <div class="send"><a class="tg" id="tg" target="_blank" rel="noopener">Отправить в Telegram</a><a class="wa" id="wa" target="_blank" rel="noopener">В WhatsApp</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="exit hall" id="h9">
+    <div class="rule"><span>выход</span></div>
+    <h2>Выхода нет</h2>
+    <p>Ты не посетитель. Ты экспонат номер один, постоянная экспозиция, главный зал. Музей работает круглосуточно, без выходных, пока я жив.</p>
+    <div class="sig" id="sig">Директор музея, он же твой</div>
+  </section>
+
+  <footer>Эту страницу видишь только ты.<br><a href="../">Солнышко →</a> &nbsp;·&nbsp; <a href="../aptechka/">Аптечка настроения →</a></footer>
+</div>
+
+<div id="guide">
+  <div class="top"><span class="cap"><span class="dot"></span>Аудиогид</span><button id="gclose" style="color:var(--muted);font-size:20px;line-height:1">×</button></div>
+  <div class="txt" id="gtxt"></div>
+  <div class="ctl"><button id="gspeak">🔊 Озвучить</button><button id="gnext">Следующий зал →</button></div>
+</div>
+
+<script>
+// ===================== НАСТРОЙКИ =====================
+const CONFIG = {
+  name: 'Солнышко',
+  // Как подписать сертификат и финал. author: твоё имя для сертификата (пусто = «Директор музея»).
+  author: '',
+  signature: 'Директор музея, он же твой',
+  // Куда прилетит её отзыв. telegram: username без @; whatsapp: номер с кодом страны цифрами. Пусто = мессенджер спросит, кому.
+  contact: { telegram: '', whatsapp: '' },
+  collection: [
+    { kind: 'blue', nm: 'Синий', ds: 'как море и твоё платье' },
+    { ico: '🍫', nm: 'Сникерс', ds: 'официально признан лекарством' },
+    { ico: '☕', nm: 'Капучино', ds: 'двумя руками, с прищуром' },
+  ],
+  medals: [
+    { ico: '🏆', t: 'За красоту', s: 'без фильтров, без усилий, каждый день' },
+    { ico: '🧠', t: 'За ум', s: 'спорить бесполезно, я пробовал' },
+    { ico: '🍽️', t: 'За выбор ресторана', s: 'в любом городе, с первого раза' },
+    { ico: '📞', t: 'За «ладно, спим»', s: 'и ещё час разговора после' },
+    { ico: '🧡', t: 'За доброту', s: 'даже к тем, кто её не заслужил' },
+    { ico: '🛰️', t: 'За терпение', s: 'выдерживает меня даже на расстоянии' },
+  ],
+  stats: [
+    { v: 1, l: 'таких, как ты, во всём мире' },
+    { v: 1, l: 'место в моём списке важных' },
+    { v: 100, suf: '%', l: 'мыслей заняты тобой', wide: false },
+    { v: 0, l: 'шансов это изменить' },
+    { v: '∞', l: 'срок хранения экспоната', wide: true },
+  ],
+  reviews: [
+    { av: '🐈', who: 'Кот', st: 5, p: 'Гладит правильно. Кормит вовремя. Разрешаю оставаться.' },
+    { av: '🍫', who: 'Сникерс', st: 5, p: 'Был съеден с честью. Умер героем.' },
+    { av: '☕', who: 'Капучино', st: 5, p: 'Меня держали двумя руками. Чувствовал себя важным.' },
+    { av: '📅', who: 'Понедельник', st: 4, p: 'Обычно меня никто не любит. Рядом с ней даже я праздник.' },
+    { av: '🛣️', who: 'Расстояние', st: 1, p: 'Меня здесь не уважают. Все делают вид, что меня нет.' },
+    { av: '🪞', who: 'Зеркало', st: 5, p: 'Лучшее, что я показываю за день.' },
+  ],
+  voiceLines: ['«привет» звучит так', '«я соскучилась» звучит так', 'смех. громкость на максимум', '«ещё пять минут…» сонный вариант', '«ладно, спим». Не спим.'],
+};
+// =====================================================
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const vib = p => { try { navigator.vibrate && navigator.vibrate(p); } catch (e) {} };
+
+// ---------- sound ----------
+let AC;
+const ac = () => { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (AC && AC.state === 'suspended') AC.resume(); return AC; };
+function tone(f, d = .12, type = 'sine', g = .08, when = 0) { const a = ac(); if (!a) return; const o = a.createOscillator(), v = a.createGain(); o.type = type; o.frequency.value = f; v.gain.setValueAtTime(0, a.currentTime + when); v.gain.linearRampToValueAtTime(g, a.currentTime + when + .01); v.gain.exponentialRampToValueAtTime(.0001, a.currentTime + when + d); o.connect(v).connect(a.destination); o.start(a.currentTime + when); o.stop(a.currentTime + when + d + .02); }
+function ding() { tone(1318, .5, 'triangle', .06); tone(1975, .7, 'sine', .04, .05); }
+function tear() { const a = ac(); if (!a) return; const n = a.sampleRate * .25, b = a.createBuffer(1, n, a.sampleRate), d = b.getChannelData(0); for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n) * .6; const s = a.createBufferSource(); s.buffer = b; const f = a.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 2200; f.Q.value = .7; const v = a.createGain(); v.gain.value = .25; s.connect(f).connect(v).connect(a.destination); s.start(); }
+let sirenStop = null;
+function siren(ms = 2400) { const a = ac(); if (!a) return; const o = a.createOscillator(), v = a.createGain(); o.type = 'square'; v.gain.value = .05; o.connect(v).connect(a.destination); const t0 = a.currentTime; for (let i = 0; i < ms / 300; i++) { o.frequency.setValueAtTime(i % 2 ? 620 : 880, t0 + i * .3); } o.start(); o.stop(t0 + ms / 1000); }
+
+// ---------- names ----------
+$('#t-name').textContent = CONFIG.name; $('#p-name1').textContent = CONFIG.name; $('#p-name2').textContent = CONFIG.name; $('#sig').textContent = CONFIG.signature;
+
+// ---------- spotlight ----------
+const spot = $('#spot');
+addEventListener('pointermove', e => { spot.style.setProperty('--x', e.clientX + 'px'); spot.style.setProperty('--y', e.clientY + 'px'); }, { passive: true });
+addEventListener('touchmove', e => { const t = e.touches[0]; if (t) { spot.style.setProperty('--x', t.clientX + 'px'); spot.style.setProperty('--y', t.clientY + 'px'); } }, { passive: true });
+
+// ---------- gate ----------
+let entered = false;
+$('#enter').addEventListener('click', () => {
+  if (entered) return; entered = true; const t = $('#ticket'); t.classList.add('torn'); tear(); vib([20, 40, 20]);
+  setTimeout(() => { $('#gate').classList.add('out'); document.body.style.overflow = ''; revealCheck(); }, reduced ? 0 : 700);
+});
+document.body.style.overflow = 'hidden';
+
+// ---------- reveal on scroll ----------
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); } }), { threshold: .15 });
+$$('.hall').forEach(h => io.observe(h));
+function revealCheck() { $$('.hall').forEach(h => { const r = h.getBoundingClientRect(); if (r.top < innerHeight * .9) h.classList.add('in'); }); const sr = $('#stats').getBoundingClientRect(); if (sr.top < innerHeight * .8 && sr.bottom > 0) countStats(); }
+addEventListener('scroll', revealCheck, { passive: true });
+
+// ---------- frame tilt (pointer only) ----------
+if (matchMedia('(hover:hover)').matches && !reduced) $$('.frame').forEach(f => {
+  f.addEventListener('pointermove', e => { const r = f.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; f.style.transform = `perspective(900px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg)`; });
+  f.addEventListener('pointerleave', () => f.style.transform = '');
+});
+
+// ---------- II: voice ----------
+const wave = $('#wave'); for (let i = 0; i < 14; i++) { const b = document.createElement('i'); b.style.setProperty('--d', i); b.style.setProperty('--h', 20 + Math.round(Math.abs(Math.sin(i * 1.3)) * 90)); wave.appendChild(b); }
+let vi = 0, vt = null;
+$('#voice').addEventListener('pointerdown', () => { ac(); wave.classList.remove('quiet'); $('#vnote').textContent = CONFIG.voiceLines[vi++ % CONFIG.voiceLines.length]; vib(10); [523, 659, 784].forEach((f, i) => tone(f, .25, 'sine', .04, i * .08)); clearTimeout(vt); vt = setTimeout(() => { wave.classList.add('quiet'); }, 3500); });
+
+// ---------- III: collection ----------
+const mini = $('#mini');
+CONFIG.collection.forEach(c => { const d = document.createElement('div'); if (c.kind === 'blue') { const s = document.createElement('span'); s.className = 'blue'; d.appendChild(s); } else { const s = document.createElement('span'); s.className = 'ico'; s.textContent = c.ico; d.appendChild(s); } const n = document.createElement('div'); n.className = 'nm'; n.textContent = c.nm; const ds = document.createElement('div'); ds.className = 'ds'; ds.textContent = c.ds; d.append(n, ds); d.addEventListener('pointerdown', () => { vib(8); tone(880, .15, 'triangle', .05); }); mini.appendChild(d); });
+
+// ---------- IV: medals ----------
+const medals = $('#medals'); let won = 0;
+CONFIG.medals.forEach(m => { const b = document.createElement('button'); b.className = 'medal'; const c = document.createElement('div'); c.className = 'coin'; c.textContent = m.ico; const t = document.createElement('div'); const bb = document.createElement('b'); bb.textContent = m.t; const s = document.createElement('small'); s.textContent = m.s; t.append(bb, s); b.append(c, t);
+  b.addEventListener('click', () => { if (!b.classList.contains('won')) { won++; b.classList.add('won'); } else { b.classList.remove('won'); void b.offsetWidth; b.classList.add('won'); } ding(); vib(15); if (won === CONFIG.medals.length) { setTimeout(() => guideSay('Все медали вручены. Торжественная часть окончена, аплодисменты не прекращаются.'), 400); won = -99; } });
+  medals.appendChild(b); });
+
+// ---------- V: alarm ----------
+const h5 = $('#h5'), st = $('#astatus'); let touches = 0, alarmOn = false;
+const alarmLines = ['СИГНАЛИЗАЦИЯ! Охрана уже бежит… стоп. Это же ты. Ладно, тебе можно.', 'Опять? Сигнализацию отключили. Специально для тебя.', 'Стекло убрали. Сердце теперь просто у тебя в руках. Как и всегда, собственно.', 'Оно твоё. Можно даже не возвращать.'];
+$('#glass').addEventListener('pointerdown', () => { if (alarmOn) return; ac(); const i = Math.min(touches, alarmLines.length - 1); touches++;
+  if (i === 0) { alarmOn = true; h5.classList.add('alarm'); siren(2400); vib([200, 100, 200, 100, 200]); st.style.color = '#ff7b7b'; st.textContent = 'ТРЕВОГА! ТРЕВОГА! Кто-то коснулся экспоната!'; setTimeout(() => { h5.classList.remove('alarm'); alarmOn = false; st.style.color = ''; st.textContent = alarmLines[0]; ding(); }, 2500); }
+  else { st.textContent = alarmLines[i]; ding(); vib(20); if (i >= 2) { $('.sign').textContent = 'МОЖНО ТРОГАТЬ'; $('.sign').style.background = '#2e8b57'; } }
+});
+
+// ---------- VI: stats ----------
+const stats = $('#stats');
+CONFIG.stats.forEach(s => { const d = document.createElement('div'); d.className = 'stat' + (s.wide ? ' wide' : ''); const b = document.createElement('b'); b.textContent = typeof s.v === 'number' ? '0' : s.v; b.dataset.v = s.v; b.dataset.suf = s.suf || ''; const l = document.createElement('span'); l.textContent = s.l; d.append(b, l); stats.appendChild(d); });
+let counted = false;
+function countStats() { if (counted) return; counted = true; $$('#stats b').forEach(b => { const v = Number(b.dataset.v); if (!isFinite(v)) return; const t0 = performance.now(), dur = 1200; const step = n => { const p = Math.min(1, (n - t0) / dur), e = 1 - Math.pow(1 - p, 3); b.textContent = Math.round(v * e) + b.dataset.suf; if (p < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }); }
+new IntersectionObserver(es => { if (es[0].isIntersecting) countStats(); }, { threshold: .4 }).observe(stats);
+
+// ---------- audio guide ----------
+const gpanel = $('#guide'), gtxt = $('#gtxt'); let typing = null, curHall = null, speaking = false;
+const halls = $$('.hall[data-guide]');
+function guideSay(text, hall) { curHall = hall || curHall; gpanel.classList.add('on'); clearInterval(typing); gtxt.classList.remove('done'); gtxt.textContent = ''; let i = 0; if (reduced) { gtxt.textContent = text; gtxt.classList.add('done'); } else typing = setInterval(() => { gtxt.textContent = text.slice(0, ++i); if (i >= text.length) { clearInterval(typing); gtxt.classList.add('done'); } }, 28); if (speaking) speak(text); }
+function speak(text) { try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.lang = 'ru-RU'; const v = speechSynthesis.getVoices().find(v => /^ru/i.test(v.lang)); if (v) u.voice = v; u.rate = .95; speechSynthesis.speak(u); } catch (e) {} }
+$$('[data-g]').forEach(b => b.addEventListener('click', () => { const h = b.closest('.hall'); vib(10); tone(1046, .2, 'sine', .04); guideSay(h.dataset.guide, h); }));
+$('#gclose').addEventListener('click', () => { gpanel.classList.remove('on'); try { speechSynthesis.cancel(); } catch (e) {} });
+$('#gspeak').addEventListener('click', () => { if (!('speechSynthesis' in window)) { $('#gspeak').textContent = '🔇 Нет голоса'; return; } speaking = !speaking; $('#gspeak').classList.toggle('act', speaking); if (speaking) speak(gtxt.textContent || ''); else speechSynthesis.cancel(); });
+$('#gnext').addEventListener('click', () => { const i = halls.indexOf(curHall); const n = halls[i + 1]; if (!n) { guideSay('Экскурсия окончена. Главный экспонат может оставаться в музее столько, сколько захочет.'); return; } n.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); setTimeout(() => guideSay(n.dataset.guide, n), 500); });
+
+// ---------- guestbook ----------
+const rv = $('#reviews');
+CONFIG.reviews.forEach(r => { const d = document.createElement('div'); d.className = 'rev'; const a = document.createElement('div'); a.className = 'av'; a.textContent = r.av; const t = document.createElement('div'); const b = document.createElement('b'); b.textContent = r.who; const s = document.createElement('div'); s.className = 'stars'; s.textContent = '★'.repeat(r.st) + '☆'.repeat(5 - r.st); const p = document.createElement('p'); p.textContent = r.p; t.append(b, s, p); d.append(a, t); rv.appendChild(d); });
+let stars = 5; const sp = $('#starpick');
+const paint = () => $$('span', sp).forEach(s => s.classList.toggle('on', Number(s.dataset.s) <= stars));
+sp.addEventListener('click', e => { const s = e.target.closest('span'); if (!s) return; stars = Number(s.dataset.s); paint(); vib(8); tone(700 + stars * 90, .12, 'triangle', .04); links(); }); paint();
+const rtext = $('#rtext'), rname = $('#rname');
+const msg = () => `Отзыв в книге «Музея тебя» ${'★'.repeat(stars)}${'☆'.repeat(5 - stars)}\n${rtext.value.trim() || '(без слов, но с чувством)'}\n— ${rname.value.trim() || CONFIG.name}`;
+function links() { const c = CONFIG.contact, tt = encodeURIComponent(msg()); $('#tg').href = c.telegram ? `https://t.me/${c.telegram}?text=${tt}` : `https://t.me/share/url?url=${encodeURIComponent(' ')}&text=${tt}`; $('#wa').href = c.whatsapp ? `https://wa.me/${c.whatsapp}?text=${tt}` : `https://wa.me/?text=${tt}`; }
+rtext.addEventListener('input', links); rname.addEventListener('input', links); links();
+
+// ---------- certificate ----------
+let certBlob = null;
+async function drawCert() {
+  try { await document.fonts.ready; await Promise.all([document.fonts.load('700 80px "Cormorant Garamond"'), document.fonts.load('italic 600 80px "Cormorant Garamond"'), document.fonts.load('500 30px Manrope')]); } catch (e) {}
+  const W = 1080, H = 1350, c = document.createElement('canvas'); c.width = W; c.height = H; const x = c.getContext('2d');
+  const g = x.createRadialGradient(W / 2, H * .3, 50, W / 2, H / 2, H); g.addColorStop(0, '#221c2e'); g.addColorStop(1, '#0e0c12'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  // borders
+  const gold = x.createLinearGradient(0, 0, W, H); gold.addColorStop(0, '#f3dd93'); gold.addColorStop(.5, '#8a6d2a'); gold.addColorStop(1, '#f3dd93');
+  x.strokeStyle = gold; x.lineWidth = 14; x.strokeRect(40, 40, W - 80, H - 80); x.lineWidth = 3; x.strokeRect(68, 68, W - 136, H - 136);
+  // corner ornaments
+  x.lineWidth = 3; [[68, 68, 1, 1], [W - 68, 68, -1, 1], [68, H - 68, 1, -1], [W - 68, H - 68, -1, -1]].forEach(([cx, cy, sx, sy]) => { x.beginPath(); x.arc(cx + 60 * sx, cy + 60 * sy, 60, 0, Math.PI * 2); x.stroke(); x.beginPath(); x.arc(cx + 60 * sx, cy + 60 * sy, 40, 0, Math.PI * 2); x.stroke(); });
+  x.textAlign = 'center'; x.fillStyle = '#d9b85c';
+  x.font = '700 22px Manrope'; x.letterSpacing = '10px'; x.fillText('МУЗЕЙ ТЕБЯ · ОТДЕЛ ДОКУМЕНТОВ', W / 2, 190); x.letterSpacing = '0px';
+  x.fillStyle = '#f3dd93'; x.font = '700 110px "Cormorant Garamond"'; x.fillText('СЕРТИФИКАТ', W / 2, 320);
+  x.fillStyle = '#a79f90'; x.font = 'italic 600 40px "Cormorant Garamond"'; x.fillText('о признании самым важным человеком', W / 2, 380);
+  x.fillStyle = '#f3ecdc'; x.font = '500 30px Manrope';
+  const wrap = (t, y, lh = 44, maxW = 820) => { const words = t.split(' '); let line = ''; for (const w of words) { const test = line ? line + ' ' + w : w; if (x.measureText(test).width > maxW) { x.fillText(line, W / 2, y); y += lh; line = w; } else line = test; } if (line) x.fillText(line, W / 2, y); return y + lh; };
+  let y = wrap('Настоящим официально подтверждается, что', 480);
+  x.fillStyle = '#f3dd93'; x.font = 'italic 600 118px "Cormorant Garamond"'; x.fillText(CONFIG.name, W / 2, y + 80); y += 150;
+  x.fillStyle = '#f3ecdc'; x.font = '500 30px Manrope';
+  const who = CONFIG.author ? `в жизни ${CONFIG.author}` : 'в жизни директора этого музея';
+  y = wrap(`является самым важным человеком ${who}. Статус присвоен навсегда, пересмотру и обжалованию не подлежит. Любые попытки усомниться считаются недействительными.`, y + 10, 44, 860);
+  // seal
+  const sx = 300, sy = 1080; x.save(); x.translate(sx, sy); x.rotate(-.18); x.strokeStyle = '#e07a8c'; x.lineWidth = 5; x.beginPath(); x.arc(0, 0, 110, 0, Math.PI * 2); x.stroke(); x.lineWidth = 2; x.beginPath(); x.arc(0, 0, 96, 0, Math.PI * 2); x.stroke();
+  x.fillStyle = '#e07a8c'; x.font = '700 20px Manrope'; x.letterSpacing = '4px'; x.fillText('ЭКСПОНАТ № 1', 0, -20); x.fillText('ПОДЛИННИК', 0, 14); x.letterSpacing = '0px'; x.font = '42px serif'; x.fillText('❤', 0, 64); x.restore();
+  // signature
+  x.strokeStyle = '#d9b85c'; x.lineWidth = 2; x.beginPath(); x.moveTo(560, 1110); x.lineTo(900, 1110); x.stroke();
+  x.strokeStyle = '#f3dd93'; x.lineWidth = 3; x.beginPath(); x.moveTo(600, 1095); x.bezierCurveTo(640, 1020, 680, 1130, 720, 1060); x.bezierCurveTo(750, 1010, 770, 1110, 820, 1070); x.bezierCurveTo(850, 1050, 870, 1090, 890, 1075); x.stroke();
+  x.fillStyle = '#a79f90'; x.font = '500 20px Manrope'; x.fillText(CONFIG.author ? CONFIG.author + ', директор музея' : 'Директор музея', 730, 1145);
+  const d = new Date(); x.fillText('Выдан ' + d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }), 730, 1180);
+  x.fillStyle = '#d9b85c'; x.font = '700 18px Manrope'; x.letterSpacing = '6px'; x.fillText('ОРИГИНАЛ ОДИН · ПОДДЕЛКЕ НЕ ПОДЛЕЖИТ', W / 2, 1265);
+  return new Promise(res => c.toBlob(b => { certBlob = b; $('#certimg').src = URL.createObjectURL(b); res(); }, 'image/png'));
+}
+drawCert();
+$('#certsave').addEventListener('click', async () => { if (!certBlob) await drawCert(); const f = new File([certBlob], 'sertifikat.png', { type: 'image/png' }); vib(15); ding();
+  if (navigator.canShare && navigator.canShare({ files: [f] })) { try { await navigator.share({ files: [f], title: 'Сертификат самого важного человека' }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(certBlob); a.download = 'sertifikat.png'; document.body.appendChild(a); a.click(); a.remove(); });
+</script>
+</body>
+</html>
