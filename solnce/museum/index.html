@@ -234,7 +234,7 @@ footer a{color:var(--gold2)}
       </svg>
     </div></div>
     <div class="plaque"><b>«Улыбка»</b><div class="row"><span>Автор</span><span id="p-name1">Солнышко</span><span>Материал</span><span>чистое счастье, немного хитрости</span><span>Воздействие</span><span>мгновенное, необратимое</span></div></div>
-    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+    <div class="guide"><button class="btn ghost sm" data-g>📜 Экскурсовод</button></div>
   </section>
 
   <!-- II -->
@@ -248,7 +248,7 @@ footer a{color:var(--gold2)}
       <div class="voice-note" id="vnote">тихо… нажми</div>
     </div></div>
     <div class="plaque"><b>«Голос»</b><div class="row"><span>Жанр</span><span>утренний, сонный</span><span>Хранится</span><span>в избранных голосовых</span><span>Прослушано</span><span>больше, чем любой плейлист</span></div></div>
-    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+    <div class="guide"><button class="btn ghost sm" data-g>📜 Экскурсовод</button></div>
   </section>
 
   <!-- III -->
@@ -259,7 +259,7 @@ footer a{color:var(--gold2)}
     <div class="lamp"></div>
     <div class="frame"><div class="canvas"><div class="mini" id="mini"></div></div></div>
     <div class="plaque"><b>«Что она любит»</b><div class="row"><span>Источник</span><span>наблюдения куратора</span><span>Точность</span><span>проверена лично</span></div></div>
-    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+    <div class="guide"><button class="btn ghost sm" data-g>📜 Экскурсовод</button></div>
   </section>
 
   <!-- IV -->
@@ -270,7 +270,7 @@ footer a{color:var(--gold2)}
     <div class="lamp"></div>
     <div class="frame"><div class="canvas"><div class="medals" id="medals"></div></div></div>
     <div class="plaque"><b>«Награды»</b><div class="row"><span>Вручил</span><span>главный свидетель твоей жизни</span><span>Статус</span><span>пожизненно</span></div></div>
-    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+    <div class="guide"><button class="btn ghost sm" data-g>📜 Экскурсовод</button></div>
   </section>
 
   <!-- V -->
@@ -285,7 +285,7 @@ footer a{color:var(--gold2)}
       <div class="status" id="astatus">Сердце куратора. Принадлежит одному человеку.</div>
     </div></div></div>
     <div class="plaque"><b>«Сердце»</b><div class="row"><span>Владелец</span><span id="p-name2">Солнышко</span><span>Охрана</span><span>есть, но она на твоей стороне</span><span>Срок</span><span>бессрочно</span></div></div>
-    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+    <div class="guide"><button class="btn ghost sm" data-g>📜 Экскурсовод</button></div>
   </section>
 
   <!-- VI -->
@@ -296,7 +296,7 @@ footer a{color:var(--gold2)}
     <div class="lamp"></div>
     <div class="frame"><div class="canvas"><div class="stats" id="stats"></div></div></div>
     <div class="plaque"><b>«Статистика»</b><div class="row"><span>Проверено</span><span>лично, несколько раз в день</span><span>Погрешность</span><span>ноль</span></div></div>
-    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+    <div class="guide"><button class="btn ghost sm" data-g>📜 Экскурсовод</button></div>
   </section>
 
   <!-- certificate -->
@@ -305,7 +305,7 @@ footer a{color:var(--gold2)}
     <h2>Отдел <em>документов</em></h2>
     <p class="lead">Официальная бумага. С печатью. Можно сохранить и показывать всем.</p>
     <div class="cert"><img id="certimg" alt="Сертификат"><div class="btns"><button class="btn" id="certsave">Сохранить сертификат</button></div></div>
-    <div class="guide"><button class="btn ghost sm" data-g>🎧 Аудиогид</button></div>
+    <div class="guide"><button class="btn ghost sm" data-g>📜 Экскурсовод</button></div>
   </section>
 
   <!-- guestbook -->
@@ -340,7 +340,7 @@ footer a{color:var(--gold2)}
 </div>
 
 <div id="guide">
-  <div class="top"><span class="cap"><span class="dot"></span>Аудиогид</span><button id="gclose" style="color:var(--muted);font-size:20px;line-height:1">×</button></div>
+  <div class="top"><span class="cap"><span class="dot"></span>Экскурсовод</span><button id="gclose" style="color:var(--muted);font-size:20px;line-height:1">×</button></div>
   <div class="txt" id="gtxt"></div>
   <div class="ctl"><button id="gspeak" hidden>▶ Голос директора</button><button id="gnext">Следующий зал →</button></div>
 </div>
@@ -383,7 +383,7 @@ const CONFIG = {
     { av: '🪞', who: 'Зеркало', st: 5, p: 'Лучшее, что я показываю за день.' },
   ],
   // Твой голос вместо синтезатора. Запиши голосовое для зала и положи файл в solnce/museum/audio/,
-  // потом впиши путь: h1: 'audio/zal1.m4a'. Пустое = аудиогид только печатает текст, без озвучки.
+  // потом впиши путь: h1: 'audio/zal1.m4a'. Пустое = экскурсовод только печатает текст, без озвучки.
   audio: { h1: '', h2: '', h3: '', h4: '', h5: '', h6: '', h7: '', h8: '' },
   voiceLines: ['«привет» звучит так', '«я соскучилась» звучит так', 'смех. громкость на максимум', '«ещё пять минут…» сонный вариант', '«ладно, спим». Не спим.'],
 };
